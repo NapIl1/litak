@@ -1,18 +1,19 @@
-using litak_back_end.Controllers;
-using litak_back_end.Repositories;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using litak_back_end;
+using Microsoft.AspNetCore.Authentication;
+using MongoDB.Bson.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<IRecordRepository, RecordRepository>();
-builder.Services.AddScoped<IOptionsRepository, OptionsRepository>();
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddAuthentication("BasicAuthentication")
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+BsonSerializer.RegisterSerializer(new StringObjectIdConverter());
 
 var app = builder.Build();
-app.UseRouting();
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
 
+app.UseRouting();
+app.UseAuthorization();
+app.MapControllers();
 app.Run();
