@@ -1,44 +1,72 @@
-<div>
-    <div class="row">
-        <div class="col-3" *ngFor="let flight of flights">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title border-bottom pb-2">{{flight.operator}}</h5>
-                    <p>
-                        <span [style.backgroundColor]="flight.model?.color"
-                            class="badge badge-primary">{{flight.model?.name}}</span>
-                        <span [style.backgroundColor]="flight.assignment?.color"
-                            class="badge badge-primary">{{flight.assignment?.name}}</span>
-
-                    </p>
-
-                    <div class="alert alert-info">
-                        Статус: <span [ngSwitch]="flight.flightStep.step">
-                            <span class="badge badge-primary" *ngSwitchCase="FlightSteps.START">Старт</span>
-                            <span class="badge badge-primary" *ngSwitchCase="FlightSteps.FLIGHT">Політ</span>
-                            <span class="badge badge-primary" *ngSwitchCase="FlightSteps.LBZ_FORWARD">ЛБЗ ВПЕРЕД</span>
-                            <span class="badge badge-primary" *ngSwitchCase="FlightSteps.RETURN">Повернення</span>
-                            <span class="badge badge-primary" *ngSwitchCase="FlightSteps.LBZ_HOME">ЛБЗ назад</span>
-                            <span class="badge badge-primary" *ngSwitchCase="FlightSteps.END">Кінець</span>
-                        </span>
-                    </div>
 
 
+<div class="dashboard-wrapper">
+    <div class="dashboard-ecommerce">
+        <div class="container-fluid dashboard-content ">
 
-                    <div class="d-flex justify-content-end">
-                        <button *ngIf="!flight.flightStep.isApproved" (click)="approve(flight.id)" class="btn btn-success w-100">
-                            Дозволити
-                        </button>
-                        <div *ngIf="flight.flightStep.isApproved" class="alert alert-success w-100" role="alert">
-                            Дозвіл надано
+            <div class="row">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3" *ngFor="let flight of flights">
+                    <div class="card ">
+                        <div class="card-body">
+                            <h5 class="card-title border-bottom pb-2">Оператор: {{flight.operator}}</h5>
+                            <p>
+                                <span [style.backgroundColor]="flight.model?.color"
+                                    class="badge badge-primary">{{flight.model?.name}}</span>
+                                <span [style.backgroundColor]="flight.assignment?.color"
+                                    class="badge badge-primary">{{flight.assignment?.name}}</span>
+        
+                            </p>
+        
+                            <div class="alert alert-info">
+                                <b>Статус: </b> <span [ngSwitch]="flight.flightStep.step">
+                                    <span class="badge badge-primary" *ngSwitchCase="FlightSteps.START">Старт</span>
+                                    <span class="badge badge-primary" *ngSwitchCase="FlightSteps.FLIGHT">Політ</span>
+                                    <span class="badge badge-primary" *ngSwitchCase="FlightSteps.LBZ_FORWARD">ЛБЗ ВПЕРЕД</span>
+                                    <span class="badge badge-primary" *ngSwitchCase="FlightSteps.RETURN">Повернення</span>
+                                    <span class="badge badge-primary" *ngSwitchCase="FlightSteps.LBZ_HOME">ЛБЗ назад</span>
+                                    <span class="badge badge-primary" *ngSwitchCase="FlightSteps.END">Кінець</span>
+                                </span>
+
+                                <div><b>Телефон:</b> {{ flight.operatorPhone }}</div>
+                                <div><b>Створений:</b> {{ flight.dateOfFlight | date : 'dd/MM/yy HH:mm'}}</div>
+                                <div><b>Маршрут вперед:</b> {{ flight.routeForward }} </div>
+                                <div><b>Виліт:</b> {{ flight.dateOfFlight | date : 'dd/MM/yy HH:mm' }}</div>
+                                <div><b>ЛБЗ Вперед:</b> {{ flight.LBZForwardDate | date : 'dd/MM/yy HH:mm' }}</div>
+                                <div><b>Повернення:</b> {{ flight.returnDate | date : 'dd/MM/yy HH:mm' }}</div>
+                                <div><b>Маршрут назад:</b> {{ flight.routeBack }} </div>
+                                <div><b>ЛБЗ Назад:</b> {{ flight.LBZBackDate | date : 'dd/MM/yy HH:mm' }}</div>
+
+                            </div>
+        
+        
+                            <div *ngIf="flight.isReturnChanged == true" class="alert alert-danger">
+                                <b>Маршрут назад змінився!</b>
+                                <div>
+                                    {{flight.changedReturnRoute}}
+                                </div>
+                            </div>
+        
+                            <div class="d-flex justify-content-end">
+                                <button *ngIf="!flight.flightStep.isApproved" (click)="approve(flight._id)" class="btn btn-success w-100">
+                                    Дозволити
+                                </button>
+                                <div *ngIf="flight.flightStep.isApproved" class="alert alert-success w-100 mb-0" role="alert">
+                                    Дозвіл надано
+                                </div>
+                            </div>
+                            
+        
                         </div>
                     </div>
-                    
-
+        
                 </div>
+        
             </div>
-
         </div>
-
     </div>
 </div>
+
+
+
+
+

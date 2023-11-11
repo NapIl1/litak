@@ -54,16 +54,27 @@ namespace litak_back_end.Controllers
         }
         
         [HttpPut]
-        public async Task UpdateOptions(string recordId, [FromBody] JsonObject recordJson)
+        public async Task UpdateOptions(string optionsId, [FromBody] JsonObject recordJson)
         {
             var record = BsonDocument.Parse(recordJson.ToString());
             var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
             var database = mongoClient.GetDatabase("sample_weatherdata");
-            var collection = database.GetCollection<BsonDocument>("records"); 
+            var collection = database.GetCollection<BsonDocument>("options"); 
             
-            var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(recordId));
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(optionsId));
 
             await collection.ReplaceOneAsync(filter, record);
+        }
+
+        [HttpDelete]
+        public async Task DeleteRecord(string optionsId)
+        {
+            var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            var database = mongoClient.GetDatabase("sample_weatherdata");
+
+            var recordsCollection = database.GetCollection<BsonDocument>("options");
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(optionsId));
+            await recordsCollection.DeleteOneAsync(filter);
         }
     }
 }

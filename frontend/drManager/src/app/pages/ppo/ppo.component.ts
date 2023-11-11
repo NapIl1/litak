@@ -8,34 +8,34 @@ import { FlightService } from 'src/app/services/flight.service';
   styleUrls: ['./ppo.component.scss']
 })
 export class PpoComponent implements OnInit {
-  
+
   flights: Flight[] = [];
 
-  /**
-   *
-   */
   constructor(private flightService: FlightService) {
-    
-  }
-
-  ngOnInit(): void {
-
-    this.flights = this.flightService.getAllFlights();
-
-    this.flights.push(...this.flights);
-    this.flights.push(...this.flights);
-    this.flights.push(...this.flights);
 
   }
 
-  public approve(id: string) {
+  async ngOnInit(): Promise<void> {
+    await this.getFlights();
+  }
 
-    this.flightService.approve(id);
+  public async approve(id: string | undefined) {
 
-    this.flights = this.flightService.getAllFlights();
+    if (id) {
+      const flightToUpdate = this.flights.find(x => x._id == id);
 
-    
-    
+      if (flightToUpdate) {
+        flightToUpdate.flightStep.isApproved = true;
+        await this.flightService.updateFlightAsync(flightToUpdate);
+      }
+    }
+
+    await this.getFlights();
+  }
+
+  async getFlights() {
+    const allFlights = await this.flightService.getAllFlightsAsync();
+    this.flights = allFlights.filter(x => x.flightStep.step != FlightSteps.END);
   }
 
   public get FlightSteps() {

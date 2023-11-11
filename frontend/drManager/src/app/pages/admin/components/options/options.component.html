@@ -1,0 +1,176 @@
+<div class="row">
+    <div class="col-12">
+        <div class="section-block">
+            <h4 class="section-title">Редагування опцій</h4>
+        </div>
+        <div class="tab-regular">
+            <ul class="nav nav-tabs " id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active p-2" id="home-tab" data-toggle="tab" href="#boardingStatus" role="tab"
+                        aria-controls="home" aria-selected="true">
+                        Статус повернення
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link p-2" id="home-tab" data-toggle="tab" href="#dronAppointment" role="tab"
+                        aria-controls="home" aria-selected="true">
+                        Призначення Дронів
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link p-2" id="home-tab" data-toggle="tab" href="#dronModel" role="tab"
+                        aria-controls="home" aria-selected="true">
+                        Моделі дронів
+                    </a>
+                </li>
+
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                <!-- Статус повернення -->
+                <div class="tab-pane fade show active" id="boardingStatus" role="tabpanel"
+                    aria-labelledby="home-tab">
+
+                    <div class="row pb-2">
+                        <div class="col-6">
+                            <input [(ngModel)]="name" placeholder="Назва" type="text" class="form-control">
+                        </div>
+
+                        <div class="col-4">
+                            <input [(ngModel)]="color" placeholder="Колір" type="text" class="form-control">
+                        </div>
+
+                        <div class="col-2">
+                            <button (click)="addNewOption('boardingStatus')" class="btn btn-primary btn-sm">Створити</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Назва</th>
+                                        <th scope="col">Колір</th>
+                                        <th scope="col">Видалити</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of options.boardingStatuses; index as i">
+                                        <th scope="row">{{i+1}}</th>
+                                        <td>{{item.name}}</td>
+                                        <td><span [style.backgroundColor]="item.color" style="color: white;" class="badge">{{colorPlaceholder}}</span></td>
+                                        <td>
+                                            <button (click)="removeOption(i,'boardingStatus')" class="btn btn-danger btn-xs">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Призначення Дронів -->
+                <div class="tab-pane fade" id="dronAppointment" role="tabpanel"
+                    aria-labelledby="home-tab">
+
+                    <div class="row pb-2">
+                        <div class="col-6">
+                            <input [(ngModel)]="name" placeholder="Назва" type="text" class="form-control">
+                        </div>
+
+                        <div class="col-4">
+                            <input [(ngModel)]="color" placeholder="Колір" type="text" class="form-control">
+                        </div>
+
+                        <div class="col-2">
+                            <button (click)="addNewOption('dronAppointment')" class="btn btn-primary btn-sm">Створити</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Назва</th>
+                                        <th scope="col">Колір</th>
+                                        <th scope="col">Видалити</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of options.dronAppointment; index as i">
+                                        <th scope="row">{{i+1}}</th>
+                                        <td>{{item.name}}</td>
+                                        <td><span [style.backgroundColor]="item.color" style="color: white;" class="badge">{{colorPlaceholder}}</span></td>
+                                        <td>
+                                            <button (click)="removeOption(i,'dronAppointment')" class="btn btn-danger btn-xs">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Моделі дронів -->
+                <div class="tab-pane fade" id="dronModel" role="tabpanel"
+                    aria-labelledby="home-tab">
+
+                    <div class="row pb-2">
+                        <div class="col-6">
+                            <input [(ngModel)]="name" placeholder="Назва" type="text" class="form-control">
+                        </div>
+
+                        <div class="col-4">
+                            <input [(ngModel)]="color" placeholder="Колір" type="text" class="form-control">
+                        </div>
+
+                        <div class="col-2">
+                            <button (click)="addNewOption('dronModel')" class="btn btn-primary btn-sm">Створити</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Назва</th>
+                                        <th scope="col">Колір</th>
+                                        <th scope="col">Видалити</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of options.dronModels; index as i">
+                                        <th scope="row">{{ i+1 }}</th>
+                                        <td>{{ item.name }}</td>
+                                        <td><span [style.backgroundColor]="item.color" style="color: white;" class="badge">{{colorPlaceholder}}</span></td>
+                                        <td>
+                                            <button (click)="removeOption(i,'dronModel')" class="btn btn-danger btn-xs">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

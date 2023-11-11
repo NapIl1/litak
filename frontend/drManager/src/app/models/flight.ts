@@ -15,7 +15,7 @@ export interface FlightStep {
 }
 
 export interface Flight {
-    id: string;
+    _id?: string;
     operator?: string;
     operatorPhone?: string;
     spotterPhone?: string;
@@ -39,18 +39,23 @@ export interface Flight {
     isLBZForward?: boolean;
 
     returnDate?: Date;
-    isReturnStarted?: boolean;
-    returnRoute?: ValueColor;
+    isReturnChanged?: boolean;
+    changedReturnRoute?: string;
+    boardingStatus?: ValueColor;
 
     LBZBackDate?: Date;
     isLBZBack?: boolean;
 
     langingStatus?: ValueColor;
 
+    endDate?: Date;
+
     ppoPhone?: string; // ?
     rebPhone?: string; // ?
 
-    flightStep: FlightStep;
+    userId?: string;
 
-    test?: number;
+    isExpand?: boolean;
+
+    flightStep: FlightStep;
 }

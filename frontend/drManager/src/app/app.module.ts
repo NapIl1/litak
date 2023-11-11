@@ -13,6 +13,11 @@ import { FormsModule } from '@angular/forms';
 import { PpoComponent } from './pages/ppo/ppo.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import { HttpClientModule } from '@angular/common/http';
+import { OptionsComponent } from './pages/admin/components/options/options.component';
+import { UsersComponent } from './pages/admin/components/users/users.component';
+import { PersonalInfoComponent } from './pages/personal-info/personal-info.component';
+import { FlightsStatsComponent } from './pages/admin/components/flights-stats/flights-stats.component';
 
 @NgModule({
   declarations: [
@@ -23,14 +28,19 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     SidebarComponent,
     PilotComponent,
     PpoComponent,
-    AdminComponent
+    AdminComponent,
+    OptionsComponent,
+    UsersComponent,
+    PersonalInfoComponent,
+    FlightsStatsComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     NgSelectModule,
-    NgxMaskDirective
+    NgxMaskDirective,
+    HttpClientModule
   ],
   providers: [provideNgxMask()],
   bootstrap: [AppComponent]

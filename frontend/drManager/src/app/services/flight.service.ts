@@ -1,115 +1,75 @@
 import { Injectable } from '@angular/core';
 import { Flight, FlightSteps } from '../models/flight';
 import { v4 as uuidv4 } from 'uuid';
+import { HttpClient } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
+import { API_URL } from '../consts/consts';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FlightService {
+  private readonly RECORDS_URL = API_URL + 'Records';
 
-  private static readonly KEY = 'FL';
-
-  constructor() {
-
-    const fl = localStorage.getItem(FlightService.KEY);
-
-    if (!fl) {
-      const mocked = this.getMockedFlights();
-      localStorage.setItem(FlightService.KEY, JSON.stringify(mocked));
-    }
-
+  constructor(private http: HttpClient) {
   }
 
-  public getById(id: string): Flight | undefined {
-    const flights = this.getAllFlights();
+  public async getById(id: string): Promise<Flight | undefined> {
 
-    const flight = flights.find(x => x.id === id);
+    const flights = await this.getAllFlightsAsync();
+    console.log(flights);
+    const flight = flights?.find(x => x._id === id);
 
     return flight;
   }
 
-  public addFlight(flight: Flight): void {
-    const fl = localStorage.getItem("FL");
+  public async getAllFlightsAsync(): Promise<Flight[]> {
+    const flights = await lastValueFrom(this.http.get<Flight[]>(this.RECORDS_URL));
 
-    if (fl) {
-      const flights = JSON.parse(fl);
-      flights.push(flight);
+    return flights ?? [];
+  }
 
-      localStorage.setItem(FlightService.KEY, JSON.stringify(flights));
+  public async addFlightAsync(flight: Flight): Promise<void> {
+    try {
+      await lastValueFrom(this.http.post(this.RECORDS_URL, flight));
+    } catch (error) {
+      
     }
   }
 
-  public approve(id: string): void {
+  public async updateFlightAsync(flight: Flight): Promise<void> {
+    try {
+      const id = flight._id;
+      delete flight._id;
 
-    const flights = this.getAllFlights();
+      await lastValueFrom(this.http.put(this.RECORDS_URL + `?recordId=${id}`, flight));
 
-    const flight = flights.find(x => x.id === id);
-
-    if(flight) {
-      flight.flightStep.isApproved = true;
-
-      localStorage.setItem(FlightService.KEY, JSON.stringify(flights));
+      flight._id = id;
+    } catch (error) {
+      
     }
 
-
   }
 
-  public getAllFlights(): Flight[] {
-    const fl = localStorage.getItem("FL");
+  public async removeFlight(id: string): Promise<void> {
+    try {
+      await lastValueFrom(this.http.delete(this.RECORDS_URL + `?recordId=${id}`));
+    } catch (error) {
 
-    if (fl) {
-      return JSON.parse(fl);
     }
-    return []
   }
 
+  public async approveAsync(id: string): Promise<void> {
+    const flights = await this.getAllFlightsAsync();
 
+    const flight = flights.find(x => x._id === id);
 
-  private getMockedFlights(): Flight[] {
-    return [
-      {
-        id: uuidv4(),
-        operator: 'Vasyan',
-        operatorPhone: '0676985522',
-        spotterPhone: '0676985523',
-        dateOfFlight: new Date(),
-        routeForward: 'ROUTE FORWARD',
-        routeBack: 'route back',
-        assignment: {
-          name: 'Ударний байрактар',
-          color: '#5969ff'
-        },
-        model: {
-          name: 'Мавік 3Т',
-          color: '#5969ff'
-        },
-        flightStep: {
-          isApproved: false,
-          step: FlightSteps.START
-        }
-      },
-      {
-        id: uuidv4(),
-        operator: 'Petro',
-        operatorPhone: '0676985222',
-        spotterPhone: '0676985333',
-        dateOfFlight: new Date(),
-        routeForward: 'ROUTE FORWARD22',
-        routeBack: 'route back1123',
-        assignment: {
-          name: 'Ударний байрактар',
-          color: '#5969ff'
-        },
-        model: {
-          name: 'Мавік 3Т',
-          color: '#5969ff'
-        },
-        flightStep: {
-          isApproved: false,
-          step: FlightSteps.START
-        }
-      },
-    ]
+    if (!flight) {
+      throw 'Doesnt exist';
+    }
+    flight.flightStep.isApproved = true;
+
+    this.http.put(`${this.RECORDS_URL}?id=${flight._id}`, flight);
+
   }
-
 }

@@ -11,7 +11,7 @@ namespace litak_back_end.Controllers
     public class RecordsController : ControllerBase
     {
         [HttpGet]
-        [Authorize(AuthenticationSchemes = "BasicAuthentication")]
+        //[Authorize(AuthenticationSchemes = "BasicAuthentication")]
         public async Task<List<object>> GetAllRecords()
         {
             var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");

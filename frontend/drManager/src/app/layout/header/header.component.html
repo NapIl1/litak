@@ -7,37 +7,38 @@
         <div class="collapse navbar-collapse " id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto navbar-right-top">
 
-                <li class="nav-item">
+                <li *ngIf="userInfo.role == userRoles.ADMIN" a class="nav-item">
                     <a routerLink="admin" class="nav-link nav-icons" href="#">
                         <i class="fas fa-fw fa-cog"></i>
                         Адмін
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <li *ngIf="userInfo.role == userRoles.ADMIN || userInfo.role == userRoles.PPO_REB" class="nav-item">
                     <a routerLink="ppo" class="nav-link nav-icons" href="#">
                         <i class="fas fa-fw fa-rocket"></i>
                         ППО РЕБ
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a routerLink="pilot" class="nav-link nav-icons" href="#">
+                <li *ngIf="userInfo.role == userRoles.ADMIN || userInfo.role == userRoles.PILOT" class="nav-item">
+                    <a routerLink="new-flight" class="nav-link nav-icons" href="#">
                         <i class="fas fa-fw fa-user"></i>
                         Пілот
                     </a>
                 </li>
 
                 <li class="nav-item dropdown nav-user">
-                    <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle"></a>
+                    <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
                     <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
                         <div class="nav-user-info">
-                            <h5 class="mb-0 text-white nav-user-name">John Abraham </h5>
-                            <span class="status"></span><span class="ml-2">Available</span>
+                            <h5 class="mb-0 text-white nav-user-name">{{userInfo.login}}</h5>
+                            <span class="status"></span><span class="ml-2">{{userInfo.userOptions?.nickName}}</span>
                         </div>
-                        <a class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i>Account</a>
-                        <a class="dropdown-item" href="#"><i class="fas fa-cog mr-2"></i>Setting</a>
-                        <a class="dropdown-item" href="#"><i class="fas fa-power-off mr-2"></i>Logout</a>
+                        <a class="dropdown-item" routerLink="personal-info" ><i class="fas fa-user mr-2"></i>Аккаунт</a>
+                        <a (click)="logout()" class="dropdown-item pointer"><i class="fas fa-power-off mr-2"></i>Вийти</a>
                     </div>
                 </li>
             </ul>

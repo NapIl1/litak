@@ -17,10 +17,10 @@
                             
                         </a>
                     </li>
-                    <li *ngFor="let flight of flights" class="nav-item" [routerLink]="['/pilot', flight.id]">
+                    <li *ngFor="let flight of flights" class="nav-item" [routerLink]="['/pilot', flight._id]">
                         <a class="nav-link" >
                             {{flight.dateOfFlight | date:'yyyy-MM-dd HH:mm'}}
-                            Статус: <span [ngSwitch]="flight.flightStep.step">
+                            Статус: <span [ngSwitch]="flight?.flightStep?.step">
                                 <span  *ngSwitchCase="FlightSteps.START">Старт</span>
                                 <span  *ngSwitchCase="FlightSteps.FLIGHT">Політ</span>
                                 <span  *ngSwitchCase="FlightSteps.LBZ_FORWARD">ЛБЗ ВПЕРЕД</span>

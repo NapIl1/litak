@@ -14,8 +14,8 @@ export class SidebarComponent implements OnInit {
 
   constructor(private flightService: FlightService) { }
 
-  ngOnInit(): void {
-    this.flights = this.flightService.getAllFlights();
+  async ngOnInit(): Promise<void> {
+    this.flights = await this.flightService.getAllFlightsAsync();
   }
 
 
