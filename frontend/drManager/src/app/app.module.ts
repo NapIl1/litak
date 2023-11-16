@@ -18,6 +18,7 @@ import { OptionsComponent } from './pages/admin/components/options/options.compo
 import { UsersComponent } from './pages/admin/components/users/users.component';
 import { PersonalInfoComponent } from './pages/personal-info/personal-info.component';
 import { FlightsStatsComponent } from './pages/admin/components/flights-stats/flights-stats.component';
+import { ColorPickerModule } from 'ngx-color-picker';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { FlightsStatsComponent } from './pages/admin/components/flights-stats/fl
     FormsModule,
     NgSelectModule,
     NgxMaskDirective,
-    HttpClientModule
+    HttpClientModule,
+    ColorPickerModule
   ],
   providers: [provideNgxMask()],
   bootstrap: [AppComponent]

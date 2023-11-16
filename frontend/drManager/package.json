@@ -19,6 +19,7 @@
     "@angular/platform-browser-dynamic": "^16.2.0",
     "@angular/router": "^16.2.0",
     "@ng-select/ng-select": "^11.1.1",
+    "ngx-color-picker": "^15.0.0",
     "ngx-mask": "^16.3.9",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

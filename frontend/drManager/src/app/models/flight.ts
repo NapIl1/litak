@@ -57,5 +57,10 @@ export interface Flight {
 
     isExpand?: boolean;
 
+    isRejected?: boolean;
+    rejectedReason?: string;
+
+    isTerminated?: boolean;
+
     flightStep: FlightStep;
 }

@@ -39,7 +39,7 @@
                         </div>
 
                         <div class="col-4">
-                            <input [(ngModel)]="color" placeholder="Колір" type="text" class="form-control">
+                            <input [(colorPicker)]="color" [style.background]="color" [placeholder]="color === '' ? 'Колір' : color" type="text" class="form-control">
                         </div>
 
                         <div class="col-2">
@@ -86,7 +86,7 @@
                         </div>
 
                         <div class="col-4">
-                            <input [(ngModel)]="color" placeholder="Колір" type="text" class="form-control">
+                            <input [(colorPicker)]="color" [style.background]="color" [placeholder]="color === '' ? 'Колір' : color" type="text" class="form-control">
                         </div>
 
                         <div class="col-2">
@@ -133,7 +133,7 @@
                         </div>
 
                         <div class="col-4">
-                            <input [(ngModel)]="color" placeholder="Колір" type="text" class="form-control">
+                            <input [(colorPicker)]="color" [style.background]="color" [placeholder]="color === '' ? 'Колір' : color" type="text" class="form-control">
                         </div>
 
                         <div class="col-2">

@@ -105,7 +105,7 @@ export class PilotComponent implements OnInit {
   }
 
   public async next() {
-    if (this.flight.flightStep.isApproved == false) {
+    if (this.flight.flightStep.isApproved == false && this.flight.flightStep.step === FlightSteps.START) {
       alert('Не дозволено!');
       return;
     }
@@ -115,35 +115,35 @@ export class PilotComponent implements OnInit {
         this.flight.flightStartDate = new Date;
         this.flight.flightStep = {
           step: FlightSteps.FLIGHT,
-          isApproved: false
+          isApproved: true
         };
         break;
       case FlightSteps.FLIGHT:
         this.flight.LBZForwardDate = new Date;
         this.flight.flightStep = {
           step: FlightSteps.LBZ_FORWARD,
-          isApproved: false
+          isApproved: true
         };
         break;
       case FlightSteps.LBZ_FORWARD:
         this.flight.returnDate = new Date;
         this.flight.flightStep = {
           step: FlightSteps.RETURN,
-          isApproved: false
+          isApproved: true
         };
         break;
       case FlightSteps.RETURN:
         this.flight.LBZBackDate = new Date;
         this.flight.flightStep = {
           step: FlightSteps.LBZ_HOME,
-          isApproved: false
+          isApproved: true
         };
         break;
       case FlightSteps.LBZ_HOME:
         this.flight.endDate = new Date;
         this.flight.flightStep = {
           step: FlightSteps.END,
-          isApproved: false
+          isApproved: true
         };
         break;
       case FlightSteps.END:
@@ -161,11 +161,23 @@ export class PilotComponent implements OnInit {
       return;
     }
 
-    alert('Заявку подано');
-
+    // alert('Заявку подано');
   }
 
-  newFlight() {
+  public newFlight() {
+    this.router.navigate(['new-flight']);
+  }
+
+  public async terminateFlight() {
+    this.flight.isTerminated = true;
+    this.flight.endDate = new Date;
+    this.flight.flightStep = {
+      step: FlightSteps.END,
+      isApproved: true
+    };
+
+    await this.getFlightsAssignedToUser();
+    await this.flightService.updateFlightAsync(this.flight);
     this.router.navigate(['new-flight']);
   }
 

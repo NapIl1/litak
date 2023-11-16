@@ -4,20 +4,21 @@
     <div class="dashboard-ecommerce">
         <div class="container-fluid dashboard-content ">
 
-            <div class="row">
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3" *ngFor="let flight of flights">
-                    <div class="card ">
-                        <div class="card-body">
+            <div class="d-flex" style="flex-wrap: wrap;">
+                <div style="min-width: 200px;" *ngFor="let flight of flights">
+                    <div class="card m-1" [style.backgroundColor]=" flight.flightStep.isApproved === true ? flight.assignment!.color : 'white'">
+
+                        <div class="card-body p-2">
                             <h5 class="card-title border-bottom pb-2">Оператор: {{flight.operator}}</h5>
                             <p>
                                 <span [style.backgroundColor]="flight.model?.color"
-                                    class="badge badge-primary">{{flight.model?.name}}</span>
-                                <span [style.backgroundColor]="flight.assignment?.color"
-                                    class="badge badge-primary">{{flight.assignment?.name}}</span>
+                                    class="badge badge-primary bg-dark">{{flight.model?.name}}</span>
+                                <span
+                                    class="badge badge-primary bg-dark">{{flight.assignment?.name}}</span>
         
                             </p>
         
-                            <div class="alert alert-info">
+                            <div class="alert alert-info mb-0">
                                 <b>Статус: </b> <span [ngSwitch]="flight.flightStep.step">
                                     <span class="badge badge-primary" *ngSwitchCase="FlightSteps.START">Старт</span>
                                     <span class="badge badge-primary" *ngSwitchCase="FlightSteps.FLIGHT">Політ</span>
@@ -33,26 +34,30 @@
                                 <div><b>Виліт:</b> {{ flight.dateOfFlight | date : 'dd/MM/yy HH:mm' }}</div>
                                 <div><b>ЛБЗ Вперед:</b> {{ flight.LBZForwardDate | date : 'dd/MM/yy HH:mm' }}</div>
                                 <div><b>Повернення:</b> {{ flight.returnDate | date : 'dd/MM/yy HH:mm' }}</div>
-                                <div><b>Маршрут назад:</b> {{ flight.routeBack }} </div>
+                                <div class="bg-danger" *ngIf="flight.isReturnChanged">
+                                    <i class="fas fa-exclamation-circle text-white"></i>
+                                    <b>Маршрут назад:</b> {{ flight.changedReturnRoute }} </div>
+                                <div *ngIf="!flight.isReturnChanged"><b>Маршрут назад:</b> {{ flight.routeBack }} </div>
                                 <div><b>ЛБЗ Назад:</b> {{ flight.LBZBackDate | date : 'dd/MM/yy HH:mm' }}</div>
 
                             </div>
         
         
-                            <div *ngIf="flight.isReturnChanged == true" class="alert alert-danger">
+                            <!-- <div *ngIf="flight.isReturnChanged == true" class="alert alert-danger mb-0 mt-1">
                                 <b>Маршрут назад змінився!</b>
                                 <div>
                                     {{flight.changedReturnRoute}}
                                 </div>
-                            </div>
+                            </div> -->
         
-                            <div class="d-flex justify-content-end">
-                                <button *ngIf="!flight.flightStep.isApproved" (click)="approve(flight._id)" class="btn btn-success w-100">
+                            <div class="d-flex justify-content-center mt-1">
+                                
+                                <button *ngIf="!flight.flightStep.isApproved" (click)="approve(flight._id)" class="btn btn-success w-50 m-1">
                                     Дозволити
                                 </button>
-                                <div *ngIf="flight.flightStep.isApproved" class="alert alert-success w-100 mb-0" role="alert">
-                                    Дозвіл надано
-                                </div>
+                                <button *ngIf="!flight.flightStep.isApproved" (click)="discard(flight._id)" class="btn btn-danger w-50 m-1">
+                                    Заборонити
+                                </button>
                             </div>
                             
         

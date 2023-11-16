@@ -18,6 +18,11 @@ export class OptionsComponent {
   name: string = '';
   color: string = '';
 
+  avaliableColors: string[] = [
+    'rgb(89, 105, 255)',
+    'rgb(255, 64, 123)'
+  ]
+
   colorPlaceholder = 'Текст';
 
   constructor(private optionsService: OptionsService) {
@@ -31,6 +36,8 @@ export class OptionsComponent {
   }
 
   public async addNewOption(type: string) {
+
+    // console.log(this.color);
 
     await this.optionsService.addOption(this.name, this.color, type);
     this.options = await this.optionsService.getAllOptions();
