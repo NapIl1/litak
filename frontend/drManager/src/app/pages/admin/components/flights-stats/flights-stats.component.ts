@@ -12,7 +12,7 @@ export class FlightsStatsComponent implements OnInit {
   flights: Flight[] = [];
 
   firstPart: Flight[] = [];
-  secondPard: Flight[] = [];
+  secondPart: Flight[] = [];
 
   isExpanded = false;
   expanded: Flight | null = null;
@@ -45,7 +45,7 @@ export class FlightsStatsComponent implements OnInit {
     if(this.expanded) {
       this.expanded = null;
       this.firstPart = [...this.flights];
-      this.secondPard = [];
+      this.secondPart = [];
 
       return;
     }
@@ -54,7 +54,7 @@ export class FlightsStatsComponent implements OnInit {
     
     this.expanded = this.flights[i];
     this.firstPart = [...this.flights];
-    this.secondPard = [...this.firstPart.splice(i+1)];
+    this.secondPart = [...this.firstPart.splice(i+1)];
   }
 
 }

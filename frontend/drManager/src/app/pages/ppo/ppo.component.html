@@ -25,6 +25,7 @@
                                     <span class="badge badge-primary" *ngSwitchCase="FlightSteps.LBZ_FORWARD">ЛБЗ ВПЕРЕД</span>
                                     <span class="badge badge-primary" *ngSwitchCase="FlightSteps.RETURN">Повернення</span>
                                     <span class="badge badge-primary" *ngSwitchCase="FlightSteps.LBZ_HOME">ЛБЗ назад</span>
+                                    <span class="badge badge-primary" *ngSwitchCase="FlightSteps.REDUCTION">Початок зниження</span>
                                     <span class="badge badge-primary" *ngSwitchCase="FlightSteps.END">Кінець</span>
                                 </span>
 
@@ -39,7 +40,7 @@
                                     <b>Маршрут назад:</b> {{ flight.changedReturnRoute }} </div>
                                 <div *ngIf="!flight.isReturnChanged"><b>Маршрут назад:</b> {{ flight.routeBack }} </div>
                                 <div><b>ЛБЗ Назад:</b> {{ flight.LBZBackDate | date : 'dd/MM/yy HH:mm' }}</div>
-
+                                <div> Початок зниження за <b>{{flight.reductionDistance}} км</b> в район <b>{{flight.reductionLocation}}</b></div>
                             </div>
         
         
@@ -50,16 +51,28 @@
                                 </div>
                             </div> -->
         
-                            <div class="d-flex justify-content-center mt-1">
-                                
-                                <button *ngIf="!flight.flightStep.isApproved" (click)="approve(flight._id)" class="btn btn-success w-50 m-1">
+                            <div *ngIf="(userRole == UserRoles.PPO) && !flight.flightStep.isApprovedByPPO" class="d-flex justify-content-center mt-1">                     
+                                <button (click)="approve(flight._id)" class="btn btn-success w-50 m-1">
                                     Дозволити
                                 </button>
-                                <button *ngIf="!flight.flightStep.isApproved" (click)="discard(flight._id)" class="btn btn-danger w-50 m-1">
+                                <button (click)="discard(flight._id)" class="btn btn-danger w-50 m-1">
                                     Заборонити
                                 </button>
                             </div>
                             
+                            <div *ngIf="(userRole == UserRoles.REB) && !flight.flightStep.isApprovedByREB" class="d-flex justify-content-center mt-1">
+                                <button (click)="approve(flight._id)" class="btn btn-success w-50 m-1">
+                                    Дозволити
+                                </button>
+                                <button (click)="discard(flight._id)" class="btn btn-danger w-50 m-1">
+                                    Заборонити
+                                </button>
+                            </div>
+
+                            <div *ngIf="userRole == UserRoles.ADMIN && flight.flightStep.isApproved == false" class="alert alert-warning mt-2 mb-0">
+                                <div *ngIf="flight.flightStep.isApprovedByPPO == false"><b>Очікується дозвіл від ППО</b></div>
+                                <div *ngIf="flight.flightStep.isApprovedByREB == false"><b>Очікується дозвіл від РЕБ</b></div>
+                            </div>
         
                         </div>
                     </div>

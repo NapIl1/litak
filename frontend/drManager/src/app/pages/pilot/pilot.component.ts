@@ -35,6 +35,8 @@ export class PilotComponent implements OnInit {
     flightStep: {
       step: FlightSteps.START,
       isApproved: false,
+      isApprovedByPPO: false,
+      isApprovedByREB: false,
     },
     dateOfFlight: new Date()
   };
@@ -113,38 +115,33 @@ export class PilotComponent implements OnInit {
     switch (this.flight.flightStep.step) {
       case FlightSteps.START:
         this.flight.flightStartDate = new Date;
-        this.flight.flightStep = {
-          step: FlightSteps.FLIGHT,
-          isApproved: true
-        };
+        this.flight.flightStep.step = FlightSteps.FLIGHT;
+        this.flight.flightStep.isApproved = true;
         break;
       case FlightSteps.FLIGHT:
         this.flight.LBZForwardDate = new Date;
-        this.flight.flightStep = {
-          step: FlightSteps.LBZ_FORWARD,
-          isApproved: true
-        };
+        this.flight.flightStep.step = FlightSteps.LBZ_FORWARD;
+        this.flight.flightStep.isApproved = true;
         break;
       case FlightSteps.LBZ_FORWARD:
         this.flight.returnDate = new Date;
-        this.flight.flightStep = {
-          step: FlightSteps.RETURN,
-          isApproved: true
-        };
+        this.flight.flightStep.step = FlightSteps.RETURN;
+        this.flight.flightStep.isApproved = true;
         break;
       case FlightSteps.RETURN:
         this.flight.LBZBackDate = new Date;
-        this.flight.flightStep = {
-          step: FlightSteps.LBZ_HOME,
-          isApproved: true
-        };
+        this.flight.flightStep.step = FlightSteps.LBZ_HOME;
+        this.flight.flightStep.isApproved = true;
         break;
       case FlightSteps.LBZ_HOME:
+        this.flight.reductionDate = new Date;
+        this.flight.flightStep.step = FlightSteps.REDUCTION;
+        this.flight.flightStep.isApproved = true;
+        break;
+      case FlightSteps.REDUCTION:
         this.flight.endDate = new Date;
-        this.flight.flightStep = {
-          step: FlightSteps.END,
-          isApproved: true
-        };
+        this.flight.flightStep.step = FlightSteps.END;
+        this.flight.flightStep.isApproved = true;
         break;
       case FlightSteps.END:
         break;
@@ -168,13 +165,11 @@ export class PilotComponent implements OnInit {
     this.router.navigate(['new-flight']);
   }
 
-  public async terminateFlight() {
+  public async terminateFlight(isApproved: boolean) {
     this.flight.isTerminated = true;
     this.flight.endDate = new Date;
-    this.flight.flightStep = {
-      step: FlightSteps.END,
-      isApproved: true
-    };
+    this.flight.flightStep.step = FlightSteps.END;
+    this.flight.flightStep.isApproved = isApproved;
 
     await this.getFlightsAssignedToUser();
     await this.flightService.updateFlightAsync(this.flight);

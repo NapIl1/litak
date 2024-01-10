@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { FlightService } from 'src/app/services/flight.service';
 
+
+//NOT USED!
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',

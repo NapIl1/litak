@@ -14,10 +14,24 @@
                     </a>
                 </li>
 
-                <li *ngIf="userInfo.role == userRoles.ADMIN || userInfo.role == userRoles.PPO_REB" class="nav-item">
+                <li *ngIf="userInfo.role == userRoles.PPO" class="nav-item">
                     <a routerLink="ppo" class="nav-link nav-icons" href="#">
                         <i class="fas fa-fw fa-rocket"></i>
-                        ППО РЕБ
+                        ППО
+                    </a>
+                </li>
+
+                <li *ngIf="userInfo.role == userRoles.REB" class="nav-item">
+                    <a routerLink="ppo" class="nav-link nav-icons" href="#">
+                        <i class="fas fa-fw fa-rocket"></i>
+                        РЕБ
+                    </a>
+                </li>
+
+                <li *ngIf="userInfo.role == userRoles.ADMIN" class="nav-item">
+                    <a routerLink="ppo" class="nav-link nav-icons" href="#">
+                        <i class="fas fa-fw fa-rocket"></i>
+                        ППО/РЕБ
                     </a>
                 </li>
 

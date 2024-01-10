@@ -21,7 +21,8 @@
                             <option value="-1">Виберіть Роль</option>
                             <option value="1">Адмін</option>
                             <option value="2">Пілот</option>
-                            <option value="3">ППО/РЕБ</option>
+                            <option value="3">ППО</option>
+                            <option value="4">РЕБ</option>
                         </select>
                     </div>
                 </div>
@@ -52,7 +53,8 @@
                                     <td>{{
                                         item.role == UserRoles.ADMIN ? 'Адмін' :
                                         item.role == UserRoles.PILOT ? 'Пілот' :
-                                        'ППО/РЕБ'
+                                        item.role == UserRoles.PPO ? 'ППО' :
+                                        'РЕБ'
                                     }}</td>
                                     <td>
                                         <button (click)="removeUser(item._id)" class="btn btn-danger btn-xs">

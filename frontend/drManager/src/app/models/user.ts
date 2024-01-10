@@ -2,7 +2,8 @@ export enum UserRole {
     NOT_SELECTED = -1,
     ADMIN = 1,
     PILOT = 2,
-    PPO_REB = 3,
+    PPO = 3,
+    REB = 4,
 };
 
 export interface User {

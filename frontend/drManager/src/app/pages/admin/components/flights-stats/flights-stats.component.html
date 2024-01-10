@@ -31,6 +31,7 @@
                                         item.flightStep.step == FlightSteps.LBZ_FORWARD ? 'ЛБЗ Вперед' :
                                         item.flightStep.step == FlightSteps.RETURN ? 'Повернення' :
                                         item.flightStep.step == FlightSteps.LBZ_HOME ? 'ЛБЗ Назад' :
+                                        item.flightStep.step == FlightSteps.REDUCTION ? 'Початок зниження' :
                                         'Завершено'
                                         }}</td>
                                     <td>
@@ -53,21 +54,24 @@
                                     <td class="alert alert-success" colspan="7">
                                         <div><b>Оператор:</b> {{ expanded.operator }}</div>
                                         <div><b>Телефон:</b> {{ expanded.operatorPhone }}</div>
-                                        <div><b>Створений:</b> {{ expanded.dateOfFlight | date : 'dd/MM/yy HH:mm'}}
-                                        </div>
+                                        <div><b>Створений:</b> {{ expanded.dateOfFlight | date : 'dd/MM/yy HH:mm'}}</div>
                                         <div><b>Маршрут вперед:</b> {{ expanded.routeForward }} </div>
                                         <div><b>Виліт:</b> {{ expanded.dateOfFlight | date : 'dd/MM/yy HH:mm' }}</div>
-                                        <div><b>ЛБЗ Вперед:</b> {{ expanded.LBZForwardDate | date : 'dd/MM/yy HH:mm' }}
-                                        </div>
-                                        <div><b>Повернення:</b> {{ expanded.returnDate | date : 'dd/MM/yy HH:mm' }}
-                                        </div>
+                                        <div><b>ЛБЗ Вперед:</b> {{ expanded.LBZForwardDate | date : 'dd/MM/yy HH:mm' }}</div>
+                                        <div><b>Повернення:</b> {{ expanded.returnDate | date : 'dd/MM/yy HH:mm' }}</div>
                                         <div><b>Маршрут назад:</b> {{ expanded.routeBack }} </div>
-                                        <div><b>ЛБЗ Назад:</b> {{ expanded.LBZBackDate | date : 'dd/MM/yy HH:mm' }}
+                                        <div><b>ЛБЗ Назад:</b> {{ expanded.LBZBackDate | date : 'dd/MM/yy HH:mm' }}</div>
+                                        <div> Початок зниження за <b>{{expanded.reductionDistance}} км</b> в район <b>{{expanded.reductionLocation}}</b></div>
+                                        <div *ngIf="expanded.isRejectedbyPPO == true">
+                                            <b>Заборонено ППО по причині:</b> {{expanded.rejectedReason}}
+                                        </div>
+                                        <div *ngIf="expanded.isRejectedbyREB == true">
+                                            <b>Заборонено РЕБ по причині:</b> {{expanded.rejectedReason}}
                                         </div>
                                     </td>
                                 </tr>
 
-                                <tr *ngFor="let item of secondPard; index as i">
+                                <tr *ngFor="let item of secondPart; index as i">
                                     <th scope="row">{{ i+1 }}</th>
                                     <td>{{ item.operator }}</td>
                                     <td>{{ item.dateOfFlight | date: 'dd/MM/yy HH:mm' }}</td>
@@ -77,11 +81,12 @@
                                         item.flightStep.step == FlightSteps.LBZ_FORWARD ? 'ЛБЗ Вперед' :
                                         item.flightStep.step == FlightSteps.RETURN ? 'Повернення' :
                                         item.flightStep.step == FlightSteps.LBZ_HOME ? 'ЛБЗ Назад' :
+                                        item.flightStep.step == FlightSteps.REDUCTION ? 'Початок зниження' :
                                         'Завершено'
                                         }}</td>
                                     <td>
                                         {{
-                                        item.flightStep.isApproved ? 'Так' : 'Ні'
+                                            item.flightStep.isApproved ? 'Так' : 'Ні'
                                         }}
                                     </td>
 

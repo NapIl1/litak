@@ -6,12 +6,16 @@ export enum FlightSteps {
     LBZ_FORWARD = 2,
     RETURN = 3,
     LBZ_HOME = 4,
-    END = 5
+    REDUCTION = 5,
+    END = 6
 }
 
 export interface FlightStep {
     step?: number;
     isApproved?: boolean;
+
+    isApprovedByPPO?: boolean;
+    isApprovedByREB?: boolean;
 }
 
 export interface Flight {
@@ -46,6 +50,10 @@ export interface Flight {
     LBZBackDate?: Date;
     isLBZBack?: boolean;
 
+    reductionDate?: Date;
+    reductionDistance?: number;
+    reductionLocation?: string;
+
     langingStatus?: ValueColor;
 
     endDate?: Date;
@@ -59,6 +67,8 @@ export interface Flight {
 
     isRejected?: boolean;
     rejectedReason?: string;
+    isRejectedbyPPO?: boolean;
+    isRejectedbyREB?: boolean;
 
     isTerminated?: boolean;
 

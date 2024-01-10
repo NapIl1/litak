@@ -28,7 +28,11 @@ export class LoginComponent {
       this.router.navigate(['pilot']);
     }
 
-    if (userInfo?.role == UserRole.PPO_REB) {
+    if (userInfo?.role == UserRole.PPO) {
+      this.router.navigate(['ppo']);
+    }
+
+    if (userInfo?.role == UserRole.REB) {
       this.router.navigate(['ppo']);
     }
 

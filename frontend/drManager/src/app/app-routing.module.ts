@@ -43,7 +43,7 @@ const routes: Routes = [
         path: 'ppo',
         component: PpoComponent,
         canActivate: [RoleGuard],
-        data: { roles: [UserRole.ADMIN, UserRole.PPO_REB] }
+        data: { roles: [UserRole.ADMIN, UserRole.PPO, UserRole.REB] }
       },
       {
         path: 'admin',
