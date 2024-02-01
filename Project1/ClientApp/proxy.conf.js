@@ -4,7 +4,7 @@ const target = env.ASPNETCORE_HTTPS_PORT
   ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}/api`
   : env.ASPNETCORE_URLS
   ? env.ASPNETCORE_URLS.split(";")[0]
-  : "http://litak-temp-ca.whitedesert-053b82c7.westeurope.azurecontainerapps.io/api";
+  : "https://litak-temp-ca.whitedesert-053b82c7.westeurope.azurecontainerapps.io/api";
 
 const PROXY_CONFIG = [
   {
