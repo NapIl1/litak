@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http'
 })
 export class ApiService {
 
-  private readonly API_URL = 'http://localhost:80/api';
+  private readonly API_URL = 'http://litak-temp-ca.whitedesert-053b82c7.westeurope.azurecontainerapps.io/api';
 
   constructor(private http: HttpClient) { }
 
