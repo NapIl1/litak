@@ -16,7 +16,8 @@ export class FlightService {
   }
 
   public async getByIdAsync(id: string): Promise<Flight | undefined> {
-    return await lastValueFrom(this.http.get<Flight>(this.RECORDS_URL + `/GetRecordById?recordId=${id}`));
+    var flights = await lastValueFrom(this.http.get<Flight[]>(this.RECORDS_URL + `/GetRecordById?recordId=${id}`));
+    return flights[0];
   }
     
   public async getByUserIdAsync(userId?: string): Promise<Flight[]> {
