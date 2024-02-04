@@ -30,7 +30,6 @@ export class PersonalInfoComponent implements OnInit {
 
   ngOnInit(): void {
     var ui = this.userService.getUserInfo();
-    console.log(ui);
     if (ui) {
       this.userInfo = ui;
       if(!this.userInfo.userOptions) {
@@ -44,7 +43,7 @@ export class PersonalInfoComponent implements OnInit {
     await this.userService.updateUser(this.userInfo);
 
     var ui = this.userService.getUserInfo();
-    console.log(ui);
+
     if (ui) {
       this.userInfo = ui;
     }
@@ -57,7 +56,7 @@ export class PersonalInfoComponent implements OnInit {
       await this.userService.updateUser(this.userInfo);
 
       var ui = this.userService.getUserInfo();
-      console.log(ui);
+
       if (ui) {
         this.userInfo = ui;
       }

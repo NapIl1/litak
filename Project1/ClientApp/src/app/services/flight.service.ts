@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { API_URL } from '../consts/consts';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,16 +12,21 @@ import { API_URL } from '../consts/consts';
 export class FlightService {
   private readonly RECORDS_URL = API_URL + 'Records';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private userService: UserService) {
   }
 
-  public async getById(id: string): Promise<Flight | undefined> {
+  public async getByIdAsync(id: string): Promise<Flight | undefined> {
+    return await lastValueFrom(this.http.get<Flight>(this.RECORDS_URL + `/GetRecordById?recordId=${id}`));
+  }
+    
+  public async getByUserIdAsync(userId?: string): Promise<Flight[]> {
+    const flights = await lastValueFrom(this.http.get<Flight[]>(this.RECORDS_URL + `/GetRecordsForUser?userId=${userId}`));
+    return flights ?? [];
+  }
 
-    const flights = await this.getAllFlightsAsync();
-    console.log(flights);
-    const flight = flights?.find(x => x._id === id);
-
-    return flight;
+  public async getActiveFlightAsync(): Promise<Flight[]> {
+    const flights = await lastValueFrom(this.http.get<Flight[]>(this.RECORDS_URL + '/GetNotFinishedRecords'));
+    return flights ?? [];
   }
 
   public async getAllFlightsAsync(): Promise<Flight[]> {
@@ -60,9 +66,8 @@ export class FlightService {
   }
 
   public async approveAsync(id: string): Promise<void> {
-    const flights = await this.getAllFlightsAsync();
+    const flight = await this.getByIdAsync(id);
 
-    const flight = flights.find(x => x._id === id);
 
     if (!flight) {
       throw 'Doesnt exist';

@@ -68,9 +68,6 @@ export class PilotComponent implements OnInit {
       this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == ui.userOptions?.dronModel?.toUpperCase());
     }
 
-    console.log(this.flights);
-    console.log(this.options);
-
     this.route.paramMap.subscribe(async params => {
       const id = params.get('id');
 
@@ -80,15 +77,13 @@ export class PilotComponent implements OnInit {
 
       this.isNewFlight = false;
 
-      const flight = await this.flightService.getById(id);
+      const flight = await this.flightService.getByIdAsync(id);
 
       if (!flight) {
         return;
       }
 
       this.flight = flight;
-
-      console.log(this.flight);
 
       this.flight.assignment = this.options?.dronAppointment?.find(x => x.name == this.flight.assignment?.name);
       this.flight.model = this.options.dronModels?.find(x => x.name == this.flight.model?.name);
@@ -99,8 +94,6 @@ export class PilotComponent implements OnInit {
 
   public async createFlight() {
     this.flight.userId = this.userInfo._id;
-
-    console.log(this.flight);
 
     await this.flightService.addFlightAsync(this.flight);
     await this.getFlightsAssignedToUser();
@@ -179,8 +172,10 @@ export class PilotComponent implements OnInit {
   }
 
   private async getFlightsAssignedToUser() {
-    const allFligths = await this.flightService.getAllFlightsAsync();
-      this.flights = allFligths.filter(x => x.userId == this.userInfo._id && x.flightStep.step != FlightSteps.END);
+    // const allFligths = await this.flightService.getAllFlightsAsync();
+    // this.flights = allFligths.filter(x => x.userId == this.userInfo._id && x.flightStep.step != FlightSteps.END);
+
+    this.flights = await this.flightService.getByUserIdAsync(this.userInfo._id);
   }
 
   public get FlightSteps() {

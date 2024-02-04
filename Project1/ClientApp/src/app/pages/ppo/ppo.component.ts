@@ -103,9 +103,9 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   async getFlights() {
     
-    const allFlights = await this.flightService.getAllFlightsAsync();
+    const allFlights = await this.flightService.getActiveFlightAsync();
     
-    const filtered = allFlights.filter(x => x.flightStep.step !== FlightSteps.END && !x.isRejected);
+    const filtered = allFlights.filter(x => !x.isRejected);
     
     this.flights = [];
     this.flights.push(...filtered.filter(x => x.flightStep.isApproved === false))

@@ -31,14 +31,10 @@ export class OptionsComponent {
 
   async ngOnInit(): Promise<void> {
     this.options = await this.optionsService.getAllOptions();
-    console.log(this.options);
 
   }
 
   public async addNewOption(type: string) {
-
-    // console.log(this.color);
-
     await this.optionsService.addOption(this.name, this.color, type);
     this.options = await this.optionsService.getAllOptions();
 

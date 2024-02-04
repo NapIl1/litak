@@ -10,8 +10,8 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class LoginComponent {
 
-  username: string = 'den-karpenko';
-  password: string = 'lxgiwyl123!';
+  username: string = '';
+  password: string = '';
 
   constructor(private userService: UserService, private router: Router) {
 
@@ -19,13 +19,13 @@ export class LoginComponent {
 
   public async login(): Promise<void> {
     const userInfo = await this.userService.login(this.username, this.password);
-
+    
     if (userInfo?.role == UserRole.ADMIN) {
       this.router.navigate(['admin']);
     }
 
     if (userInfo?.role == UserRole.PILOT) {
-      this.router.navigate(['pilot']);
+      this.router.navigate(['new-flight']);
     }
 
     if (userInfo?.role == UserRole.PPO) {

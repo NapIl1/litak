@@ -105,7 +105,31 @@ namespace litak_back_end.Controllers
             var database = mongoClient.GetDatabase("sample_weatherdata");
 
             var recordsCollection = database.GetCollection<BsonDocument>("records");
-            var filter = Builders<BsonDocument>.Filter.Eq("userId", new ObjectId(userId));
+            var filter1 = Builders<BsonDocument>.Filter.Eq("userId", userId);
+            var filter2 = Builders<BsonDocument>.Filter.Ne("flightStep.step", 6);
+            var combinedFilter = Builders<BsonDocument>.Filter.And(filter1, filter2);
+
+            var records = (await recordsCollection.FindAsync(combinedFilter)).ToList();
+            var convertedRecords = records.ConvertAll(record =>
+            {
+                if (record.Contains("_id") && record["_id"].IsObjectId)
+                {
+                    record["_id"] = record["_id"].AsObjectId.ToString();
+                }
+                return record;
+            });
+
+            return convertedRecords.ConvertAll(BsonTypeMapper.MapToDotNetValue);
+        }
+
+        [HttpGet("GetRecordById")]
+        public async Task<List<object>> GetRecordById([FromQuery] string recordId)
+        {
+            var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            var database = mongoClient.GetDatabase("sample_weatherdata");
+
+            var recordsCollection = database.GetCollection<BsonDocument>("records");
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(recordId));
 
             var records = (await recordsCollection.FindAsync(filter)).ToList();
             var convertedRecords = records.ConvertAll(record =>
