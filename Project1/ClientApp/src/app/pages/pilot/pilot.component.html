@@ -8,7 +8,50 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
+
+
+
                     <ul class="navbar-nav flex-column">
+
+                        <li class="nav-divider _nav-sidebar">
+                            Навігація
+                        </li>
+                        
+                        <li *ngIf="userInfo.role == userRoles.ADMIN" a class="nav-item _nav-sidebar">
+                            <a routerLink="admin" class="nav-link nav-icons" href="#">
+                                <i class="fas fa-fw fa-cog"></i>
+                                Адмін
+                            </a>
+                        </li>
+        
+                        <li *ngIf="userInfo.role == userRoles.PPO" class="nav-item _nav-sidebar">
+                            <a routerLink="ppo" class="nav-link nav-icons" href="#">
+                                <i class="fas fa-fw fa-rocket"></i>
+                                ППО
+                            </a>
+                        </li>
+        
+                        <li *ngIf="userInfo.role == userRoles.REB" class="nav-item _nav-sidebar">
+                            <a routerLink="ppo" class="nav-link nav-icons" href="#">
+                                <i class="fas fa-fw fa-rocket"></i>
+                                РЕБ
+                            </a>
+                        </li>
+        
+                        <li *ngIf="userInfo.role == userRoles.ADMIN" class="nav-item _nav-sidebar">
+                            <a routerLink="ppo" class="nav-link nav-icons" href="#">
+                                <i class="fas fa-fw fa-rocket"></i>
+                                ППО/РЕБ
+                            </a>
+                        </li>
+        
+                        <li *ngIf="userInfo.role == userRoles.ADMIN || userInfo.role == userRoles.PILOT" class="nav-item _nav-sidebar">
+                            <a routerLink="new-flight" class="nav-link nav-icons" href="#">
+                                <i class="fas fa-fw fa-user"></i>
+                                Пілот
+                            </a>
+                        </li>
+
                         <li class="nav-divider">
                             Вильоти
                         </li>

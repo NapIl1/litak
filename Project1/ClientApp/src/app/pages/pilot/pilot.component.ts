@@ -5,7 +5,7 @@ import { concatWith, switchMap } from 'rxjs';
 import { DroneModel, ValueColor } from 'src/app/models/droneModel';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
-import { User } from 'src/app/models/user';
+import { User, UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
 import { UserService } from 'src/app/services/user.service';
@@ -17,6 +17,8 @@ import { v4 as uuidv4 } from 'uuid';
   styleUrls: ['./pilot.component.scss']
 })
 export class PilotComponent implements OnInit {
+
+  userRoles = UserRole;
 
   userInfo: User = {};
 
