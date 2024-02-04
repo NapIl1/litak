@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { API_URL } from '../consts/consts';
 import { DroneOptions } from '../models/options';
 import { lastValueFrom } from 'rxjs';
+import { FlightSteps } from '../models/flight';
 
 @Injectable({
   providedIn: 'root'
@@ -18,12 +19,17 @@ export class OptionsService {
     return options[0] ?? {};
   }
 
-  public async addOption(name: string, color: string, type: string) {
+  public async addOption(name: string, color: string, type: string, legacyId?: string) {
 
     const options = await this.getAllOptions();
     const optionId = options._id;
 
     if (type === 'boardingStatus') {
+
+      if (!options.boardingStatuses) {
+        options.boardingStatuses = [];
+      }
+
       options.boardingStatuses?.push({
         color: color,
         name: name
@@ -31,6 +37,11 @@ export class OptionsService {
     }
 
     if (type === 'dronAppointment') {
+
+      if (!options.dronAppointment) {
+        options.dronAppointment = [];
+      }
+
       options.dronAppointment?.push({
         color: color,
         name: name
@@ -38,14 +49,32 @@ export class OptionsService {
     }
 
     if (type === 'dronModel') {
+
+      if (!options.dronModels) {
+        options.dronModels = [];
+      }
+
       options.dronModels?.push({
         color: color,
         name: name
       });
     }
+
+    if (type === 'flightStatus') {
+
+      if (!options.flightStatus) {
+        options.flightStatus = [];
+      }
+
+      var option = options.flightStatus.find(x => x.legacyId == legacyId)
+
+      if (option) {
+        option.color = color;
+        option.name = name;
+      }
+    }
     
     delete options._id;
-    
     await lastValueFrom(this.http.put(`${this.OPTIONS_API}?optionsId=${optionId}`,options));
 
   }
@@ -72,6 +101,31 @@ export class OptionsService {
 
   }
 
+  private readonly statuses = ['Початок','Політ','ЛБЗ Вперед','Повернення','ЛБЗ Назад','Початок зниження','Завершено']
+
+  public async addFlightSteps() {
+
+    const options = await this.getAllOptions();
+    const optionId = options._id;
+
+    if(!options.flightStatus || options.flightStatus.length === 0) {
+      options.flightStatus = [];
+
+      Object.values(FlightSteps).forEach(async step => {
+        if(!isNaN(Number(step))) {
+          options.flightStatus?.push({
+            color: '#5969ff',
+            name: this.statuses[Number(step)],
+            legacyId: step.toString()
+          });
+        }
+      });
+
+      delete options._id;
+    
+      await lastValueFrom(this.http.put(`${this.OPTIONS_API}?optionsId=${optionId}`,options));
+    }
+  }
   // const mapp: DroneOptions = {
   //   "boardingStatuses": [
   //     {

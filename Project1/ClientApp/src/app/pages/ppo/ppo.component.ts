@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
-import { Flight, FlightSteps } from 'src/app/models/flight';
+import { ValueColor } from 'src/app/models/droneModel';
+import { Flight, FlightStep, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
 import { User, UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
@@ -23,6 +24,8 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   interval_ms = 5000;
 
+  flightStatuses: ValueColor[] = [];
+
   constructor(private flightService: FlightService,
               private optionsService: OptionsService,
               private userService: UserService) {
@@ -42,6 +45,10 @@ export class PpoComponent implements OnInit, OnDestroy {
 
     await this.getOptions()
     await this.getFlights();
+
+    if (this.options.flightStatus) {
+      this.flightStatuses = this.options.flightStatus;
+    }
 
     this.refreshFlightSubscription = interval(this.interval_ms).subscribe(async x => {
       await this.getFlights();

@@ -19,7 +19,9 @@
                             </p>
         
                             <div class="alert alert-info mb-0">
-                                <b>Статус: </b> <span [ngSwitch]="flight.flightStep.step">
+                                <b>Статус: </b> 
+                                
+                                <!-- <span [ngSwitch]="flight.flightStep.step">
                                     <span class="badge badge-primary" *ngSwitchCase="FlightSteps.START">Старт</span>
                                     <span class="badge badge-primary" *ngSwitchCase="FlightSteps.FLIGHT">Політ</span>
                                     <span class="badge badge-primary" *ngSwitchCase="FlightSteps.LBZ_FORWARD">ЛБЗ ВПЕРЕД</span>
@@ -27,6 +29,10 @@
                                     <span class="badge badge-primary" *ngSwitchCase="FlightSteps.LBZ_HOME">ЛБЗ назад</span>
                                     <span class="badge badge-primary" *ngSwitchCase="FlightSteps.REDUCTION">Початок зниження</span>
                                     <span class="badge badge-primary" *ngSwitchCase="FlightSteps.END">Кінець</span>
+                                </span> -->
+
+                                <span [style.backgroundColor]="this.flightStatuses[flight.flightStep.step ?? 0].color"  class="badge badge-primary">
+                                    {{ this.flightStatuses[flight.flightStep.step ?? 0].name }}
                                 </span>
 
                                 <div><b>Телефон:</b> {{ flight.operatorPhone }}</div>

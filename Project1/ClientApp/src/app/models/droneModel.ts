@@ -4,6 +4,7 @@ export interface DroneModel {
 }
 
 export interface ValueColor {
+    legacyId?: string;
     name: string;
     color: string;
 }
