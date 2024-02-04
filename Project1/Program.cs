@@ -14,12 +14,6 @@ BsonSerializer.RegisterSerializer(new StringObjectIdConverter());
 
 var app = builder.Build();
 
-app.UseStaticFiles();
-app.UseRouting();
-
-app.UseSwagger();
-app.UseSwaggerUI();
-
 app.Use(async (context, next) =>
 {
     await next();
@@ -29,6 +23,12 @@ app.Use(async (context, next) =>
         await next();
     }
 });
+
+app.UseStaticFiles();
+app.UseRouting();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 app.UseAuthorization();
