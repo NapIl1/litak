@@ -75,5 +75,49 @@ namespace litak_back_end.Controllers
             var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(recordId));
             await recordsCollection.DeleteOneAsync(filter);
         }
+
+        [HttpGet("GetNotFinishedRecords")]
+        public async Task<List<object>> GetNotFinishedRecords()
+        {
+            var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            var database = mongoClient.GetDatabase("sample_weatherdata");
+
+            var recordsCollection = database.GetCollection<BsonDocument>("records");
+            var filter = Builders<BsonDocument>.Filter.Ne("flightStep.step", 6);
+
+            var records = (await recordsCollection.FindAsync(filter)).ToList();
+            var convertedRecords = records.ConvertAll(record =>
+            {
+                if (record.Contains("_id") && record["_id"].IsObjectId)
+                {
+                    record["_id"] = record["_id"].AsObjectId.ToString();
+                }
+                return record;
+            });
+
+            return convertedRecords.ConvertAll(BsonTypeMapper.MapToDotNetValue);
+        }
+
+        [HttpGet("GetRecordsForUser")]
+        public async Task<List<object>> GetRecordsForUser([FromQuery] string userId)
+        {
+            var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            var database = mongoClient.GetDatabase("sample_weatherdata");
+
+            var recordsCollection = database.GetCollection<BsonDocument>("records");
+            var filter = Builders<BsonDocument>.Filter.Eq("userId", new ObjectId(userId));
+
+            var records = (await recordsCollection.FindAsync(filter)).ToList();
+            var convertedRecords = records.ConvertAll(record =>
+            {
+                if (record.Contains("_id") && record["_id"].IsObjectId)
+                {
+                    record["_id"] = record["_id"].AsObjectId.ToString();
+                }
+                return record;
+            });
+
+            return convertedRecords.ConvertAll(BsonTypeMapper.MapToDotNetValue);
+        }
     }
 }
