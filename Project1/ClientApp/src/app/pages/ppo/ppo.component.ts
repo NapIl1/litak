@@ -1,12 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
-import { Flight, FlightSteps } from 'src/app/models/flight';
+import { ValueColor } from 'src/app/models/droneModel';
+import { Flight, FlightStep, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
 import { User, UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
 import { UserService } from 'src/app/services/user.service';
+import {FlightSignalRService} from "../../signal-r.services/flight.signal-r.service";
 
 @Component({
   selector: 'app-ppo',
@@ -23,13 +25,18 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   interval_ms = 5000;
 
+  flightStatuses: ValueColor[] = [];
+
   constructor(private flightService: FlightService,
               private optionsService: OptionsService,
-              private userService: UserService) {
+              private userService: UserService,
+              private recordsSignalrFlightService: FlightSignalRService) {
 
   }
   ngOnDestroy(): void {
     this.refreshFlightSubscription?.unsubscribe();
+    this.recordsSignalrFlightService.recordAdded.unsubscribe();
+    this.recordsSignalrFlightService.recordUpdated.unsubscribe();
   }
 
   async ngOnInit(): Promise<void> {
@@ -46,6 +53,9 @@ export class PpoComponent implements OnInit, OnDestroy {
     this.refreshFlightSubscription = interval(this.interval_ms).subscribe(async x => {
       await this.getFlights();
     })
+
+    this.recordsSignalrFlightService.recordAdded.subscribe((item:Flight) => this.addFlight(item))
+    this.recordsSignalrFlightService.recordUpdated.subscribe((item:Flight) => this.updateFlight(item))
   }
 
   public async getOptions() {
@@ -102,7 +112,7 @@ export class PpoComponent implements OnInit, OnDestroy {
   }
 
   async getFlights() {
-    
+
     const allFlights = await this.flightService.getAllFlightsAsync();
     
     const filtered = allFlights.filter(x => x.flightStep.step !== FlightSteps.END && !x.isRejected);
@@ -122,5 +132,13 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   public get UserRoles() {
     return UserRole;
+  }
+
+  private addFlight(item: Flight) {
+    //add flight
+  }
+
+  private updateFlight(item: Flight) {
+    //update flight
   }
 }
