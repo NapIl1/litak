@@ -6,7 +6,11 @@
 
             <div class="d-flex" style="flex-wrap: wrap;">
                 <div style="min-width: 200px;" *ngFor="let flight of flights">
-                    <div class="card m-1" [style.backgroundColor]=" flight.flightStep.isApproved === true ? flight.assignment!.color : 'white'">
+                    <div class="card m-1"
+                    [class.not-approved]="userRole == UserRoles.PPO && this.flight.flightStep.isApprovedByPPO === false 
+                    || userRole == UserRoles.REB && this.flight.flightStep.isApprovedByREB === false 
+                    || userRole == UserRoles.ADMIN && this.flight.flightStep.isApproved === false"
+                    [style.backgroundColor]=" flight.flightStep.isApproved === true ? flight.assignment!.color : 'white'">
 
                         <div class="card-body p-2">
                             <h5 class="card-title border-bottom pb-2">Оператор: {{flight.operator}}</h5>
@@ -38,7 +42,7 @@
                                 <div><b>Телефон:</b> {{ flight.operatorPhone }}</div>
                                 <div><b>Створений:</b> {{ flight.dateOfFlight | date : 'dd/MM/yy HH:mm'}}</div>
                                 <div><b>Маршрут вперед:</b> {{ flight.routeForward }} </div>
-                                <div><b>Виліт:</b> {{ flight.dateOfFlight | date : 'dd/MM/yy HH:mm' }}</div>
+                                <div><b>Виліт:</b> {{ flight.flightStartDate | date : 'dd/MM/yy HH:mm' }}</div>
                                 <div><b>ЛБЗ Вперед:</b> {{ flight.LBZForwardDate | date : 'dd/MM/yy HH:mm' }}</div>
                                 <div><b>Повернення:</b> {{ flight.returnDate | date : 'dd/MM/yy HH:mm' }}</div>
                                 <div class="bg-danger" *ngIf="flight.isReturnChanged">

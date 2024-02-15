@@ -203,10 +203,9 @@
 
                                 <div class="row">
                                     <div class="col-12">
-                                        <label class="col-form-label">Оператор</label>
+                                        <label required class="col-form-label">Оператор</label>
                                         <input [disabled]="flight.flightStep.step != FlightSteps.START || ( flight.flightStep.step == FlightSteps.START && flight.flightStep.isApproved == true)" [(ngModel)]="flight.operator" type="text" class="form-control">
                                     </div>
-
                                 </div>
 
                                 <div class="row">
@@ -222,8 +221,6 @@
                                         <input [disabled]="flight.flightStep.step != FlightSteps.START || ( flight.flightStep.step == FlightSteps.START && flight.flightStep.isApproved == true)" [(ngModel)]="flight.spotterPhone" type="text" class="form-control"
                                             mask='(000) 000-0000'>
                                     </div>
-
-
                                 </div>
 
                                 <div class="row">
@@ -298,7 +295,11 @@
                                     <div class="col-12">
                                         <div>
                                             <label class="col-form-label">Діскорд</label>
-                                            <input [disabled]="flight.flightStep.step != FlightSteps.START || ( flight.flightStep.step == FlightSteps.START && flight.flightStep.isApproved == true)" [(ngModel)]="flight.discordUrl" type="text" class="form-control">
+                                            <div class="alert alert-secondary">
+                                                <a target="_blank" [href]="flight.discordUrl">
+                                                    {{flight.discordUrl}}
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -318,7 +319,7 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="mt-3 d-flex justify-content-end">
-                                            <button *ngIf="!flight._id" [disabled]="!flight.isInDiscord" (click)="createFlight()" href="#" class="btn btn-success">
+                                            <button *ngIf="!flight._id" [disabled]="validateStep(FlightSteps.START)" (click)="createFlight()" href="#" class="btn btn-success">
                                                 Створити політ
                                                 <i class="fas fa-arrow-right"></i>
                                             </button>

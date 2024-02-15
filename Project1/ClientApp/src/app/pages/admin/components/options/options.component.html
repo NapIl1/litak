@@ -3,6 +3,7 @@
         <div class="section-block">
             <h4 class="section-title">Редагування опцій</h4>
         </div>
+
         <div class="tab-regular">
             <ul class="nav nav-tabs " id="myTab" role="tablist">
                 <li class="nav-item">
@@ -13,23 +14,30 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link p-2" id="home-tab" data-toggle="tab" href="#dronAppointment" role="tab"
+                    <a class="nav-link p-2" data-toggle="tab" href="#dronAppointment" role="tab"
                         aria-controls="home" aria-selected="true">
                         Призначення Дронів
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link p-2" id="home-tab" data-toggle="tab" href="#dronModel" role="tab"
+                    <a class="nav-link p-2" data-toggle="tab" href="#dronModel" role="tab"
                         aria-controls="home" aria-selected="true">
                         Моделі дронів
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link p-2" id="home-tab" data-toggle="tab" href="#flightStatus" role="tab"
+                    <a class="nav-link p-2" data-toggle="tab" href="#flightStatus" role="tab"
                         aria-controls="home" aria-selected="true">
                         Статус польотів
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link p-2" data-toggle="tab" href="#discrodUrl" role="tab"
+                        aria-controls="home" aria-selected="true">
+                        Посилання на діскорд
                     </a>
                 </li>
 
@@ -238,6 +246,19 @@
 
                 </div>
 
+                <div class="tab-pane fade" id="discrodUrl" role="tabpanel" aria-labelledby="home-tab">
+                
+                    <div class="row pb-2">
+                        <div class="col-md-10 col-12 mb-2">
+                            <input [(ngModel)]="options.discordUrl" placeholder="Посилання на діскорд" type="text" class="form-control">
+                        </div>
+                
+                        <div class="col-md-2 col-12 mb-2">
+                            <button (click)="changeDiscordUrl()" class="btn btn-primary btn-sm w-100">Змінити</button>
+                        </div>
+                    </div>
+                
+                </div>
             </div>
         </div>
     </div>

@@ -59,11 +59,11 @@ export class PilotComponent implements OnInit {
       this.userInfo = ui;
 
       await this.getFlightsAssignedToUser();
-
+      console.log(ui);
       this.flight.operatorPhone = ui.userOptions?.operatorPhoneNumber;
       this.flight.spotterPhone = ui.userOptions?.spotterPhoneNumber;
       this.flight.operator = ui.userOptions?.nickName;
-      this.flight.discordUrl = ui.userOptions?.discordUrl;
+      this.flight.discordUrl = this.options.discordUrl;
       this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == ui.userOptions?.dronAppointment?.toUpperCase());
       this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == ui.userOptions?.dronModel?.toUpperCase());
     }
@@ -90,6 +90,10 @@ export class PilotComponent implements OnInit {
 
     })
 
+  }
+
+  public navigateToDiscordUrl() {
+    window.open(this.options.discordUrl, '_blank')!.focus();
   }
 
   public async createFlight() {
@@ -169,6 +173,21 @@ export class PilotComponent implements OnInit {
     await this.getFlightsAssignedToUser();
     await this.flightService.updateFlightAsync(this.flight);
     this.router.navigate(['new-flight']);
+  }
+
+  validateStep(step: FlightSteps) {
+    // console.log("test");
+    // TODO: refactor later
+
+    switch(step) {
+      case FlightSteps.START:
+        return this.flight.isInDiscord !== true
+        || this.flight.assignment == null
+        || this.flight.model == null
+        || this.flight.operator == null || this.flight.operator === ''
+
+    }
+    return false;
   }
 
   private async getFlightsAssignedToUser() {

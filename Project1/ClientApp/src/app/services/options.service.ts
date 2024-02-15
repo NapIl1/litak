@@ -19,6 +19,16 @@ export class OptionsService {
     return options[0] ?? {};
   }
 
+  public async changeDiscordUrl(discordUrl?: string) {
+    const options = await this.getAllOptions();
+    const optionId = options._id;
+
+    options.discordUrl = discordUrl;
+    console.log(options);
+    delete options._id;
+    await lastValueFrom(this.http.put(`${this.OPTIONS_API}?optionsId=${optionId}`,options));
+  }
+
   public async addOption(name: string, color: string, type: string, legacyId?: string) {
 
     const options = await this.getAllOptions();

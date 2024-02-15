@@ -5,6 +5,7 @@ export interface DroneOptions {
     boardingStatuses?: ValueColor[];
     dronAppointment?: ValueColor[];
     dronModels?: ValueColor[];
+    discordUrl?: string;
 
     flightStatus?: ValueColor[];
 }

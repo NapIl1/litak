@@ -13,7 +13,8 @@ export class OptionsComponent {
   options: DroneOptions = {
     boardingStatuses: [],
     dronAppointment: [],
-    dronModels: []
+    dronModels: [],
+    discordUrl: ''
   };
 
   name: string = '';
@@ -34,6 +35,11 @@ export class OptionsComponent {
 
   async ngOnInit(): Promise<void> {
     await this.optionsService.addFlightSteps();
+    this.options = await this.optionsService.getAllOptions();
+  }
+
+  public async changeDiscordUrl() {
+    await this.optionsService.changeDiscordUrl(this.options.discordUrl);
     this.options = await this.optionsService.getAllOptions();
   }
 

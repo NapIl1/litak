@@ -6,3 +6,30 @@
     padding-left: 5px;
     padding-right: 5px;
 }
+
+
+.not-approved {
+    border: 3px solid red;
+    /* Set border properties */
+    border-radius: 5px;
+    /* Optional: Adjust border radius */
+    animation: shimmer 1500ms infinite;
+    /* Apply shimmer animation */
+}
+
+@keyframes shimmer {
+    0% {
+        border-color: transparent;
+        /* Start with transparent border */
+    }
+
+    50% {
+        border-color: red;
+        /* Halfway through, make the border visible */
+    }
+
+    100% {
+        border-color: transparent;
+        /* At the end, make it transparent again */
+    }
+}

@@ -22,7 +22,7 @@ export class PpoComponent implements OnInit, OnDestroy {
   userRole?: UserRole;
   refreshFlightSubscription?: Subscription;
 
-  interval_ms = 5000;
+  interval_ms = 10000;
 
   flightStatuses: ValueColor[] = [];
 
@@ -44,14 +44,14 @@ export class PpoComponent implements OnInit, OnDestroy {
     }
 
     await this.getOptions()
-    await this.getFlights();
+    await this.initFlights();
 
     if (this.options.flightStatus) {
       this.flightStatuses = this.options.flightStatus;
     }
 
     this.refreshFlightSubscription = interval(this.interval_ms).subscribe(async x => {
-      await this.getFlights();
+      await this.initFlights();
     })
   }
 
@@ -82,7 +82,7 @@ export class PpoComponent implements OnInit, OnDestroy {
       }
     }
 
-    await this.getFlights();
+    await this.initFlights();
   }
 
   public async discard(id: string | undefined) {
@@ -105,15 +105,17 @@ export class PpoComponent implements OnInit, OnDestroy {
       }
     }
 
-    await this.getFlights();
+    await this.initFlights();
   }
 
-  async getFlights() {
+  async initFlights() {
     
     const allFlights = await this.flightService.getActiveFlightAsync();
     
     const filtered = allFlights.filter(x => !x.isRejected);
     
+    console.log(filtered);
+
     this.flights = [];
     this.flights.push(...filtered.filter(x => x.flightStep.isApproved === false))
 
