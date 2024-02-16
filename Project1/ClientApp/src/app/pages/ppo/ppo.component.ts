@@ -35,6 +35,11 @@ export class PpoComponent implements OnInit, OnDestroy {
     this.refreshFlightSubscription?.unsubscribe();
   }
 
+  toggleSection(flight: any) {
+    console.log(flight.isSectionCollapsed)
+    flight.isSectionCollapsed = !flight.isSectionCollapsed;
+  }
+
   async ngOnInit(): Promise<void> {
 
     var ui = this.userService.getUserInfo();

@@ -73,4 +73,6 @@ export interface Flight {
     isTerminated?: boolean;
 
     flightStep: FlightStep;
+
+    isSectionCollapsed: boolean;
 }

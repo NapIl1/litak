@@ -17,7 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
   styleUrls: ['./pilot.component.scss']
 })
 export class PilotComponent implements OnInit {
-
+  localRouterPath: string = 'start';
   userRoles = UserRole;
 
   userInfo: User = {};
@@ -34,6 +34,7 @@ export class PilotComponent implements OnInit {
   };
 
   flight: Flight = {
+    isSectionCollapsed: false,
     flightStep: {
       step: FlightSteps.START,
       isApproved: false,
@@ -92,6 +93,10 @@ export class PilotComponent implements OnInit {
 
   }
 
+  handleLocalRoute(route: string){
+    this.localRouterPath = route;
+  }
+
   public navigateToDiscordUrl() {
     window.open(this.options.discordUrl, '_blank')!.focus();
   }
@@ -116,31 +121,37 @@ export class PilotComponent implements OnInit {
         this.flight.flightStartDate = new Date;
         this.flight.flightStep.step = FlightSteps.FLIGHT;
         this.flight.flightStep.isApproved = true;
+        this.flight.isSectionCollapsed = true;
         break;
       case FlightSteps.FLIGHT:
         this.flight.LBZForwardDate = new Date;
         this.flight.flightStep.step = FlightSteps.LBZ_FORWARD;
         this.flight.flightStep.isApproved = true;
+        this.flight.isSectionCollapsed = true;
         break;
       case FlightSteps.LBZ_FORWARD:
         this.flight.returnDate = new Date;
         this.flight.flightStep.step = FlightSteps.RETURN;
         this.flight.flightStep.isApproved = true;
+        this.flight.isSectionCollapsed = true;
         break;
       case FlightSteps.RETURN:
         this.flight.LBZBackDate = new Date;
         this.flight.flightStep.step = FlightSteps.LBZ_HOME;
         this.flight.flightStep.isApproved = true;
+        this.flight.isSectionCollapsed = true;
         break;
       case FlightSteps.LBZ_HOME:
         this.flight.reductionDate = new Date;
         this.flight.flightStep.step = FlightSteps.REDUCTION;
         this.flight.flightStep.isApproved = true;
+        this.flight.isSectionCollapsed = true;
         break;
       case FlightSteps.REDUCTION:
         this.flight.endDate = new Date;
         this.flight.flightStep.step = FlightSteps.END;
         this.flight.flightStep.isApproved = true;
+        this.flight.isSectionCollapsed = true;
         break;
       case FlightSteps.END:
         break;

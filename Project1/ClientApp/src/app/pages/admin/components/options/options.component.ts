@@ -17,6 +17,7 @@ export class OptionsComponent {
     discordUrl: ''
   };
 
+  defaultTabSelected: string = 'boardingStatus';
   name: string = '';
   color: string = '';
 
@@ -28,9 +29,7 @@ export class OptionsComponent {
   ]
 
   colorPlaceholder = 'Текст';
-
   constructor(private optionsService: OptionsService) {
-
   }
 
   async ngOnInit(): Promise<void> {
@@ -53,13 +52,9 @@ export class OptionsComponent {
   }
 
   public async removeOption(index:number, type: string) {
-
     await this.optionsService.removeOption(index, type);
     this.options = await this.optionsService.getAllOptions();
-    
   }
-
-
 
   public async editOption(index: number, type: string) {
     this.selectedOption = index;
@@ -68,5 +63,9 @@ export class OptionsComponent {
       this.name = this.options.flightStatus[index].name;
       this.color = this.options.flightStatus[index].color;
     }
+  }
+
+  public changeLocalRoute(route: string){
+    this.defaultTabSelected = route;
   }
 }

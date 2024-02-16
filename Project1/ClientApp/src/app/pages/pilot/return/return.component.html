@@ -1,0 +1,56 @@
+<div class="tab-regular">
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade" id="return" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="row">
+                <div class="col-12">
+                    <div>
+                        <label class="col-form-label">Повернення час</label>
+
+                        <input *ngIf="!flight.returnDate" [ngModel]="dateNow | date:'yyyy-MM-dd HH:mm'"
+                            type="datetime-local" disabled="true" class="form-control">
+                        <input *ngIf="flight.returnDate" [ngModel]="flight.returnDate | date:'yyyy-MM-dd HH:mm'"
+                            type="datetime-local" disabled="true" class="form-control">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-12">
+                    <label class="custom-control custom-checkbox">
+                        <input [disabled]="flight.flightStep.step != FlightSteps.LBZ_FORWARD"
+                            [(ngModel)]="flight.isReturnChanged" type="checkbox" checked=""
+                            class="custom-control-input">
+                        <span class="custom-control-label">
+                            Марштур змінився
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div *ngIf="flight.isReturnChanged === true" class="row">
+                <div class="col-12">
+                    <div>
+                        <label class="col-form-label">Інформація про зміну маршруту</label>
+                        <input [disabled]="flight.flightStep.step != FlightSteps.LBZ_FORWARD"
+                            [(ngModel)]="flight.changedReturnRoute" type="text" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="mt-3 d-flex justify-content-end">
+                        <button [disabled]="flight.flightStep.step !== FlightSteps.LBZ_FORWARD" class="btn btn-success"
+                            (click)="next()">
+                            Повернення
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

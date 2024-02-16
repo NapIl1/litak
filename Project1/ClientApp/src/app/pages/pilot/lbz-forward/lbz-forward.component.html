@@ -1,0 +1,31 @@
+<div class="tab-regular">
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade" id="lbz" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="row">
+                <div class="col-12">
+                    <div>
+                        <label class="col-form-label">ЛБЗ Вперед час</label>
+
+                        <input *ngIf="!flight.LBZForwardDate" [ngModel]="dateNow | date:'yyyy-MM-dd HH:mm'" type="datetime-local"
+                            disabled="true" class="form-control">
+                        <input *ngIf="flight.LBZForwardDate" [ngModel]="flight.LBZForwardDate | date:'yyyy-MM-dd HH:mm'"
+                            type="datetime-local" disabled="true" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="mt-3 d-flex justify-content-end">
+                        <button
+                            [disabled]="flight.flightStep.step !== FlightSteps.FLIGHT"
+                             class="btn btn-success" (click)="next()">
+                            ЛБЗ Вперед
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

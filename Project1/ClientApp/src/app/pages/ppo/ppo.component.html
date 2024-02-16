@@ -12,17 +12,24 @@
                     || userRole == UserRoles.ADMIN && this.flight.flightStep.isApproved === false"
                     [style.backgroundColor]=" flight.flightStep.isApproved === true ? flight.assignment!.color : 'white'">
 
-                        <div class="card-body p-2">
-                            <h5 class="card-title border-bottom pb-2">Оператор: {{flight.operator}}</h5>
-                            <p>
+                        <div class="card-body p-2" (click)="toggleSection(flight)">
+                            <div>
+                                <span [style.backgroundColor]="this.flightStatuses[flight.flightStep.step ?? 0].color"  class="badge badge-primary">
+                                    {{ this.flightStatuses[flight.flightStep.step ?? 0].name.toUpperCase() }}
+                                </span>
+                            </div>
+                            <div>
                                 <span [style.backgroundColor]="flight.model?.color"
                                     class="badge badge-primary bg-dark">{{flight.model?.name}}</span>
-                                <span
-                                    class="badge badge-primary bg-dark">{{flight.assignment?.name}}</span>
+                                <span class="badge badge-primary bg-dark">128Омбр</span>
+                            </div>
+
+                            <div>
+                                <span class="badge badge-primary bg-dark">{{flight.operator?.toUpperCase()}}</span>
+                                <span class="badge badge-primary bg-dark">ШТАТНИЙ ПІДРОЗДІЛ</span>
+                            </div>
         
-                            </p>
-        
-                            <div class="alert alert-info mb-0">
+                            <div class="alert alert-info mb-0" [class.hidden]="flight.isSectionCollapsed">
                                 <b>Статус: </b> 
                                 
                                 <!-- <span [ngSwitch]="flight.flightStep.step">

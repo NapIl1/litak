@@ -19,6 +19,18 @@ import { UsersComponent } from './pages/admin/components/users/users.component';
 import { PersonalInfoComponent } from './pages/personal-info/personal-info.component';
 import { FlightsStatsComponent } from './pages/admin/components/flights-stats/flights-stats.component';
 import { ColorPickerModule } from 'ngx-color-picker';
+import { BoardingStatusComponent } from './pages/admin/components/options/boarding-status/boarding-status.component';
+import { DronAppointmentComponent } from './pages/admin/components/options/dron-appointment/dron-appointment.component';
+import { DiscordStatusComponent } from './pages/admin/components/options/discord/discord.component';
+import { DronModelComponent } from './pages/admin/components/options/dron-model/dron-model.component';
+import { FlightStatusComponent } from './pages/admin/components/options/flight-status/flight-status.component';
+import { PilotStartComponent } from './pages/pilot/start/start.component';
+import { PilotFlightComponent } from './pages/pilot/flight/flight.component';
+import { PilotLbzForwardComponent } from './pages/pilot/lbz-forward/lbz-forward.component';
+import { PilotLbzHomeComponent } from './pages/pilot/lbz-home/lbz-home.component';
+import { PilotReturnComponent } from './pages/pilot/return/return.component';
+import { PilotReductionComponent } from './pages/pilot/reduction/reduction.component';
+import { PilotEndComponent } from './pages/pilot/end/end.component';
 
 @NgModule({
   declarations: [
@@ -28,12 +40,24 @@ import { ColorPickerModule } from 'ngx-color-picker';
     HeaderComponent,
     SidebarComponent,
     PilotComponent,
+    PilotStartComponent,
+    PilotFlightComponent,
+    PilotLbzForwardComponent,
+    PilotReturnComponent,
+    PilotLbzHomeComponent,
+    PilotReductionComponent,
+    PilotEndComponent,
     PpoComponent,
     AdminComponent,
     OptionsComponent,
     UsersComponent,
     PersonalInfoComponent,
     FlightsStatsComponent,
+    BoardingStatusComponent,
+    DronAppointmentComponent,
+    DiscordStatusComponent,
+    DronModelComponent,
+    FlightStatusComponent
   ],
   imports: [
     BrowserModule,

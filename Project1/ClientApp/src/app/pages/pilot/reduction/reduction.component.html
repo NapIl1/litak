@@ -1,0 +1,48 @@
+<div class="tab-regular">
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade" id="reduction" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="row">
+                <div class="col-12">
+                    <div>
+                        <label class="col-form-label">Початок зниження час</label>
+
+                        <input *ngIf="!flight.reductionDate" [ngModel]="dateNow | date:'yyyy-MM-dd HH:mm'"
+                            type="datetime-local" disabled="true" class="form-control">
+                        <input *ngIf="flight.reductionDate" [ngModel]="flight.reductionDate | date:'yyyy-MM-dd HH:mm'"
+                            type="datetime-local" disabled="true" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div>
+                        <label class="col-form-label">Дистанція (в км.)</label>
+                        <input [disabled]="flight.flightStep.step != FlightSteps.LBZ_HOME"
+                            [(ngModel)]="flight.reductionDistance" type="number" class="form-control">
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div>
+                        <label class="col-form-label">Населений пункт</label>
+                        <input [disabled]="flight.flightStep.step != FlightSteps.LBZ_HOME"
+                            [(ngModel)]="flight.reductionLocation" type="text" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="mt-3 d-flex justify-content-end">
+
+                        <button [disabled]="flight.flightStep.step !== FlightSteps.LBZ_HOME" class="btn btn-success"
+                            (click)="next()">
+                            Початок зниження
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

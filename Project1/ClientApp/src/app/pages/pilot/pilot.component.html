@@ -118,14 +118,14 @@
                     <div class="tab-regular">
                         <ul class="nav nav-tabs " id="myTab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active p-2" id="home-tab" data-toggle="tab" href="#start" role="tab"
+                                <a (click)="handleLocalRoute('start')" class="nav-link active p-2" id="home-tab" data-toggle="tab" href="#start" role="tab"
                                     aria-controls="home" aria-selected="true">
                                     Загальна інформація
                                     <i class="fas fa-check-circle text-success"></i>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link p-2" id="profile-tab" aria-disabled="true" data-toggle="tab"
+                                <a (click)="handleLocalRoute('flight')" class="nav-link p-2" id="profile-tab" aria-disabled="true" data-toggle="tab"
                                     href="#flight" role="tab" aria-controls="profile" aria-selected="false">
                                     Взліт
 
@@ -136,7 +136,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link p-2" id="contact-tab" data-toggle="tab" href="#lbz" role="tab"
+                                <a (click)="handleLocalRoute('lbz')" class="nav-link p-2" id="contact-tab" data-toggle="tab" href="#lbz" role="tab"
                                     aria-controls="contact" aria-selected="false">
                                     ЛБЗ Вперед
 
@@ -147,7 +147,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link p-2" id="contact-tab" data-toggle="tab" href="#return" role="tab"
+                                <a (click)="handleLocalRoute('return')" class="nav-link p-2" id="contact-tab" data-toggle="tab" href="#return" role="tab"
                                     aria-controls="contact" aria-selected="false">
                                     Повернення
                                     <i *ngIf="flight.flightStep.step! >= FlightSteps.LBZ_FORWARD && flight.flightStep.isApproved === true"
@@ -157,7 +157,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link p-2" id="contact-tab" data-toggle="tab" href="#lbzhome" role="tab"
+                                <a (click)="handleLocalRoute('lbzhome')" class="nav-link p-2" id="contact-tab" data-toggle="tab" href="#lbzhome" role="tab"
                                     aria-controls="contact" aria-selected="false">
                                     ЛБЗ Назад
                                     <i *ngIf="flight.flightStep.step! >= FlightSteps.RETURN && flight.flightStep.isApproved === true"
@@ -168,7 +168,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link p-2" id="contact-tab" data-toggle="tab" href="#reduction" role="tab"
+                                <a (click)="handleLocalRoute('reduction')" class="nav-link p-2" id="contact-tab" data-toggle="tab" href="#reduction" role="tab"
                                     aria-controls="contact" aria-selected="false">
                                     Початок зниження
                                     <i *ngIf="flight.flightStep.step! >= FlightSteps.LBZ_HOME && flight.flightStep.isApproved === true"
@@ -179,7 +179,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link p-2" id="contact-tab" data-toggle="tab" href="#end" role="tab"
+                                <a (click)="handleLocalRoute('end')" class="nav-link p-2" id="contact-tab" data-toggle="tab" href="#end" role="tab"
                                     aria-controls="contact" aria-selected="false">
                                     Завершення
                                     <i *ngIf="flight.flightStep.step! >= FlightSteps.REDUCTION && flight.flightStep.isApproved === true"
@@ -198,7 +198,45 @@
                         </ul>
                         <div class="tab-content" id="myTabContent">
                             <!-- ЗАГАЛЬНА ІНФОРМАЦІЯ -->
-                            <div class="tab-pane fade show active" id="start" role="tabpanel"
+                            <app-pilot-start 
+                            *ngIf="localRouterPath == 'start'"
+                            [flights]='flights'
+                            [flight]='flight'
+                            [userInfo]='userInfo'
+                            [options]='options'></app-pilot-start>
+                            <app-pilot-flight *ngIf="localRouterPath == 'flight'"
+                            [flights]='flights'
+                            [flight]='flight'
+                            [userInfo]='userInfo'
+                            [options]='options'
+                            [localRouterPath]='localRouterPath'></app-pilot-flight>
+                            <app-pilot-lbz-forward *ngIf="localRouterPath == 'lbz'"
+                            [flights]='flights'
+                            [flight]='flight'
+                            [userInfo]='userInfo'
+                            [options]='options'></app-pilot-lbz-forward>
+                            <app-pilot-return *ngIf="localRouterPath == 'return'"
+                            [flights]='flights'
+                            [flight]='flight'
+                            [userInfo]='userInfo'
+                            [options]='options'></app-pilot-return>
+                            <app-pilot-lbz-home *ngIf="localRouterPath == 'lbzhome'"
+                            [flights]='flights'
+                            [flight]='flight'
+                            [userInfo]='userInfo'
+                            [options]='options'></app-pilot-lbz-home>
+                            <app-pilot-reduction *ngIf="localRouterPath == 'reduction'"
+                            [flights]='flights'
+                            [flight]='flight'
+                            [userInfo]='userInfo'
+                            [options]='options'></app-pilot-reduction>
+                            <app-pilot-end *ngIf="localRouterPath == 'end'"
+                            [flights]='flights'
+                            [flight]='flight'
+                            [userInfo]='userInfo'
+                            [options]='options'></app-pilot-end>
+
+                            <!-- <div class="tab-pane fade show active" id="start" role="tabpanel"
                                 aria-labelledby="home-tab">
 
                                 <div class="row">
@@ -328,10 +366,11 @@
                                 </div>
 
 
-                            </div>
+                            </div> -->
 
                             <!-- ВИЛІТ -->
-                            <div class="tab-pane fade" id="flight" role="tabpanel" aria-labelledby="profile-tab">
+
+                            <!-- <div class="tab-pane fade" id="flight" role="tabpanel" aria-labelledby="profile-tab">
 
                                 <div class="row">
                                     <div class="col-12">
@@ -359,10 +398,10 @@
                                     </div>
                                 </div>
 
-                            </div>
+                            </div> -->
 
                             <!-- ЛБЗ ВПЕРЕД -->
-                            <div class="tab-pane fade" id="lbz" role="tabpanel" aria-labelledby="contact-tab">
+                            <!-- <div class="tab-pane fade" id="lbz" role="tabpanel" aria-labelledby="contact-tab">
                                 <div class="row">
                                     <div class="col-12">
                                         <div>
@@ -388,10 +427,10 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <!-- ПОВЕРНЕННЯ -->
-                            <div class="tab-pane fade" id="return" role="tabpanel" aria-labelledby="contact-tab">
+                            <!-- <div class="tab-pane fade" id="return" role="tabpanel" aria-labelledby="contact-tab">
                                 <div class="row">
                                     <div class="col-12">
                                         <div>
@@ -441,10 +480,10 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <!-- ЛБЗ ДОДОМУ -->
-                            <div class="tab-pane fade" id="lbzhome" role="tabpanel" aria-labelledby="contact-tab">
+                            <!-- <div class="tab-pane fade" id="lbzhome" role="tabpanel" aria-labelledby="contact-tab">
                                 <div class="row">
                                     <div class="col-12">
                                         <div>
@@ -471,10 +510,10 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <!-- ПОЧАТОК ЗНИЖЕННЯ -->
-                            <div class="tab-pane fade" id="reduction" role="tabpanel" aria-labelledby="contact-tab">
+                            <!-- <div class="tab-pane fade" id="reduction" role="tabpanel" aria-labelledby="contact-tab">
                                 <div class="row">
                                     <div class="col-12">
                                         <div>
@@ -516,10 +555,10 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <!-- ЗАВЕРШЕННЯ -->
-                            <div class="tab-pane fade" id="end" role="tabpanel" aria-labelledby="contact-tab">
+                            <!-- <div class="tab-pane fade" id="end" role="tabpanel" aria-labelledby="contact-tab">
                                 <div class="row">
                                     <div class="col-6">
                                         <div>
@@ -553,7 +592,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
