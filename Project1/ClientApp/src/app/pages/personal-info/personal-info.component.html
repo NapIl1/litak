@@ -15,7 +15,7 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="inputText3" class="col-form-label">Нікнейм</label>
+                                        <label for="inputText3" class="col-form-label">Позивний</label>
                                         <input [(ngModel)]="userInfo!.userOptions!.nickName" type="text"
                                             class="form-control">
                                     </div>
@@ -32,8 +32,8 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="inputText3" class="col-form-label">Посилання на діскорд</label>
-                                        <input [(ngModel)]="userInfo!.userOptions!.discordUrl" type="text"
+                                        <label for="inputText3" class="col-form-label">Бригада</label>
+                                        <input [(ngModel)]="userInfo!.userOptions!.brigade" type="text"
                                             class="form-control">
                                     </div>
                                 </div>
@@ -43,6 +43,16 @@
                                         <label for="inputText3" class="col-form-label">Номер Оператора</label>
                                         <input [(ngModel)]="userInfo!.userOptions!.spotterPhoneNumber"
                                             mask='(000) 000-0000' type="text" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="inputText3" class="col-form-label">Штатний підрозділ</label>
+                                        <input [(ngModel)]="userInfo!.userOptions!.staffUnit"
+                                            type="text" class="form-control">
                                     </div>
                                 </div>
                             </div>

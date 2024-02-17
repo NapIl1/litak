@@ -11,8 +11,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Оператор</th>
+                                    <th scope="col">Місія</th>
                                     <th scope="col">Дата створення</th>
                                     <th scope="col">Статус</th>
                                     <th scope="col">Одобрено</th>
@@ -22,8 +21,7 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let item of firstPart; index as i">
-                                    <th>{{ i+1 }}</th>
-                                    <td>{{ item.operator }}</td>
+                                    <td>{{ item.dateOfFlight | date: 'ddMMyy-HHmm' }}-{{item.operator}}-{{item.brigade}}</td>
                                     <td>{{ item.dateOfFlight | date: 'dd/MM/yy HH:mm' }}</td>
                                     <td>{{
                                         item.flightStep.step == FlightSteps.START ? 'Початок' :

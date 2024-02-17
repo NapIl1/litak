@@ -60,11 +60,12 @@ export class PilotComponent implements OnInit {
       this.userInfo = ui;
 
       await this.getFlightsAssignedToUser();
-      console.log(ui);
       this.flight.operatorPhone = ui.userOptions?.operatorPhoneNumber;
       this.flight.spotterPhone = ui.userOptions?.spotterPhoneNumber;
       this.flight.operator = ui.userOptions?.nickName;
       this.flight.discordUrl = this.options.discordUrl;
+      this.flight.brigade = ui.userOptions?.brigade;
+      this.flight.staffUnit = ui.userOptions?.staffUnit;
       this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == ui.userOptions?.dronAppointment?.toUpperCase());
       this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == ui.userOptions?.dronModel?.toUpperCase());
     }
@@ -187,7 +188,6 @@ export class PilotComponent implements OnInit {
   }
 
   validateStep(step: FlightSteps) {
-    // console.log("test");
     // TODO: refactor later
 
     switch(step) {
@@ -202,9 +202,6 @@ export class PilotComponent implements OnInit {
   }
 
   private async getFlightsAssignedToUser() {
-    // const allFligths = await this.flightService.getAllFlightsAsync();
-    // this.flights = allFligths.filter(x => x.userId == this.userInfo._id && x.flightStep.step != FlightSteps.END);
-
     this.flights = await this.flightService.getByUserIdAsync(this.userInfo._id);
   }
 

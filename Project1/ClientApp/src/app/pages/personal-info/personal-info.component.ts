@@ -18,7 +18,8 @@ export class PersonalInfoComponent implements OnInit {
       dronType: '',
       dronModel: '',
       dronAppointment: '',
-      discordUrl: ''
+      brigade: '',
+      staffUnit: ''
     }
   };
 

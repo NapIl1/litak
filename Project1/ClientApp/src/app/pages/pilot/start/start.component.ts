@@ -29,6 +29,8 @@ export class PilotStartComponent implements OnInit {
       this.flight.operatorPhone = this.userInfo.userOptions?.operatorPhoneNumber;
       this.flight.spotterPhone = this.userInfo.userOptions?.spotterPhoneNumber;
       this.flight.operator = this.userInfo.userOptions?.nickName;
+      this.flight.brigade = this.userInfo.userOptions?.brigade;
+      this.flight.staffUnit = this.userInfo.userOptions?.staffUnit;
       this.flight.discordUrl = this.options.discordUrl;
       this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == this.userInfo.userOptions?.dronAppointment?.toUpperCase());
       this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == this.userInfo.userOptions?.dronModel?.toUpperCase());
@@ -71,7 +73,6 @@ export class PilotStartComponent implements OnInit {
   }
 
   validateStep(step: FlightSteps) {
-    // console.log("test");
     // TODO: refactor later
 
     switch(step) {

@@ -20,6 +20,7 @@ export interface User {
         dronModel?: string;
         dronAppointment?: string;
         dronType?: string;
-        discordUrl?: string;
+        brigade?: string;
+        staffUnit?: string;
     }
 };

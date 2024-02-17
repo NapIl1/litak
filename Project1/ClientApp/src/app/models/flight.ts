@@ -23,10 +23,14 @@ export interface Flight {
     operator?: string;
     operatorPhone?: string;
     spotterPhone?: string;
+    brigade?: string;
+    staffUnit?: string;
     assignment?: ValueColor;
     model?: ValueColor;
     controlRange?: ValueColor;
     videoRange?: ValueColor;
+    workingHeight?: string;
+    taskPerformanceArea?: string;
 
     dateOfFlight?: Date;
 

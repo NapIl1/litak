@@ -36,7 +36,6 @@ export class PpoComponent implements OnInit, OnDestroy {
   }
 
   toggleSection(flight: any) {
-    console.log(flight.isSectionCollapsed)
     flight.isSectionCollapsed = !flight.isSectionCollapsed;
   }
 
@@ -81,6 +80,7 @@ export class PpoComponent implements OnInit, OnDestroy {
 
         if (flightToUpdate.flightStep.isApprovedByPPO == true && flightToUpdate.flightStep.isApprovedByREB == true) {
           flightToUpdate.flightStep.isApproved = true;
+          flightToUpdate.isSectionCollapsed = true;
         }
 
         await this.flightService.updateFlightAsync(flightToUpdate);
@@ -115,12 +115,11 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   async initFlights() {
     
+    const nonCollapsedFlights = this.flights.filter(x=>x.isSectionCollapsed == false);
     const allFlights = await this.flightService.getActiveFlightAsync();
     
     const filtered = allFlights.filter(x => !x.isRejected);
     
-    console.log(filtered);
-
     this.flights = [];
     this.flights.push(...filtered.filter(x => x.flightStep.isApproved === false))
 
@@ -128,6 +127,13 @@ export class PpoComponent implements OnInit, OnDestroy {
       this.flights.push(...filtered.filter(x => x.flightStep.isApproved === true && x.assignment?.name === c.name));
     });
 
+    // do not collapse selected records
+    this.flights.forEach(updatedFlight => {
+      const nonCollapsedFlight = nonCollapsedFlights.find(flight => flight._id === updatedFlight._id);
+      if (nonCollapsedFlight && nonCollapsedFlight.isSectionCollapsed !== updatedFlight.isSectionCollapsed) {
+        updatedFlight.isSectionCollapsed = nonCollapsedFlight.isSectionCollapsed;
+      }
+    });
   }
 
   public get FlightSteps() {
