@@ -68,7 +68,7 @@ export class PilotEndComponent implements OnInit {
       await this.getFlightsAssignedToUser();
   
       if (this.flight.flightStep.step == FlightSteps.END) {
-        this.router.navigate(['new-flight']);
+        this.router.navigate(['flight']);
         return;
       }
     }
@@ -81,7 +81,7 @@ export class PilotEndComponent implements OnInit {
   
       await this.getFlightsAssignedToUser();
       await this.flightService.updateFlightAsync(this.flight);
-      this.router.navigate(['new-flight']);
+      this.router.navigate(['flight']);
     }
   
     private async getFlightsAssignedToUser() {

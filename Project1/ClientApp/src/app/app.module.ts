@@ -31,6 +31,9 @@ import { PilotLbzHomeComponent } from './pages/pilot/lbz-home/lbz-home.component
 import { PilotReturnComponent } from './pages/pilot/return/return.component';
 import { PilotReductionComponent } from './pages/pilot/reduction/reduction.component';
 import { PilotEndComponent } from './pages/pilot/end/end.component';
+import { WaitingApprovalComponent } from './pages/pilot/waiting-approval/waiting-approval.component';
+import { SimpleModalModule } from 'ngx-simple-modal';
+import { FlightCardComponent } from './pages/shared/flight-card/flight-card.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +44,7 @@ import { PilotEndComponent } from './pages/pilot/end/end.component';
     SidebarComponent,
     PilotComponent,
     PilotStartComponent,
+    WaitingApprovalComponent,
     PilotFlightComponent,
     PilotLbzForwardComponent,
     PilotReturnComponent,
@@ -57,7 +61,8 @@ import { PilotEndComponent } from './pages/pilot/end/end.component';
     DronAppointmentComponent,
     DiscordStatusComponent,
     DronModelComponent,
-    FlightStatusComponent
+    FlightStatusComponent,
+    FlightCardComponent
   ],
   imports: [
     BrowserModule,

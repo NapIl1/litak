@@ -7,15 +7,15 @@
             <div class="d-flex" style="flex-wrap: wrap;">
                 <div style="min-width: 200px;" *ngFor="let flight of flights">
                     <div class="card m-1"
-                    [class.not-approved]="userRole == UserRoles.PPO && this.flight.flightStep.isApprovedByPPO === false 
+                    [class.not-approved]="(userRole == UserRoles.PPO && this.flight.flightStep.isApprovedByPPO === false 
                     || userRole == UserRoles.REB && this.flight.flightStep.isApprovedByREB === false 
-                    || userRole == UserRoles.ADMIN && this.flight.flightStep.isApproved === false"
+                    || userRole == UserRoles.ADMIN && this.flight.flightStep.isApproved === false) || (!flight.isChecked)"
                     [style.backgroundColor]=" flight.flightStep.isApproved === true ? flight.assignment!.color : 'white'">
 
                         <div class="card-body p-2" (click)="toggleSection(flight)">
                             <div>
-                                <span [style.backgroundColor]="this.flightStatuses[flight.flightStep.step ?? 0].color"  class="badge badge-primary">
-                                    {{ this.flightStatuses[flight.flightStep.step ?? 0].name.toUpperCase() }}
+                                <span [style.backgroundColor]="this.flightStatuses[flight.flightStep.visibleStep ?? 0].color"  class="badge badge-primary">
+                                    {{ this.flightStatuses[flight.flightStep.visibleStep ?? 0].name.toUpperCase() }}
                                 </span>
                             </div>
                             <div>
@@ -63,6 +63,7 @@
                                 <div><b>Робоча висота:</b> {{ flight.workingHeight}}</div>
                                 <div><b>Д/Ч Керування:</b> {{ flight.controlRange}}</div>
                                 <div><b>Д/Ч Відео:</b> {{ flight.videoRange}}</div>
+                                <div><b>Район завдання:</b>{{flight.taskPerformanceArea}}</div>
                                 <div><b>Стрім:</b>????????</div>
                                 
                                 

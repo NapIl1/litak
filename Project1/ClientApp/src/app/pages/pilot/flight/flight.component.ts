@@ -1,9 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FLIGHT_ROUTES } from 'src/app/consts/consts';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
 import { User } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
+import { OptionsService } from 'src/app/services/options.service';
+import { RoutingService } from 'src/app/services/routing.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
     selector: 'app-pilot-flight',
@@ -11,47 +15,37 @@ import { FlightService } from 'src/app/services/flight.service';
     styleUrls: ['./flight.component.scss']
 })
 export class PilotFlightComponent implements OnInit {
-    @Input() flights: Flight[] = [];
-    @Input() flight!: Flight;
-    @Input() userInfo!: User;
-    @Input() options!: DroneOptions;
-    @Input() localRouterPath!: string;
+    flights: Flight[] = [];
+    flight!: Flight;
+    userInfo!: User;
+    options!: DroneOptions;
+    localRouterPath!: string;
     isNewFlight: boolean = true;
     dateNow = Date.now();
 
     constructor(
-        private router: Router,
-        private flightService: FlightService,
-        private route: ActivatedRoute) { }
+      private router: Router,
+      private flightService: FlightService,
+      private optionsService: OptionsService,
+      private userService: UserService,
+      private route: ActivatedRoute,
+      private routingService: RoutingService) { }
 
     async ngOnInit(): Promise<void> {
-        this.flight.operatorPhone = this.userInfo.userOptions?.operatorPhoneNumber;
-        this.flight.spotterPhone = this.userInfo.userOptions?.spotterPhoneNumber;
-        this.flight.operator = this.userInfo.userOptions?.nickName;
-        this.flight.discordUrl = this.options.discordUrl;
-        this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == this.userInfo.userOptions?.dronAppointment?.toUpperCase());
-        this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == this.userInfo.userOptions?.dronModel?.toUpperCase());
+      this.options = await this.optionsService.getAllOptions();
 
-        this.route.paramMap.subscribe(async params => {
-            const id = params.get('id');
-
-            if (!id) {
-                return;
-            }
-
-            this.isNewFlight = false;
-
-            const flight = await this.flightService.getByIdAsync(id);
-
-            if (!flight) {
-                return;
-            }
-
+      const ui = this.userService.getUserInfo();
+  
+      if (ui) {
+        this.userInfo = ui;
+  
+        this.flightService.activeFlight$.subscribe(flight => {
+          if (flight) {
             this.flight = flight;
-
-            this.flight.assignment = this.options?.dronAppointment?.find(x => x.name == this.flight.assignment?.name);
-            this.flight.model = this.options.dronModels?.find(x => x.name == this.flight.model?.name);
-        })
+          }
+        });
+      }
+      
     }
   
     public async next() {
@@ -62,35 +56,31 @@ export class PilotFlightComponent implements OnInit {
 
       this.flight.flightStartDate = new Date;
       this.flight.flightStep.step = FlightSteps.FLIGHT;
+      this.flight.flightStep.visibleStep = FlightSteps.FLIGHT;
       this.flight.flightStep.isApproved = true;
       this.flight.isSectionCollapsed = true;
+
+
   
       await this.flightService.updateFlightAsync(this.flight);
-      await this.getFlightsAssignedToUser();
-  
-      if (this.flight.flightStep.step == FlightSteps.END) {
-        this.router.navigate(['new-flight']);
-        return;
-      }
+      await this.flightService.refreshActiveFlight();
     }
   
     public async terminateFlight(isApproved: boolean) {
-      this.flight.isTerminated = true;
-      this.flight.endDate = new Date;
-      this.flight.flightStep.step = FlightSteps.END;
-      this.flight.flightStep.isApproved = isApproved;
-  
-      await this.getFlightsAssignedToUser();
-      await this.flightService.updateFlightAsync(this.flight);
-      this.router.navigate(['new-flight']);
+      console.log(event);
+      const res = confirm("Ви впевнені що хочете завершити політ?")
+      if (res) {
+        this.flight.isTerminated = true;
+        this.flight.endDate = new Date;
+        this.flight.flightStep.step = FlightSteps.END;
+        this.flight.flightStep.visibleStep = FlightSteps.END;
+        this.flight.flightStep.isApproved = isApproved;
+
+        await this.flightService.updateFlightAsync(this.flight);
+        await this.flightService.refreshActiveFlight();
+      }
     }
-  
-    private async getFlightsAssignedToUser() {
-      // const allFligths = await this.flightService.getAllFlightsAsync();
-      // this.flights = allFligths.filter(x => x.userId == this.userInfo._id && x.flightStep.step != FlightSteps.END);
-  
-      this.flights = await this.flightService.getByUserIdAsync(this.userInfo._id);
-    }
+
   
     public get FlightSteps() {
       return FlightSteps;

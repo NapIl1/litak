@@ -1,9 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
+import { FLIGHT_ROUTES } from 'src/app/consts/consts';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
-import { User } from 'src/app/models/user';
+import { User, UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
+import { OptionsService } from 'src/app/services/options.service';
+import { RoutingService } from 'src/app/services/routing.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
     selector: 'app-pilot-start',
@@ -11,51 +15,58 @@ import { FlightService } from 'src/app/services/flight.service';
     styleUrls: ['./start.component.scss']
 })
 export class PilotStartComponent implements OnInit {
-  @Input() flights!: Flight[];
-  @Input() flight!: Flight;
-  @Input() userInfo!: User;
-  @Input() options!: DroneOptions;
-  
+  userRoles = UserRole;
+
+  userInfo: User = {};
 
   dateNow = Date.now();
-  isNewFlight: boolean = true;
 
+  options: DroneOptions = {
+    boardingStatuses: [],
+    dronAppointment: [],
+    dronModels: []
+  };
 
+  flight: Flight = {
+    isSectionCollapsed: false,
+    flightStep: {
+      step: FlightSteps.START,
+      visibleStep: FlightSteps.START,
+      isApproved: false,
+      isApprovedByPPO: false,
+      isApprovedByREB: false,
+    },
+    dateOfFlight: new Date()
+  };
   constructor(
+    private route: Router,
     private flightService: FlightService,
-    private route: ActivatedRoute) { }
+    private optionsService: OptionsService,
+    private userService: UserService) { }
 
   async ngOnInit(): Promise<void> {
-      this.flight.operatorPhone = this.userInfo.userOptions?.operatorPhoneNumber;
-      this.flight.spotterPhone = this.userInfo.userOptions?.spotterPhoneNumber;
-      this.flight.operator = this.userInfo.userOptions?.nickName;
-      this.flight.brigade = this.userInfo.userOptions?.brigade;
-      this.flight.staffUnit = this.userInfo.userOptions?.staffUnit;
+    this.options = await this.optionsService.getAllOptions();
+
+    const ui = this.userService.getUserInfo();
+
+    if (ui) {
+      this.userInfo = ui;
+
+      this.flight.operatorPhone = ui.userOptions?.operatorPhoneNumber;
+      this.flight.spotterPhone = ui.userOptions?.spotterPhoneNumber;
+      this.flight.operator = ui.userOptions?.nickName;
       this.flight.discordUrl = this.options.discordUrl;
-      this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == this.userInfo.userOptions?.dronAppointment?.toUpperCase());
-      this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == this.userInfo.userOptions?.dronModel?.toUpperCase());
+      this.flight.brigade = ui.userOptions?.brigade;
+      this.flight.staffUnit = ui.userOptions?.staffUnit;
+      this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == ui.userOptions?.dronAppointment?.toUpperCase());
+      this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == ui.userOptions?.dronModel?.toUpperCase());
+    }
 
-    this.route.paramMap.subscribe(async params => {
-      const id = params.get('id');
+    // this.flightService.activeFlight$.subscribe(res => {
+    //   if(res) {
 
-      if (!id) {
-        return;
-      }
-
-      this.isNewFlight = false;
-
-      const flight = await this.flightService.getByIdAsync(id);
-
-      if (!flight) {
-        return;
-      }
-
-      this.flight = flight;
-
-      this.flight.assignment = this.options?.dronAppointment?.find(x => x.name == this.flight.assignment?.name);
-      this.flight.model = this.options.dronModels?.find(x => x.name == this.flight.model?.name);
-
-    })
+    //   }
+    // })
 
   }
 
@@ -67,12 +78,14 @@ export class PilotStartComponent implements OnInit {
     this.flight.userId = this.userInfo._id;
 
     await this.flightService.addFlightAsync(this.flight);
-    await this.getFlightsAssignedToUser();
 
     alert('Заявку подано');
+    await this.flightService.refreshActiveFlight();
+    //this.route.navigate(['flight/' + FLIGHT_ROUTES.WAITING_APPROVAL]);
   }
 
   validateStep(step: FlightSteps) {
+    // console.log("test");
     // TODO: refactor later
 
     switch(step) {
@@ -84,10 +97,6 @@ export class PilotStartComponent implements OnInit {
 
     }
     return false;
-  }
-
-  private async getFlightsAssignedToUser() {
-    this.flights = await this.flightService.getByUserIdAsync(this.userInfo._id);
   }
 
   public get FlightSteps() {

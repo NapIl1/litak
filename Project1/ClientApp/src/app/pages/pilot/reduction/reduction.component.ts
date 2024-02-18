@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
 import { User } from 'src/app/models/user';
@@ -20,6 +21,8 @@ export class PilotReductionComponent implements OnInit {
     isNewFlight: boolean = true;
     dateNow = Date.now();
 
+    subs: Subscription[] = [];
+
     constructor(
         private router: Router,
         private flightService: FlightService,
@@ -28,37 +31,13 @@ export class PilotReductionComponent implements OnInit {
         private route: ActivatedRoute) { }
 
     async ngOnInit(): Promise<void> {
-        this.flight.operatorPhone = this.userInfo.userOptions?.operatorPhoneNumber;
-        this.flight.spotterPhone = this.userInfo.userOptions?.spotterPhoneNumber;
-        this.flight.operator = this.userInfo.userOptions?.nickName;
-        this.flight.discordUrl = this.options.discordUrl;
-        this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == this.userInfo.userOptions?.dronAppointment?.toUpperCase());
-        this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == this.userInfo.userOptions?.dronModel?.toUpperCase());
-
-        this.route.paramMap.subscribe(async params => {
-            const id = params.get('id');
-
-            if (!id) {
-                return;
+        const s = this.flightService.activeFlight$.subscribe(flight => {
+            if (flight) {
+                this.flight = flight;
             }
+        });
 
-            this.isNewFlight = false;
-
-            const flight = await this.flightService.getByIdAsync(id);
-
-            if (!flight) {
-                return;
-            }
-
-            this.flight = flight;
-
-            this.flight.assignment = this.options?.dronAppointment?.find(x => x.name == this.flight.assignment?.name);
-            this.flight.model = this.options.dronModels?.find(x => x.name == this.flight.model?.name);
-        })
-    }
-
-    public navigateToDiscordUrl() {
-        window.open(this.options.discordUrl, '_blank')!.focus();
+        this.subs.push(s);
     }
 
     public async createFlight() {
@@ -70,7 +49,7 @@ export class PilotReductionComponent implements OnInit {
         alert('Заявку подано');
     }
 
-    public async next() {
+    public async next(isSkipped = false) {
         if (this.flight.flightStep.isApproved == false && this.flight.flightStep.step === FlightSteps.START) {
             alert('Не дозволено!');
             return;
@@ -80,6 +59,10 @@ export class PilotReductionComponent implements OnInit {
         this.flight.flightStep.step = FlightSteps.REDUCTION;
         this.flight.flightStep.isApproved = true;
         this.flight.isSectionCollapsed = true;
+
+        if (!isSkipped) {
+            this.flight.flightStep.visibleStep = FlightSteps.REDUCTION;
+        }
 
         await this.flightService.updateFlightAsync(this.flight);
         await this.getFlightsAssignedToUser();

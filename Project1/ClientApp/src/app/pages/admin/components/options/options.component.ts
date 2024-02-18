@@ -29,12 +29,15 @@ export class OptionsComponent {
   ]
 
   colorPlaceholder = 'Текст';
+  encodedParam: string;
   constructor(private optionsService: OptionsService) {
+    this.encodedParam = encodeURIComponent(JSON.stringify(this.options));
   }
 
   async ngOnInit(): Promise<void> {
     await this.optionsService.addFlightSteps();
     this.options = await this.optionsService.getAllOptions();
+    this.encodedParam = encodeURIComponent(JSON.stringify(this.options));
   }
 
   public async changeDiscordUrl() {

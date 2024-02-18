@@ -2,12 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { concatWith, switchMap } from 'rxjs';
+import { FLIGHT_ROUTES } from 'src/app/consts/consts';
 import { DroneModel, ValueColor } from 'src/app/models/droneModel';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
 import { User, UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
+import { RoutingService } from 'src/app/services/routing.service';
 import { UserService } from 'src/app/services/user.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -59,39 +61,79 @@ export class PilotComponent implements OnInit {
     if (ui) {
       this.userInfo = ui;
 
-      await this.getFlightsAssignedToUser();
-      this.flight.operatorPhone = ui.userOptions?.operatorPhoneNumber;
-      this.flight.spotterPhone = ui.userOptions?.spotterPhoneNumber;
-      this.flight.operator = ui.userOptions?.nickName;
-      this.flight.discordUrl = this.options.discordUrl;
-      this.flight.brigade = ui.userOptions?.brigade;
-      this.flight.staffUnit = ui.userOptions?.staffUnit;
-      this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == ui.userOptions?.dronAppointment?.toUpperCase());
-      this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == ui.userOptions?.dronModel?.toUpperCase());
+      await this.flightService.refreshActiveFlight();
+
+      this.flightService.activeFlight$.subscribe(flight => {
+        console.log("Refresh flight");
+        this.handleRouting(flight);
+      });
+
+
+
+
+      
+
+      // this.flight.operatorPhone = ui.userOptions?.operatorPhoneNumber;
+      // this.flight.spotterPhone = ui.userOptions?.spotterPhoneNumber;
+      // this.flight.operator = ui.userOptions?.nickName;
+      // this.flight.discordUrl = this.options.discordUrl;
+      // this.flight.brigade = ui.userOptions?.brigade;
+      // this.flight.staffUnit = ui.userOptions?.staffUnit;
+      // this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == ui.userOptions?.dronAppointment?.toUpperCase());
+      // this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == ui.userOptions?.dronModel?.toUpperCase());
+
+      
     }
 
-    this.route.paramMap.subscribe(async params => {
-      const id = params.get('id');
+    // this.route.paramMap.subscribe(async params => {
+    //   const id = params.get('id');
 
-      if (!id) {
-        return;
-      }
+    //   if (!id) {
+    //     return;
+    //   }
 
-      this.isNewFlight = false;
+    //   this.isNewFlight = false;
 
-      const flight = await this.flightService.getByIdAsync(id);
+    //   const flight = await this.flightService.getByIdAsync(id);
 
-      if (!flight) {
-        return;
-      }
+    //   if (!flight) {
+    //     return;
+    //   }
 
-      this.flight = flight;
+    //   this.flight = flight;
 
-      this.flight.assignment = this.options?.dronAppointment?.find(x => x.name == this.flight.assignment?.name);
-      this.flight.model = this.options.dronModels?.find(x => x.name == this.flight.model?.name);
+    //   this.flight.assignment = this.options?.dronAppointment?.find(x => x.name == this.flight.assignment?.name);
+    //   this.flight.model = this.options.dronModels?.find(x => x.name == this.flight.model?.name);
+    // })
+    
+  }
 
-    })
+  private handleRouting(flight: Flight | null) {
+    if (!flight) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.START]);
+      return;
+    }
 
+    if (flight.flightStep.step === FlightSteps.START && flight.flightStep.isApproved === false) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.WAITING_APPROVAL]);
+      return;
+    }
+    
+    if (flight.flightStep.step === FlightSteps.START && flight.flightStep.isApproved === true) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.FLIGHT]);
+    }
+
+    if (flight.flightStep.step === FlightSteps.FLIGHT) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.LBZ_FORWARD]);
+    }
+
+    if (flight.flightStep.step === FlightSteps.LBZ_FORWARD) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.REDUCTION]);
+    }
+
+    if (flight.flightStep.step === FlightSteps.END) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.START]);
+    }
   }
 
   handleLocalRoute(route: string){
@@ -109,6 +151,7 @@ export class PilotComponent implements OnInit {
     await this.getFlightsAssignedToUser();
 
     alert('Заявку подано');
+    this.router.navigate(['waiting-approval'], {relativeTo: this.route});
   }
 
   public async next() {
@@ -165,7 +208,7 @@ export class PilotComponent implements OnInit {
     await this.getFlightsAssignedToUser();
 
     if (this.flight.flightStep.step == FlightSteps.END) {
-      this.router.navigate(['new-flight']);
+      this.router.navigate(['flight']);
       return;
     }
 
@@ -173,7 +216,7 @@ export class PilotComponent implements OnInit {
   }
 
   public newFlight() {
-    this.router.navigate(['new-flight']);
+    this.router.navigate(['flight']);
   }
 
   public async terminateFlight(isApproved: boolean) {
@@ -184,10 +227,11 @@ export class PilotComponent implements OnInit {
 
     await this.getFlightsAssignedToUser();
     await this.flightService.updateFlightAsync(this.flight);
-    this.router.navigate(['new-flight']);
+    this.router.navigate(['flight']);
   }
 
   validateStep(step: FlightSteps) {
+    // console.log("test");
     // TODO: refactor later
 
     switch(step) {
@@ -202,7 +246,16 @@ export class PilotComponent implements OnInit {
   }
 
   private async getFlightsAssignedToUser() {
+    // const allFligths = await this.flightService.getAllFlightsAsync();
+    // this.flights = allFligths.filter(x => x.userId == this.userInfo._id && x.flightStep.step != FlightSteps.END);
+
     this.flights = await this.flightService.getByUserIdAsync(this.userInfo._id);
+  }
+
+  isRequestOpened = false;
+
+  public navigateToRequest() {
+    this.isRequestOpened = !this.isRequestOpened;
   }
 
   public get FlightSteps() {

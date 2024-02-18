@@ -1,33 +1,29 @@
-<div class="tab-regular">
-    <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade" id="flight" role="tabpanel" aria-labelledby="profile-tab">
-            <div class="row">
-                <div class="col-12">
-                    <div>
-                        <label class="col-form-label">Дата вильоту</label>
+<div *ngIf="flight">
 
-                        <input *ngIf="!flight.flightStartDate" [ngModel]="dateNow | date:'yyyy-MM-dd HH:mm'"
-                            type="datetime-local" disabled="true" class="form-control">
-                        <input *ngIf="flight.flightStartDate"
-                            [ngModel]="flight.flightStartDate | date:'yyyy-MM-dd HH:mm'" type="datetime-local"
-                            disabled="true" class="form-control">
-                    </div>
-                </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="mt-3 d-flex justify-content-end">
+                <button
+                    [disabled]="flight.flightStep.step !== FlightSteps.START || flight.flightStep.isApproved === false"
+                    class="btn btn-success w-100" (click)="next()">
+                    Виліт
+                    <i class="fas fa-arrow-right"></i>
+                </button>
             </div>
-
-            <div class="row">
-                <div class="col-12">
-                    <div class="mt-3 d-flex justify-content-end">
-                        <button
-                            [disabled]="flight.flightStep.step !== FlightSteps.START || flight.flightStep.isApproved === false"
-                            class="btn btn-success" (click)="next()">
-                            Виліт
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="mt-3 d-flex justify-content-end">
+                <button
+                    [disabled]="flight.flightStep.step !== FlightSteps.START || flight.flightStep.isApproved === false"
+                    class="btn btn-danger w-100" (click)="terminateFlight(true)">
+                    Скасувати заявку
+                    <i class="fas fa-arrow-right"></i>
+                </button>
             </div>
-
         </div>
     </div>
 </div>
+

@@ -25,7 +25,7 @@ export class LoginComponent {
     }
 
     if (userInfo?.role == UserRole.PILOT) {
-      this.router.navigate(['new-flight']);
+      this.router.navigate(['flight']);
     }
 
     if (userInfo?.role == UserRole.PPO) {

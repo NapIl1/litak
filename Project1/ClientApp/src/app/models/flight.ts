@@ -16,6 +16,8 @@ export interface FlightStep {
 
     isApprovedByPPO?: boolean;
     isApprovedByREB?: boolean;
+
+    visibleStep?:number;
 }
 
 export interface Flight {
@@ -46,9 +48,13 @@ export interface Flight {
     LBZForwardDate?: Date;
     isLBZForward?: boolean;
 
+    isForwardChanged?: boolean;
+    changedForwardRoute?: string;
+
     returnDate?: Date;
     isReturnChanged?: boolean;
     changedReturnRoute?: string;
+
     boardingStatus?: ValueColor;
 
     LBZBackDate?: Date;
@@ -67,8 +73,6 @@ export interface Flight {
 
     userId?: string;
 
-    isExpand?: boolean;
-
     isRejected?: boolean;
     rejectedReason?: string;
     isRejectedbyPPO?: boolean;
@@ -79,4 +83,6 @@ export interface Flight {
     flightStep: FlightStep;
 
     isSectionCollapsed: boolean;
+
+    isChecked?: boolean;
 }
