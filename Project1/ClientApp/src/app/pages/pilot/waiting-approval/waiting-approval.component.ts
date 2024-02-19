@@ -1,17 +1,14 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subscription, interval, switchMap } from 'rxjs';
-import { FLIGHT_ROUTES } from 'src/app/consts/consts';
-import { DroneModel, ValueColor } from 'src/app/models/droneModel';
-import { Flight, FlightSteps } from 'src/app/models/flight';
+import { ValueColor } from 'src/app/models/droneModel';
+import { Flight } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
 import { User, UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
 import { RoutingService } from 'src/app/services/routing.service';
 import { UserService } from 'src/app/services/user.service';
-import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-pilot-waiting-approval',

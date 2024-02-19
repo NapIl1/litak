@@ -36,41 +36,35 @@ export class PpoComponent implements OnInit, OnDestroy {
   }
 
   toggleSection(flight: any) {
-    flight.isSectionCollapsed = !flight.isSectionCollapsed;
+    flight.isChecked = !flight.isChecked;
 
 
-    if(flight.isSectionCollapsed === false) {
-      const str = localStorage.getItem("CHECKED_FLIGHTS");
+    const str = localStorage.getItem("CHECKED_FLIGHTS");
 
-      let checkedFlights: string[] = [];
-  
-      if(str != null) {
-        checkedFlights = JSON.parse(str);
-      } 
+    let checkedFlights: string[] = [];
 
-      if (!checkedFlights?.includes(flight._id)) {
-        checkedFlights.push(flight._id);
-        flight.isChecked = true;
-        localStorage.setItem("CHECKED_FLIGHTS", JSON.stringify(checkedFlights));
-      }
-
+    if (str != null) {
+      checkedFlights = JSON.parse(str);
     }
 
-   
-
+    if (!checkedFlights?.includes(flight._id)) {
+      checkedFlights.push(flight._id);
+      flight.isChecked = true;
+      localStorage.setItem("CHECKED_FLIGHTS", JSON.stringify(checkedFlights));
+    }
+    
     // save checked
   }
 
   async ngOnInit(): Promise<void> {
+    await this.getOptions();
+    await this.initFlights();
 
     var ui = this.userService.getUserInfo();
 
     if (ui) {
       this.userRole = ui.role;
     }
-
-    await this.getOptions()
-    await this.initFlights();
 
     if (this.options.flightStatus) {
       this.flightStatuses = this.options.flightStatus;
@@ -85,10 +79,12 @@ export class PpoComponent implements OnInit, OnDestroy {
     this.options = await this.optionsService.getAllOptions();
   }
 
-  public async approve(id: string | undefined) {
+  public async approve(flightId: string | undefined) {
 
-    if (id) {
-      const flightToUpdate = this.flights.find(x => x._id == id);
+    if (flightId) {
+      //const flightToUpdate = this.flights.find(x => x._id == flightId);
+
+      const flightToUpdate = await this.flightService.getByIdAsync(flightId);
 
       if (flightToUpdate) {
 
@@ -100,16 +96,23 @@ export class PpoComponent implements OnInit, OnDestroy {
           flightToUpdate.flightStep.isApprovedByREB = true;
         }
 
-        if (flightToUpdate.flightStep.isApprovedByPPO == true && flightToUpdate.flightStep.isApprovedByREB == true) {
+        if (this.userRole == UserRole.ADMIN) {
+          flightToUpdate.flightStep.isApprovedByAdmin = true;
+        }
+
+        if (flightToUpdate.flightStep.isApprovedByPPO == true
+           && flightToUpdate.flightStep.isApprovedByREB == true
+           && flightToUpdate.flightStep.isApprovedByAdmin == true) {
           flightToUpdate.flightStep.isApproved = true;
-          flightToUpdate.isSectionCollapsed = true;
+          flightToUpdate.isRequireAttention = false;
         }
 
         await this.flightService.updateFlightAsync(flightToUpdate);
+        await this.initFlights();
       }
     }
 
-    await this.initFlights();
+    
   }
 
   public async discard(id: string | undefined) {
@@ -127,6 +130,10 @@ export class PpoComponent implements OnInit, OnDestroy {
           flightToUpdate.isRejectedbyREB = true;
         }
 
+        if (this.userRole == UserRole.ADMIN) {
+          flightToUpdate.isRejectedbyAdmin = true;
+        }
+
         flightToUpdate.rejectedReason = prompt("Введіть причину заборони") ?? undefined;
         await this.flightService.updateFlightAsync(flightToUpdate);
       }
@@ -137,13 +144,11 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   async initFlights() {
     
-    const nonCollapsedFlights = this.flights.filter(x=>x.isSectionCollapsed == false);
     const allFlights = await this.flightService.getActiveFlightAsync();
+    const nonCollapsedFlights = allFlights.filter(x=>x.isRequireAttention == false);
     
     const filtered = allFlights.filter(x => !x.isRejected);
     
-    //console.log(filtered);
-
     this.flights = [];
     this.flights.push(...filtered.filter(x => x.flightStep.isApproved === false))
 
@@ -154,8 +159,8 @@ export class PpoComponent implements OnInit, OnDestroy {
     this.flights.forEach(updatedFlight => {
       // Find the corresponding collapsed flight
       const nonCollapsedFlight = nonCollapsedFlights.find(flight => flight._id === updatedFlight._id);
-      if (nonCollapsedFlight && nonCollapsedFlight.isSectionCollapsed !== updatedFlight.isSectionCollapsed) {
-        updatedFlight.isSectionCollapsed = nonCollapsedFlight.isSectionCollapsed;
+      if (nonCollapsedFlight && nonCollapsedFlight.isRequireAttention !== updatedFlight.isRequireAttention) {
+        updatedFlight.isRequireAttention = nonCollapsedFlight.isRequireAttention;
       }
     });
 
@@ -165,23 +170,22 @@ export class PpoComponent implements OnInit, OnDestroy {
 
     if(str != null) {
       checkedFlights = JSON.parse(str);
-    } 
-    
-    //[];
+    }
 
     this.flights.forEach(flight => {
 
-      if (flight.isForwardChanged) {
-
+      if(flight.isForwardChanged === true || flight.isReturnChanged === true || flight.flightStep.isApproved === false) {
         if (checkedFlights?.includes(flight._id!)) {
           flight.isChecked = true;
+          flight.isRequireAttention = false;
         } else {
           flight.isChecked = false;
         }
-      } 
-      else {
+      } else {
         flight.isChecked = true;
       }
+
+      
     });
   
     checkedFlights = checkedFlights.filter(id => this.flights.some(x => x._id == id));

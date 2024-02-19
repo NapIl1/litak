@@ -32,7 +32,6 @@ import { PilotReturnComponent } from './pages/pilot/return/return.component';
 import { PilotReductionComponent } from './pages/pilot/reduction/reduction.component';
 import { PilotEndComponent } from './pages/pilot/end/end.component';
 import { WaitingApprovalComponent } from './pages/pilot/waiting-approval/waiting-approval.component';
-import { SimpleModalModule } from 'ngx-simple-modal';
 import { FlightCardComponent } from './pages/shared/flight-card/flight-card.component';
 
 @NgModule({

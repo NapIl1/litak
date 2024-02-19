@@ -43,6 +43,8 @@ export class FlightService {
     const flights = await this.getByUserIdAsync(id);
     if (flights.length > 0) {
       this.activeFlightSubject.next(flights[0]);
+    } else{
+      this.activeFlightSubject.next(null);
     }
   }
 

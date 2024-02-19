@@ -13,37 +13,29 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './lbz-forward.component.html',
   styleUrls: ['./lbz-forward.component.scss']
 })
-export class PilotLbzForwardComponent implements OnInit, OnDestroy {
-  @Input() flights: Flight[] = [];
-  @Input() flight!: Flight;
-  @Input() userInfo!: User;
-  @Input() options!: DroneOptions;
-  isNewFlight: boolean = true;
-  dateNow = Date.now();
 
+export class PilotLbzForwardComponent implements OnInit, OnDestroy {
+  flight!: Flight;
+  dateNow = Date.now();
+  isNextStep = false;
+  isChangeRoute = false;
   subs: Subscription[] = [];
 
-  isChangeRoute = false;
-
   constructor(
-    private router: Router,
-    private flightService: FlightService,
-    private optionsService: OptionsService,
-    private userService: UserService,
-    private route: ActivatedRoute) { }
+      private flightService: FlightService) { }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe());
+      this.subs.forEach(s => s.unsubscribe());
   }
 
   async ngOnInit(): Promise<void> {
-    const s = this.flightService.activeFlight$.subscribe(flight => {
-      if (flight) {
-        this.flight = flight;
-      }
-    });
+      const s = this.flightService.activeFlight$.subscribe(flight => {
+          if (flight) {
+              this.flight = flight;
+          }
+      });
 
-    this.subs.push(s);
+      this.subs.push(s);
   }
 
   public async next(isSkipped = false) {
@@ -54,8 +46,10 @@ export class PilotLbzForwardComponent implements OnInit, OnDestroy {
 
     if (this.isChangeRoute) {
       this.flight.isForwardChanged = true;
+      this.flight.isRequireAttention = true;
+    } else {
+      this.flight.isRequireAttention = false;
     }
-
     
     this.flight.flightStep.step = FlightSteps.LBZ_FORWARD;
     this.flight.flightStep.isApproved = true;
@@ -64,11 +58,13 @@ export class PilotLbzForwardComponent implements OnInit, OnDestroy {
       this.flight.LBZForwardDate = new Date;
       this.flight.flightStep.visibleStep = FlightSteps.LBZ_FORWARD;
     }
-    
-    this.flight.isSectionCollapsed = true;
 
     await this.flightService.updateFlightAsync(this.flight);
     await this.flightService.refreshActiveFlight();
+  }
+
+  public validateStep() {
+    return this.flight.changedForwardRoute == null || this.flight.changedForwardRoute == ''
   }
 
   public get FlightSteps() {

@@ -14,13 +14,11 @@ export interface User {
     role?: UserRole;
     userOptions?: {
         nickName?: string;
-        operatorPhoneNumber?: string;
-        spotterPhoneNumber?: string;
+        phoneNumber?: string;
         unitNumber?: string;
         dronModel?: string;
         dronAppointment?: string;
         dronType?: string;
-        brigade?: string;
-        staffUnit?: string;
+        unit?: string;
     }
 };

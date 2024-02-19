@@ -28,11 +28,12 @@ export class PilotStartComponent implements OnInit {
   };
 
   flight: Flight = {
-    isSectionCollapsed: false,
+    isRequireAttention: false,
     flightStep: {
       step: FlightSteps.START,
       visibleStep: FlightSteps.START,
       isApproved: false,
+      isApprovedByAdmin: false,
       isApprovedByPPO: false,
       isApprovedByREB: false,
     },
@@ -52,14 +53,13 @@ export class PilotStartComponent implements OnInit {
     if (ui) {
       this.userInfo = ui;
 
-      this.flight.operatorPhone = ui.userOptions?.operatorPhoneNumber;
-      this.flight.spotterPhone = ui.userOptions?.spotterPhoneNumber;
+      this.flight.phoneNumber = ui.userOptions?.phoneNumber;
       this.flight.operator = ui.userOptions?.nickName;
       this.flight.discordUrl = this.options.discordUrl;
-      this.flight.brigade = ui.userOptions?.brigade;
-      this.flight.staffUnit = ui.userOptions?.staffUnit;
+      this.flight.unit = ui.userOptions?.unit;
       this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == ui.userOptions?.dronAppointment?.toUpperCase());
       this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == ui.userOptions?.dronModel?.toUpperCase());
+      this.flight.isRequireAttention = false;
     }
 
     // this.flightService.activeFlight$.subscribe(res => {
@@ -84,19 +84,11 @@ export class PilotStartComponent implements OnInit {
     //this.route.navigate(['flight/' + FLIGHT_ROUTES.WAITING_APPROVAL]);
   }
 
-  validateStep(step: FlightSteps) {
-    // console.log("test");
-    // TODO: refactor later
-
-    switch(step) {
-      case FlightSteps.START:
-        return this.flight.isInDiscord !== true
-        || this.flight.assignment == null
-        || this.flight.model == null
-        || this.flight.operator == null || this.flight.operator === ''
-
-    }
-    return false;
+  validateStep() {
+    return this.flight.isInDiscord !== true
+      || this.flight.assignment == null
+      || this.flight.model == null
+      || this.flight.operator == null || this.flight.operator === ''
   }
 
   public get FlightSteps() {

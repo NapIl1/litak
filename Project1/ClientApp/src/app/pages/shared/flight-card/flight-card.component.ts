@@ -28,11 +28,10 @@ export class FlightCardComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     var ui = this.userService.getUserInfo();
-
     if (ui) {
       this.userRole = ui.role;
     }
-
+    
     const options = await this.optionsService.getAllOptions();
 
     if (options.flightStatus) {
@@ -42,7 +41,7 @@ export class FlightCardComponent implements OnInit {
 
   toggleSection(flight: any) {
     if(this.isCollapsable) {
-      flight.isSectionCollapsed = !flight.isSectionCollapsed;
+      flight.isRequireAttention = !flight.isRequireAttention;
     }
   }
 

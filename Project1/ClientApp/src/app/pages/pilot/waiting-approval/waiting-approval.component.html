@@ -16,15 +16,14 @@
                     <div>
                         <span [style.backgroundColor]="flight.model?.color"
                             class="badge badge-primary bg-dark">{{flight.model?.name}}</span>
-                        <span class="badge badge-primary bg-dark">{{flight.brigade}}</span>
+                        <span class="badge badge-primary bg-dark">{{flight.unit}}</span>
                     </div>
 
                     <div>
                         <span class="badge badge-primary bg-dark">{{flight.operator?.toUpperCase()}}</span>
-                        <span class="badge badge-primary bg-dark">{{flight.staffUnit}}</span>
                     </div>
 
-                    <div class="alert alert-info mb-0" [class.hidden]="flight.isSectionCollapsed">
+                    <div class="alert alert-info mb-0" [class.hidden]="flight.isRequireAttention">
                         <!-- <b>Статус: </b>  -->
 
                         <!-- <span [ngSwitch]="flight.flightStep.step">
@@ -74,6 +73,8 @@
                         <div *ngIf="flight.flightStep.isApprovedByPPO == false"><b>Очікується дозвіл від ППО</b>
                         </div>
                         <div *ngIf="flight.flightStep.isApprovedByREB == false"><b>Очікується дозвіл від РЕБ</b>
+                        </div>
+                        <div *ngIf="flight.flightStep.isApprovedByAdmin == false"><b>Очікується дозвіл від Чергового</b>
                         </div>
                     </div>
 

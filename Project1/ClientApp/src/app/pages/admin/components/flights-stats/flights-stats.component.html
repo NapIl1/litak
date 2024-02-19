@@ -13,7 +13,7 @@
                                 <tr>
                                     <th scope="col">Місія</th>
                                     <th scope="col">Дрон</th>
-                                    <th scope="col">Бригада</th>
+                                    <th scope="col">Підрозділ</th>
                                     <th scope="col">Машршрут вперед</th>
                                     <th scope="col">Виліт</th>
                                     <th scope="col">ЛБЗ Вперед</th>
@@ -35,9 +35,9 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let item of firstPart; index as i">
-                                    <td>{{ item.dateOfFlight | date: 'ddMMyy-HHmm' }}-{{item.operator}}-{{item.brigade}}</td> <!--Місія-->
+                                    <td>{{ item.dateOfFlight | date: 'ddMMyy-HHmm' }}-{{item.operator}}-{{item.unit}}</td> <!--Місія-->
                                     <td>{{ item.assignment!.name }}</td> <!--Дрон-->
-                                    <td>{{ item.brigade }}</td> <!--Бригада-->
+                                    <td>{{ item.unit }}</td> <!--Підрозділ-->
                                     <td>{{ item.routeForward }}</td> <!--Машршрут вперед-->
                                     <td>{{ item.dateOfFlight | date : 'dd/MM/yy HH:mm' }}</td> <!--Виліт-->
                                     <td>{{ item.LBZForwardDate | date : 'dd/MM/yy HH:mm' }}</td> <!--ЛБЗ Вперед-->
@@ -88,7 +88,7 @@
                                 <tr *ngIf="expanded">
                                     <td class="alert alert-success" colspan="7">
                                         <div><b>Оператор:</b> {{ expanded.operator }}</div>
-                                        <div><b>Телефон:</b> {{ expanded.operatorPhone }}</div>
+                                        <div><b>Телефон:</b> {{ expanded.phoneNumber }}</div>
                                         <div><b>Створений:</b> {{ expanded.dateOfFlight | date : 'dd/MM/yy HH:mm'}}</div>
                                         <div><b>Маршрут вперед:</b> {{ expanded.routeForward }} </div>
                                         <div><b>Виліт:</b> {{ expanded.dateOfFlight | date : 'dd/MM/yy HH:mm' }}</div>

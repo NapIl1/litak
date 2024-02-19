@@ -12,14 +12,12 @@ export class PersonalInfoComponent implements OnInit {
   userInfo: User = {
     userOptions: {
       nickName: '',
-      operatorPhoneNumber: '',
-      spotterPhoneNumber: '',
+      phoneNumber: '',
       unitNumber: '',
       dronType: '',
       dronModel: '',
       dronAppointment: '',
-      brigade: '',
-      staffUnit: ''
+      unit: '',
     }
   };
 

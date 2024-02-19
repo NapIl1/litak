@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 import { User, UserRole } from 'src/app/models/user';
 import { UserService } from 'src/app/services/user.service';
 
@@ -14,7 +15,9 @@ export class HeaderComponent implements OnInit{
 
   userInfo: User = {};
 
-  constructor(private userService: UserService, private router: Router) { }
+  currentUrl = '';
+
+  constructor(private userService: UserService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     const ui = this.userService.getUserInfo();
@@ -22,6 +25,11 @@ export class HeaderComponent implements OnInit{
     if(ui) {
       this.userInfo = ui;
     }
+    
+    this.router.events.pipe(filter(x => x instanceof NavigationEnd)).subscribe(x => {
+      this.currentUrl = (x as NavigationEnd).url;
+    })
+
   }
 
 

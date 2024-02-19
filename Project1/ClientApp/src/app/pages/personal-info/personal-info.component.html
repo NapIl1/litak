@@ -1,3 +1,5 @@
+<app-sidebar></app-sidebar>
+
 <div class="dashboard-wrapper">
     <div class="dashboard-ecommerce">
         <div class="container-fluid dashboard-content ">
@@ -23,7 +25,7 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="inputText3" class="col-form-label">Номер Телефону</label>
-                                        <input [(ngModel)]="userInfo!.userOptions!.operatorPhoneNumber"
+                                        <input [(ngModel)]="userInfo!.userOptions!.phoneNumber"
                                             mask='(000) 000-0000' type="text" class="form-control">
                                     </div>
                                 </div>
@@ -32,32 +34,12 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="inputText3" class="col-form-label">Бригада</label>
-                                        <input [(ngModel)]="userInfo!.userOptions!.brigade" type="text"
+                                        <label for="inputText3" class="col-form-label">Підрозділ</label>
+                                        <input [(ngModel)]="userInfo!.userOptions!.unit" type="text"
                                             class="form-control">
                                     </div>
                                 </div>
-
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="inputText3" class="col-form-label">Номер Оператора</label>
-                                        <input [(ngModel)]="userInfo!.userOptions!.spotterPhoneNumber"
-                                            mask='(000) 000-0000' type="text" class="form-control">
-                                    </div>
-                                </div>
                             </div>
-
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="inputText3" class="col-form-label">Штатний підрозділ</label>
-                                        <input [(ngModel)]="userInfo!.userOptions!.staffUnit"
-                                            type="text" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-
-
 
                             <div class="d-flex justify-content-end">
                                 <button class="btn btn-success" (click)="saveChanges()">Зберегти зміни</button>

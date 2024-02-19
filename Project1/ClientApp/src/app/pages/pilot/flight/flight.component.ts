@@ -58,7 +58,7 @@ export class PilotFlightComponent implements OnInit {
       this.flight.flightStep.step = FlightSteps.FLIGHT;
       this.flight.flightStep.visibleStep = FlightSteps.FLIGHT;
       this.flight.flightStep.isApproved = true;
-      this.flight.isSectionCollapsed = true;
+      this.flight.isRequireAttention = true;
 
 
   
@@ -67,7 +67,6 @@ export class PilotFlightComponent implements OnInit {
     }
   
     public async terminateFlight(isApproved: boolean) {
-      console.log(event);
       const res = confirm("Ви впевнені що хочете завершити політ?")
       if (res) {
         this.flight.isTerminated = true;

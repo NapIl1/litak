@@ -13,7 +13,7 @@ export enum FlightSteps {
 export interface FlightStep {
     step?: number;
     isApproved?: boolean;
-
+    isApprovedByAdmin?: boolean;
     isApprovedByPPO?: boolean;
     isApprovedByREB?: boolean;
 
@@ -23,10 +23,10 @@ export interface FlightStep {
 export interface Flight {
     _id?: string;
     operator?: string;
-    operatorPhone?: string;
-    spotterPhone?: string;
-    brigade?: string;
-    staffUnit?: string;
+    phoneNumber?: string;
+    unit?: string;
+    zone?: string;
+    streamLink?: string;
     assignment?: ValueColor;
     model?: ValueColor;
     controlRange?: ValueColor;
@@ -55,7 +55,7 @@ export interface Flight {
     isReturnChanged?: boolean;
     changedReturnRoute?: string;
 
-    boardingStatus?: ValueColor;
+    boardingStatus?: string;
 
     LBZBackDate?: Date;
     isLBZBack?: boolean;
@@ -77,12 +77,13 @@ export interface Flight {
     rejectedReason?: string;
     isRejectedbyPPO?: boolean;
     isRejectedbyREB?: boolean;
+    isRejectedbyAdmin?: boolean;
 
     isTerminated?: boolean;
 
     flightStep: FlightStep;
 
-    isSectionCollapsed: boolean;
+    isRequireAttention: boolean;
 
     isChecked?: boolean;
 }

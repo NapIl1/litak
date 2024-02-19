@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Flight, FlightSteps } from 'src/app/models/flight';
@@ -13,22 +13,18 @@ import { UserService } from 'src/app/services/user.service';
     templateUrl: './reduction.component.html',
     styleUrls: ['./reduction.component.scss']
 })
-export class PilotReductionComponent implements OnInit {
-    @Input() flights: Flight[] = [];
-    @Input() flight!: Flight;
-    @Input() userInfo!: User;
-    @Input() options!: DroneOptions;
-    isNewFlight: boolean = true;
+export class PilotReductionComponent implements OnInit, OnDestroy {
+    flight!: Flight;
     dateNow = Date.now();
-
+    isNextStep = false;
     subs: Subscription[] = [];
 
     constructor(
-        private router: Router,
-        private flightService: FlightService,
-        private optionsService: OptionsService,
-        private userService: UserService,
-        private route: ActivatedRoute) { }
+        private flightService: FlightService) { }
+
+    ngOnDestroy(): void {
+        this.subs.forEach(s => s.unsubscribe());
+    }
 
     async ngOnInit(): Promise<void> {
         const s = this.flightService.activeFlight$.subscribe(flight => {
@@ -40,57 +36,26 @@ export class PilotReductionComponent implements OnInit {
         this.subs.push(s);
     }
 
-    public async createFlight() {
-        this.flight.userId = this.userInfo._id;
-
-        await this.flightService.addFlightAsync(this.flight);
-        await this.getFlightsAssignedToUser();
-
-        alert('Заявку подано');
-    }
-
     public async next(isSkipped = false) {
         if (this.flight.flightStep.isApproved == false && this.flight.flightStep.step === FlightSteps.START) {
             alert('Не дозволено!');
             return;
         }
 
-        this.flight.reductionDate = new Date;
         this.flight.flightStep.step = FlightSteps.REDUCTION;
         this.flight.flightStep.isApproved = true;
-        this.flight.isSectionCollapsed = true;
-
+    
         if (!isSkipped) {
-            this.flight.flightStep.visibleStep = FlightSteps.REDUCTION;
+          this.flight.reductionDate = new Date;
+          this.flight.flightStep.visibleStep = FlightSteps.REDUCTION;
         }
 
         await this.flightService.updateFlightAsync(this.flight);
-        await this.getFlightsAssignedToUser();
-
-        if (this.flight.flightStep.step == FlightSteps.END) {
-            this.router.navigate(['new-flight']);
-            return;
-        }
+        await this.flightService.refreshActiveFlight();
     }
 
-
-    public async terminateFlight(isApproved: boolean) {
-        this.flight.isTerminated = true;
-        this.flight.endDate = new Date;
-        this.flight.flightStep.step = FlightSteps.END;
-        this.flight.flightStep.isApproved = isApproved;
-
-        await this.getFlightsAssignedToUser();
-        await this.flightService.updateFlightAsync(this.flight);
-        this.router.navigate(['new-flight']);
-    }
-
-    private async getFlightsAssignedToUser() {
-        this.flights = await this.flightService.getByUserIdAsync(this.userInfo._id);
-    }
-
-    public get FlightSteps() {
-        return FlightSteps;
+    public validateStep() {
+        return this.flight.reductionDistance == null || this.flight.reductionLocation == null || this.flight.reductionLocation == ''
     }
 }
 

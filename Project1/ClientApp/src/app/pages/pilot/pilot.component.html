@@ -1,101 +1,9 @@
-<div class="nav-left-sidebar sidebar-dark">
-    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;">
-        <div class="menu-list" style="overflow: hidden; width: auto; height: 100%;">
-            <nav class="navbar navbar-expand-lg navbar-light">
-                <a class="d-xl-none d-lg-none">Вильоти</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-
-
-
-                    <ul class="navbar-nav flex-column">
-
-                        <li class="nav-divider _nav-sidebar">
-                            Навігація
-                        </li>
-                        
-                        <li *ngIf="userInfo.role == userRoles.ADMIN" a class="nav-item _nav-sidebar">
-                            <a routerLink="/admin" class="nav-link nav-icons" href="#">
-                                <i class="fas fa-fw fa-cog"></i>
-                                Адмін
-                            </a>
-                        </li>
-        
-                        <li *ngIf="userInfo.role == userRoles.PPO" class="nav-item _nav-sidebar">
-                            <a routerLink="/ppo" class="nav-link nav-icons" href="#">
-                                <i class="fas fa-fw fa-rocket"></i>
-                                ППО
-                            </a>
-                        </li>
-        
-                        <li *ngIf="userInfo.role == userRoles.REB" class="nav-item _nav-sidebar">
-                            <a routerLink="/ppo" class="nav-link nav-icons" href="#">
-                                <i class="fas fa-fw fa-rocket"></i>
-                                РЕБ
-                            </a>
-                        </li>
-        
-                        <li *ngIf="userInfo.role == userRoles.ADMIN" class="nav-item _nav-sidebar">
-                            <a routerLink="/ppo" class="nav-link nav-icons" href="#">
-                                <i class="fas fa-fw fa-rocket"></i>
-                                ППО/РЕБ
-                            </a>
-                        </li>
-        
-                        <li *ngIf="userInfo.role == userRoles.ADMIN || userInfo.role == userRoles.PILOT" class="nav-item _nav-sidebar">
-                            <a routerLink="/flight" class="nav-link nav-icons" href="#">
-                                <i class="fas fa-fw fa-user"></i>
-                                Пілот
-                            </a>
-                        </li>
-
-                        <li class="nav-divider">
-                            Вильоти
-                        </li>
-                        <li class="nav-item ">
-                            <a [ngClass]="{active: isNewFlight}" class="nav-link" (click)="newFlight()">
-                                <i class="fas fa-plus"></i>
-                                Новий виліт
-                            </a>
-                        </li>
-                        <li *ngFor="let item of flights" class="nav-item" [routerLink]="['/flight', item._id]">
-                        <a [ngClass]="{active: flight._id == item._id}" class="nav-link" >
-                            <i *ngIf="item.flightStep.isApproved && !item.isRejected" class="fas fa-check-circle text-success"></i>
-                            <i *ngIf="!item.flightStep.isApproved && !item.isRejected" class="fas fa-exclamation-circle text-warning"></i>
-                            <i *ngIf="item.isRejected === true" class="fas fa-exclamation-circle text-danger"></i>
-                            {{item.dateOfFlight | date:'dd/MM/yy HH:mm'}}
-                            Статус: <span [ngSwitch]="item?.flightStep?.step">
-                                <span  *ngSwitchCase="FlightSteps.START">Старт</span>
-                                <span  *ngSwitchCase="FlightSteps.FLIGHT">Політ</span>
-                                <span  *ngSwitchCase="FlightSteps.LBZ_FORWARD">ЛБЗ ВПЕРЕД</span>
-                                <span  *ngSwitchCase="FlightSteps.RETURN">Повернення</span>
-                                <span  *ngSwitchCase="FlightSteps.LBZ_HOME">ЛБЗ назад</span>
-                                <span  *ngSwitchCase="FlightSteps.REDUCTION">Початок зниження</span>
-                                <span *ngSwitchCase="FlightSteps.END">Кінець</span>
-                            </span>
-                             
-                            
-                        </a>
-                    </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-        <div class="slimScrollBar"
-            style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 995.4px;">
-        </div>
-        <div class="slimScrollRail"
-            style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;">
-        </div>
-    </div>
-</div>
+<app-sidebar></app-sidebar>
 
 <div class="dashboard-wrapper">
     <div class="dashboard-ecommerce">
         <div class="container-fluid dashboard-content ">
+            <div *ngIf="flight">
 
             <div *ngIf="flight.isRejected === true" class="row">
                 <div class="alert alert-danger w-100 mb-0" role="alert">
@@ -112,25 +20,25 @@
 
             <div *ngIf="!flight.isRejected" class="row">
                 <div class="col-12">
-                    <div class="section-block">
-                        <h4 class="section-title">{{isNewFlight ? 'Створення нового вильоту' : 'Відредагувати виліт'}}</h4>
-                    </div>
                     <div class="card">
                         <div class="card-body">
-                            <div class="justify-content-end d-flex" *ngIf="flights.length > 0 && (flights[0].flightStep.step != FlightSteps.START || flights[0].flightStep.isApproved === true)" >
-                                    <button *ngIf="!isRequestOpened" class="btn btn-warning" style="width: 100px;" (click)="navigateToRequest()">
-                                        Заявка
-                                    </button>
-                                    <button *ngIf="isRequestOpened" class="btn btn-warning" style="width: 100px;" (click)="navigateToRequest()">
-                                        <i class="fas fa-arrow-left"></i>
-                                    </button>
+                            <div class="justify-content-end d-flex"
+                                *ngIf="(flight.flightStep.step != FlightSteps.START || flight.flightStep.isApproved === true)">
+                                <button *ngIf="!isRequestOpened" class="btn btn-warning" style="width: 100px;"
+                                    (click)="navigateToRequest()">
+                                    Заявка
+                                </button>
+                                <button *ngIf="isRequestOpened" class="btn btn-warning" style="width: 100px;"
+                                    (click)="navigateToRequest()">
+                                    <i class="fas fa-arrow-left"></i>
+                                </button>
                             </div>
                             <div *ngIf="!isRequestOpened">
-                                <router-outlet></router-outlet> 
+                                <router-outlet></router-outlet>
                             </div>
                             <div *ngIf="isRequestOpened">
                                 <div class="d-flex justify-content-center" style="flex-wrap: wrap;">
-                                <app-flight-card [flight]="flights[0]"></app-flight-card>
+                                    <app-flight-card [flight]="flight"></app-flight-card>
 
                                 </div>
                             </div>
@@ -138,6 +46,8 @@
                     </div>
                 </div>
             </div>
+
+        </div>
         </div>
     </div>
 </div>

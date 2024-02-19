@@ -1,32 +1,65 @@
-<div class="tab-regular">
-    <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade" id="lbzhome" role="tabpanel" aria-labelledby="contact-tab">
-            <div class="row">
-                <div class="col-12">
-                    <div>
-                        <label class="col-form-label">ЛБЗ назад час</label>
-                        
-                        <input *ngIf="!flight.LBZBackDate" [ngModel]="dateNow | date:'yyyy-MM-dd HH:mm'" type="datetime-local"
-                            disabled="true" class="form-control">
-                        <input *ngIf="flight.LBZBackDate" [ngModel]="flight.LBZBackDate | date:'yyyy-MM-dd HH:mm'"
-                            type="datetime-local" disabled="true" class="form-control">
-                    </div>
+<div *ngIf="flight">
+    <div *ngIf="!isChangeRoute">
+        <div class="row">
+            <div class="col-12">
+                <div class="mt-3 d-flex justify-content-end">
+                    <button class="btn btn-success w-100"
+                        (click)="next()">
+                        ЛБЗ Назад
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
                 </div>
             </div>
+        </div>
 
-            <div class="row">
-                <div class="col-12">
-                    <div class="mt-3 d-flex justify-content-end">
+        <div class="row">
+            <div class="col-12">
+                <div class="mt-3 d-flex justify-content-end">
+                    <button class="btn btn-danger w-100"
+                        (click)="isChangeRoute = true">
+                        Зміна ЛБЗ
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-                        <button
-                            [disabled]="flight.flightStep.step !== FlightSteps.RETURN"
-                             class="btn btn-success" (click)="next()">
-                             ЛБЗ Назад
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="mt-3 d-flex justify-content-end">
+                    <button class="btn btn-light w-100"
+                        (click)="next(true)">
+                        Пропустити
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <div *ngIf="isChangeRoute">
+
+        <div class="row">
+
+            <div class="col-12">
+                <label class="col-form-label">Новий маршрут</label>
+                <input [placeholder]="flight.routeBack ?? ''" type="text" class="form-control"
+                    [(ngModel)]="flight.changedReturnRoute">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="mt-3 d-flex justify-content-end">
+                    <button [disabled]="validateStep()" class="btn btn-success w-100"
+                        (click)="next()">
+                        Підтвердити
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
