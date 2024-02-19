@@ -13,20 +13,26 @@ export enum FlightSteps {
 export interface FlightStep {
     step?: number;
     isApproved?: boolean;
-
+    isApprovedByAdmin?: boolean;
     isApprovedByPPO?: boolean;
     isApprovedByREB?: boolean;
+
+    visibleStep?:number;
 }
 
 export interface Flight {
     _id?: string;
     operator?: string;
-    operatorPhone?: string;
-    spotterPhone?: string;
+    phoneNumber?: string;
+    unit?: string;
+    zone?: string;
+    streamLink?: string;
     assignment?: ValueColor;
     model?: ValueColor;
     controlRange?: ValueColor;
     videoRange?: ValueColor;
+    workingHeight?: string;
+    taskPerformanceArea?: string;
 
     dateOfFlight?: Date;
 
@@ -42,10 +48,14 @@ export interface Flight {
     LBZForwardDate?: Date;
     isLBZForward?: boolean;
 
+    isForwardChanged?: boolean;
+    changedForwardRoute?: string;
+
     returnDate?: Date;
     isReturnChanged?: boolean;
     changedReturnRoute?: string;
-    boardingStatus?: ValueColor;
+
+    boardingStatus?: string;
 
     LBZBackDate?: Date;
     isLBZBack?: boolean;
@@ -63,14 +73,17 @@ export interface Flight {
 
     userId?: string;
 
-    isExpand?: boolean;
-
     isRejected?: boolean;
     rejectedReason?: string;
     isRejectedbyPPO?: boolean;
     isRejectedbyREB?: boolean;
+    isRejectedbyAdmin?: boolean;
 
     isTerminated?: boolean;
 
     flightStep: FlightStep;
+
+    isRequireAttention: boolean;
+
+    isChecked?: boolean;
 }

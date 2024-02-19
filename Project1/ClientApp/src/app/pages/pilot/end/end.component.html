@@ -1,0 +1,79 @@
+<!-- <div class="tab-regular">
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade" id="end" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="row">
+                <div class="col-6">
+                    <div>
+                        <label class="col-form-label">Завершення</label>
+                        <input disabled="true" type="datetime-local" [ngModel]="dateNow | date:'yyyy-MM-dd HH:mm'"
+                            class="form-control">
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div>
+                        <label class="col-form-label">Повернення</label>
+                        <ng-select [(ngModel)]="flight.boardingStatus">
+                            <ng-option *ngFor="let item of options.boardingStatuses" [value]="item.name">
+                                <span [style.backgroundColor]="item.color" class="badge">{{item.name}}</span>
+                            </ng-option>
+                        </ng-select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="mt-3 d-flex justify-content-end">
+                        <button [disabled]="flight.flightStep.step !== FlightSteps.REDUCTION" class="btn btn-success"
+                            (click)="next()">
+                            Завершити
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+
+<div *ngIf="flight">
+
+    <div class="row">
+        <div class="col-12">
+            <label class="col-form-label">Варіанти завершення</label>
+            <ng-select
+              [(ngModel)]="flight.boardingStatus">
+              <ng-option *ngFor="let item of endOptions" [value]="item">
+                <span class="badge">{{item}}</span>
+              </ng-option>
+            </ng-select>
+          </div>
+    </div>
+
+
+    <!-- refactor later -->
+    <div *ngIf="flight.boardingStatus === customOptionSelector" class="row mt-2">
+        <div  class="col-12">
+            <div>
+              <input [(ngModel)]="custom" type="text" class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="mt-3 d-flex justify-content-end">
+                <button [disabled]="validateStep()"
+                    class="btn btn-success w-100" (click)="next()">
+                    Завершення
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+

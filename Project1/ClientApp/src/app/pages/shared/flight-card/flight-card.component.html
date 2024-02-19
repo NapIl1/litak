@@ -1,0 +1,99 @@
+
+    <div style="min-width: 200px;">
+        <div class="card m-1" [class.not-approved]="userRole == UserRoles.PPO && this.flight.flightStep.isApprovedByPPO === false 
+                    || userRole == UserRoles.REB && this.flight.flightStep.isApprovedByREB === false 
+                    || userRole == UserRoles.ADMIN && this.flight.flightStep.isApproved === false"
+            [style.backgroundColor]=" flight.flightStep.isApproved === true ? flight.assignment!.color : 'white'">
+
+            <div class="card-body p-2" (click)="toggleSection(flight)">
+                <div>
+                    <span [style.backgroundColor]="this.flightStatuses[flight.flightStep.visibleStep ?? 0].color"
+                        class="badge badge-primary">
+                        {{ this.flightStatuses[flight.flightStep.visibleStep ?? 0].name.toUpperCase() }}
+                    </span>
+                </div>
+                <div>
+                    <span [style.backgroundColor]="flight.model?.color"
+                        class="badge badge-primary bg-dark">{{flight.model?.name}}</span>
+                    <span class="badge badge-primary bg-dark">{{flight.zone}}</span>
+                </div>
+
+                <div>
+                    <span class="badge badge-primary bg-dark">{{flight.operator?.toUpperCase()}}</span>
+                    <span class="badge badge-primary bg-dark">{{flight.unit}}</span>
+                </div>
+
+                <div class="alert alert-info mb-0" [class.hidden]="flight.isRequireAttention">
+                    <div><b>Створений:</b> {{ flight.dateOfFlight | date : 'dd/MM/yy HH:mm'}}</div>
+                    <div><b>Виліт:</b> {{ flight.flightStartDate | date : 'dd/MM/yy HH:mm' }}</div>
+                    <div><b>ЛБЗ Вперед:</b> {{ flight.LBZForwardDate | date : 'dd/MM/yy HH:mm' }}</div>
+                    <div><b>Повернення:</b> {{ flight.returnDate | date : 'dd/MM/yy HH:mm' }}</div>
+                    <div><b>ЛБЗ Назад:</b> {{ flight.LBZBackDate | date : 'dd/MM/yy HH:mm' }}</div>
+                    <div *ngIf="flight?.reductionDate !=(undefined || null)"><b>Зниження:</b> {{ flight.reductionDate | date : 'dd/MM/yy HH:mm' }}</div>
+                </div>
+                <div class="alert alert-info mb-0" [class.hidden]="flight.isRequireAttention" style="background-color: #afd7de !important;">
+                    <div><b>Призначення:</b> {{flight.assignment!.name}}</div>
+                    <div><b>Маршрут вперед:</b> {{ flight.routeForward }} </div>
+
+                    <div class="bg-danger" *ngIf="flight.isForwardChanged">
+                        <i class="fas fa-exclamation-circle text-white"></i>
+                        <b>Маршрут до ЛБЗ:</b> {{ flight.changedForwardRoute }} </div>
+                    <div *ngIf="!flight.isForwardChanged"><b>Маршрут до ЛБЗ:</b> {{ flight.routeForward }} </div>
+
+                    <div class="bg-danger" *ngIf="flight.isReturnChanged">
+                        <i class="fas fa-exclamation-circle text-white"></i>
+                        <b>Маршрут від ЛБЗ:</b> {{ flight.changedReturnRoute }} </div>
+                    <div *ngIf="!flight.isReturnChanged"><b>Маршрут від ЛБЗ:</b> {{ flight.routeBack }} </div>
+                    <div *ngIf="flight.hasOwnProperty('reductionDistance')">Початок зниження за <b>{{flight.reductionDistance}} км</b> в район <b>{{flight.reductionLocation}}</b></div>
+                    <div><b>РВЗ:</b> {{flight.taskPerformanceArea}}</div>
+                    <div><b>Робоча висота:</b> {{ flight.workingHeight}}</div>
+                    <div><b>Д/Ч Керування:</b> {{ flight.controlRange}}</div>
+                    <div><b>Д/Ч Відео:</b> {{ flight.videoRange}}</div>
+                    
+                    <div><b>Стрім:</b> {{flight.streamLink}}</div>
+                </div>
+
+
+                <!-- <div *ngIf="flight.isReturnChanged == true" class="alert alert-danger mb-0 mt-1">
+                    <b>Маршрут назад змінився!</b>
+                    <div>
+                        {{flight.changedReturnRoute}}
+                    </div>
+                </div> -->
+
+                <div *ngIf="(userRole == UserRoles.PPO) && !flight.flightStep.isApprovedByPPO" class="d-flex justify-content-center mt-1">                     
+                    <button (click)="approve(flight._id)" class="btn btn-success w-50 m-1">
+                        Дозволити
+                    </button>
+                    <button (click)="discard(flight._id)" class="btn btn-danger w-50 m-1">
+                        Заборонити
+                    </button>
+                </div>
+                
+                <div *ngIf="(userRole == UserRoles.REB) && !flight.flightStep.isApprovedByREB" class="d-flex justify-content-center mt-1">
+                    <button (click)="approve(flight._id)" class="btn btn-success w-50 m-1">
+                        Дозволити
+                    </button>
+                    <button (click)="discard(flight._id)" class="btn btn-danger w-50 m-1">
+                        Заборонити
+                    </button>
+                </div>
+
+                <div *ngIf="userRole == UserRoles.ADMIN && (flight.flightStep.isApprovedByPPO == false && flight.flightStep.isApprovedByREB == false)" class="alert alert-warning mt-2 mb-0">
+                    <div *ngIf="flight.flightStep.isApprovedByPPO == false"><b>Очікується дозвіл від ППО</b></div>
+                    <div *ngIf="flight.flightStep.isApprovedByREB == false"><b>Очікується дозвіл від РЕБ</b></div>
+                </div>
+
+                <div *ngIf="(userRole == UserRoles.ADMIN) && !flight.flightStep.isApprovedByAdmin"
+                class="d-flex justify-content-center mt-1">
+                <button (click)="approve(flight._id)" class="btn btn-success w-50 m-1">
+                    Дозволити
+                </button>
+                <button (click)="discard(flight._id)" class="btn btn-danger w-50 m-1">
+                    Заборонити
+                </button>
+            </div>
+
+            </div>
+        </div>
+    </div>

@@ -1,15 +1,13 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { concatWith, switchMap } from 'rxjs';
-import { DroneModel, ValueColor } from 'src/app/models/droneModel';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
+import { FLIGHT_ROUTES } from 'src/app/consts/consts';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
 import { User, UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
 import { UserService } from 'src/app/services/user.service';
-import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-pilot',
@@ -17,7 +15,6 @@ import { v4 as uuidv4 } from 'uuid';
   styleUrls: ['./pilot.component.scss']
 })
 export class PilotComponent implements OnInit {
-
   userRoles = UserRole;
 
   userInfo: User = {};
@@ -26,22 +23,15 @@ export class PilotComponent implements OnInit {
 
   isNewFlight: boolean = true;
 
-  flights: Flight[] = [];
   options: DroneOptions = {
     boardingStatuses: [],
     dronAppointment: [],
     dronModels: []
   };
 
-  flight: Flight = {
-    flightStep: {
-      step: FlightSteps.START,
-      isApproved: false,
-      isApprovedByPPO: false,
-      isApprovedByREB: false,
-    },
-    dateOfFlight: new Date()
-  };
+  flight!: Flight;
+
+  isRequestOpened = false;
 
   constructor(
     private router: Router,
@@ -58,110 +48,72 @@ export class PilotComponent implements OnInit {
     if (ui) {
       this.userInfo = ui;
 
-      await this.getFlightsAssignedToUser();
-      console.log(ui);
-      this.flight.operatorPhone = ui.userOptions?.operatorPhoneNumber;
-      this.flight.spotterPhone = ui.userOptions?.spotterPhoneNumber;
-      this.flight.operator = ui.userOptions?.nickName;
-      this.flight.discordUrl = this.options.discordUrl;
-      this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == ui.userOptions?.dronAppointment?.toUpperCase());
-      this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == ui.userOptions?.dronModel?.toUpperCase());
+      await this.flightService.refreshActiveFlight();
+
+      this.flightService.activeFlight$.subscribe(flight => {
+        this.handleRouting(flight);
+
+        if (flight) {
+          this.flight = flight;
+        } else {
+          this.flight = {
+            isRequireAttention: false,
+            flightStep: {
+              step: FlightSteps.START,
+              isApproved: false,
+              isApprovedByPPO: false,
+              isApprovedByREB: false,
+            },
+            dateOfFlight: new Date()
+          };
+        }
+      });
+    }
+  }
+
+  private handleRouting(flight: Flight | null) {
+    if (!flight) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.START]);
+      return;
     }
 
-    this.route.paramMap.subscribe(async params => {
-      const id = params.get('id');
+    if (flight.flightStep.step === FlightSteps.START && flight.flightStep.isApproved === false) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.WAITING_APPROVAL]);
+      return;
+    }
 
-      if (!id) {
-        return;
-      }
+    if (flight.flightStep.step === FlightSteps.START && flight.flightStep.isApproved === true) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.FLIGHT]);
+    }
 
-      this.isNewFlight = false;
+    if (flight.flightStep.step === FlightSteps.FLIGHT) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.LBZ_FORWARD]);
+    }
 
-      const flight = await this.flightService.getByIdAsync(id);
+    if (flight.flightStep.step === FlightSteps.LBZ_FORWARD) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.RETURN]);
+    }
 
-      if (!flight) {
-        return;
-      }
+    if (flight.flightStep.step === FlightSteps.RETURN) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.LBZ_HOME]);
+    }
 
-      this.flight = flight;
+    if (flight.flightStep.step === FlightSteps.LBZ_HOME) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.REDUCTION]);
+    }
 
-      this.flight.assignment = this.options?.dronAppointment?.find(x => x.name == this.flight.assignment?.name);
-      this.flight.model = this.options.dronModels?.find(x => x.name == this.flight.model?.name);
+    if (flight.flightStep.step === FlightSteps.REDUCTION) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.END]);
+    }
 
-    })
-
+    if (flight.flightStep.step === FlightSteps.END) {
+      this.router.navigate(["flight/" + FLIGHT_ROUTES.START]);
+      this.isRequestOpened = false;
+    }
   }
 
   public navigateToDiscordUrl() {
     window.open(this.options.discordUrl, '_blank')!.focus();
-  }
-
-  public async createFlight() {
-    this.flight.userId = this.userInfo._id;
-
-    await this.flightService.addFlightAsync(this.flight);
-    await this.getFlightsAssignedToUser();
-
-    alert('Заявку подано');
-  }
-
-  public async next() {
-    if (this.flight.flightStep.isApproved == false && this.flight.flightStep.step === FlightSteps.START) {
-      alert('Не дозволено!');
-      return;
-    }
-
-    switch (this.flight.flightStep.step) {
-      case FlightSteps.START:
-        this.flight.flightStartDate = new Date;
-        this.flight.flightStep.step = FlightSteps.FLIGHT;
-        this.flight.flightStep.isApproved = true;
-        break;
-      case FlightSteps.FLIGHT:
-        this.flight.LBZForwardDate = new Date;
-        this.flight.flightStep.step = FlightSteps.LBZ_FORWARD;
-        this.flight.flightStep.isApproved = true;
-        break;
-      case FlightSteps.LBZ_FORWARD:
-        this.flight.returnDate = new Date;
-        this.flight.flightStep.step = FlightSteps.RETURN;
-        this.flight.flightStep.isApproved = true;
-        break;
-      case FlightSteps.RETURN:
-        this.flight.LBZBackDate = new Date;
-        this.flight.flightStep.step = FlightSteps.LBZ_HOME;
-        this.flight.flightStep.isApproved = true;
-        break;
-      case FlightSteps.LBZ_HOME:
-        this.flight.reductionDate = new Date;
-        this.flight.flightStep.step = FlightSteps.REDUCTION;
-        this.flight.flightStep.isApproved = true;
-        break;
-      case FlightSteps.REDUCTION:
-        this.flight.endDate = new Date;
-        this.flight.flightStep.step = FlightSteps.END;
-        this.flight.flightStep.isApproved = true;
-        break;
-      case FlightSteps.END:
-        break;
-
-      default:
-        break;
-    }
-
-    await this.flightService.updateFlightAsync(this.flight);
-    await this.getFlightsAssignedToUser();
-
-    if (this.flight.flightStep.step == FlightSteps.END) {
-      this.router.navigate(['new-flight']);
-      return;
-    }
-
-    // alert('Заявку подано');
-  }
-
-  public newFlight() {
-    this.router.navigate(['new-flight']);
   }
 
   public async terminateFlight(isApproved: boolean) {
@@ -170,31 +122,26 @@ export class PilotComponent implements OnInit {
     this.flight.flightStep.step = FlightSteps.END;
     this.flight.flightStep.isApproved = isApproved;
 
-    await this.getFlightsAssignedToUser();
     await this.flightService.updateFlightAsync(this.flight);
-    this.router.navigate(['new-flight']);
+    this.router.navigate(['flight']);
   }
 
-  validateStep(step: FlightSteps) {
-    // console.log("test");
+  public validateStep(step: FlightSteps) {
     // TODO: refactor later
 
-    switch(step) {
+    switch (step) {
       case FlightSteps.START:
         return this.flight.isInDiscord !== true
-        || this.flight.assignment == null
-        || this.flight.model == null
-        || this.flight.operator == null || this.flight.operator === ''
+          || this.flight.assignment == null
+          || this.flight.model == null
+          || this.flight.operator == null || this.flight.operator === ''
 
     }
     return false;
   }
 
-  private async getFlightsAssignedToUser() {
-    // const allFligths = await this.flightService.getAllFlightsAsync();
-    // this.flights = allFligths.filter(x => x.userId == this.userInfo._id && x.flightStep.step != FlightSteps.END);
-
-    this.flights = await this.flightService.getByUserIdAsync(this.userInfo._id);
+  public navigateToRequest() {
+    this.isRequestOpened = !this.isRequestOpened;
   }
 
   public get FlightSteps() {

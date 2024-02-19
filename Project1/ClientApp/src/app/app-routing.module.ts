@@ -12,6 +12,15 @@ import { OptionsComponent } from './pages/admin/components/options/options.compo
 import { UsersComponent } from './pages/admin/components/users/users.component';
 import { PersonalInfoComponent } from './pages/personal-info/personal-info.component';
 import { FlightsStatsComponent } from './pages/admin/components/flights-stats/flights-stats.component';
+import { WaitingApprovalComponent } from './pages/pilot/waiting-approval/waiting-approval.component';
+import { PilotStartComponent } from './pages/pilot/start/start.component';
+import { PilotFlightComponent } from './pages/pilot/flight/flight.component';
+import { PilotLbzForwardComponent } from './pages/pilot/lbz-forward/lbz-forward.component';
+import { PilotReturnComponent } from './pages/pilot/return/return.component';
+import { PilotLbzHomeComponent } from './pages/pilot/lbz-home/lbz-home.component';
+import { PilotReductionComponent } from './pages/pilot/reduction/reduction.component';
+import { PilotEndComponent } from './pages/pilot/end/end.component';
+import { FLIGHT_ROUTES } from './consts/consts';
 
 const routes: Routes = [
   {
@@ -28,16 +37,43 @@ const routes: Routes = [
         component: PersonalInfoComponent
       },
       {
-        path: 'new-flight',
+        path: 'flight',
         component: PilotComponent,
         canActivate: [RoleGuard],
-        data: { roles: [UserRole.ADMIN, UserRole.PILOT] }
-      },
-      {
-        path: 'flight/:id',
-        component: PilotComponent,
-        canActivate: [RoleGuard],
-        data: { roles: [UserRole.ADMIN, UserRole.PILOT] }
+        data: { roles: [UserRole.ADMIN, UserRole.PILOT] },
+        children:[
+          {
+            path: FLIGHT_ROUTES.START,
+            component: PilotStartComponent
+          },
+          {
+            path: FLIGHT_ROUTES.WAITING_APPROVAL,
+            component: WaitingApprovalComponent
+          },
+          {
+            path: FLIGHT_ROUTES.FLIGHT,
+            component: PilotFlightComponent
+          },
+          {
+            path: FLIGHT_ROUTES.LBZ_FORWARD,
+            component: PilotLbzForwardComponent
+          },
+          {
+            path: FLIGHT_ROUTES.RETURN,
+            component: PilotReturnComponent
+          },
+          {
+            path: FLIGHT_ROUTES.LBZ_HOME,
+            component: PilotLbzHomeComponent
+          },
+          {
+            path: FLIGHT_ROUTES.REDUCTION,
+            component: PilotReductionComponent
+          },          {
+            path: FLIGHT_ROUTES.END,
+            component: PilotEndComponent
+          }
+        ]
       },
       {
         path: 'ppo',

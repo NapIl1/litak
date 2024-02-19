@@ -24,7 +24,6 @@ export class OptionsService {
     const optionId = options._id;
 
     options.discordUrl = discordUrl;
-    console.log(options);
     delete options._id;
     await lastValueFrom(this.http.put(`${this.OPTIONS_API}?optionsId=${optionId}`,options));
   }
