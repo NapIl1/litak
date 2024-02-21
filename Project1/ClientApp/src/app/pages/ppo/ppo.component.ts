@@ -22,7 +22,7 @@ export class PpoComponent implements OnInit, OnDestroy {
   userRole?: UserRole;
   refreshFlightSubscription?: Subscription;
 
-  interval_ms = 10000;
+  interval_ms = 2000;
 
   flightStatuses: ValueColor[] = [];
 
@@ -35,25 +35,22 @@ export class PpoComponent implements OnInit, OnDestroy {
     this.refreshFlightSubscription?.unsubscribe();
   }
 
-  toggleSection(flight: any) {
-    flight.isChecked = !flight.isChecked;
+  toggleSection(flight: Flight) {
+    flight.isExpanded = !flight.isExpanded;
 
+    const checkedFlights = this.getCheckedFlights();
 
-    const str = localStorage.getItem("CHECKED_FLIGHTS");
-
-    let checkedFlights: string[] = [];
-
-    if (str != null) {
-      checkedFlights = JSON.parse(str);
-    }
-
-    if (!checkedFlights?.includes(flight._id)) {
-      checkedFlights.push(flight._id);
+    if(flight.isForwardChanged === true && !checkedFlights.checkedLBZForwardChange.includes(flight._id!)) {
+      checkedFlights.checkedLBZForwardChange.push(flight._id!);
       flight.isChecked = true;
-      localStorage.setItem("CHECKED_FLIGHTS", JSON.stringify(checkedFlights));
     }
-    
-    // save checked
+
+    if(flight.isReturnChanged === true && !checkedFlights.checkedLBZBackChange.includes(flight._id!)) {
+      checkedFlights.checkedLBZBackChange.push(flight._id!);
+      flight.isChecked = true;
+    }
+
+    this.saveCheckedFlights(checkedFlights);
   }
 
   async ngOnInit(): Promise<void> {
@@ -85,6 +82,7 @@ export class PpoComponent implements OnInit, OnDestroy {
       //const flightToUpdate = this.flights.find(x => x._id == flightId);
 
       const flightToUpdate = await this.flightService.getByIdAsync(flightId);
+      const checkedFlights = this.getCheckedFlights();
 
       if (flightToUpdate) {
 
@@ -100,6 +98,9 @@ export class PpoComponent implements OnInit, OnDestroy {
           flightToUpdate.flightStep.isApprovedByAdmin = true;
         }
 
+        checkedFlights.checkedIsApproved.push(flightId);
+        this.saveCheckedFlights(checkedFlights);
+
         if (flightToUpdate.flightStep.isApprovedByPPO == true
            && flightToUpdate.flightStep.isApprovedByREB == true
            && flightToUpdate.flightStep.isApprovedByAdmin == true) {
@@ -107,6 +108,13 @@ export class PpoComponent implements OnInit, OnDestroy {
           flightToUpdate.isRequireAttention = false;
         }
 
+        
+
+        const fl = this.flights.find(x => x._id === flightId);
+        if(fl) {
+          fl.isExpanded = false;
+        }
+      
         await this.flightService.updateFlightAsync(flightToUpdate);
         await this.initFlights();
       }
@@ -143,9 +151,9 @@ export class PpoComponent implements OnInit, OnDestroy {
   }
 
   async initFlights() {
-    
+    const nonCollapsedFlights = this.flights.filter(x => x.isExpanded === true);
+
     const allFlights = await this.flightService.getActiveFlightAsync();
-    const nonCollapsedFlights = allFlights.filter(x=>x.isRequireAttention == false);
     
     const filtered = allFlights.filter(x => !x.isRejected);
     
@@ -159,40 +167,62 @@ export class PpoComponent implements OnInit, OnDestroy {
     this.flights.forEach(updatedFlight => {
       // Find the corresponding collapsed flight
       const nonCollapsedFlight = nonCollapsedFlights.find(flight => flight._id === updatedFlight._id);
-      if (nonCollapsedFlight && nonCollapsedFlight.isRequireAttention !== updatedFlight.isRequireAttention) {
-        updatedFlight.isRequireAttention = nonCollapsedFlight.isRequireAttention;
+      if (nonCollapsedFlight && nonCollapsedFlight.isExpanded !== updatedFlight.isExpanded) {
+        updatedFlight.isExpanded = nonCollapsedFlight.isExpanded;
       }
     });
 
-    const str = localStorage.getItem("CHECKED_FLIGHTS");
-
-    let checkedFlights: string[] = [];
-
-    if(str != null) {
-      checkedFlights = JSON.parse(str);
-    }
+    const checkedFlights = this.getCheckedFlights();
 
     this.flights.forEach(flight => {
+      flight.isChecked = checkedFlights.checkedIsApproved.includes(flight._id!);
 
-      if(flight.isForwardChanged === true || flight.isReturnChanged === true || flight.flightStep.isApproved === false) {
-        if (checkedFlights?.includes(flight._id!)) {
-          flight.isChecked = true;
-          flight.isRequireAttention = false;
-        } else {
-          flight.isChecked = false;
-        }
-      } else {
-        flight.isChecked = true;
+      if (flight.isForwardChanged === true) {
+        flight.isChecked = checkedFlights.checkedLBZForwardChange.includes(flight._id!);
       }
 
-      
+
+      if (flight.isReturnChanged === true) {
+        flight.isChecked = checkedFlights.checkedLBZBackChange.includes(flight._id!);
+      }
+
+      if(flight.isChecked !== true || flight.isExpanded === true) {
+        flight.isExpanded = true;
+      }
     });
   
-    checkedFlights = checkedFlights.filter(id => this.flights.some(x => x._id == id));
+    const filteredChecks: CheckedFlights = {
+      checkedIsApproved: checkedFlights.checkedIsApproved.filter(id => this.flights.some(x => x._id == id)),
+      checkedLBZBackChange: checkedFlights.checkedLBZBackChange.filter(id => this.flights.some(x => x._id == id)),
+      checkedLBZForwardChange: checkedFlights.checkedLBZForwardChange.filter(id => this.flights.some(x => x._id == id))
+    };
 
-    localStorage.setItem("CHECKED_FLIGHTS", JSON.stringify(checkedFlights));
-
+    this.saveCheckedFlights(filteredChecks);
   }
+
+
+  public getCheckedFlights(): CheckedFlights {
+    const item = localStorage.getItem(this.CHECKED_FLIGHTS_KEY);
+
+    const empty = {
+      checkedIsApproved: [],
+      checkedLBZBackChange: [],
+      checkedLBZForwardChange: []
+    }
+
+    if(item != null) {
+      const parsed: CheckedFlights = JSON.parse(item);
+      return (parsed.checkedIsApproved && parsed.checkedLBZBackChange && parsed.checkedLBZForwardChange) ? parsed : empty;
+    }
+
+    return empty;
+  }
+
+  public saveCheckedFlights(checkedFlights: CheckedFlights) {
+    localStorage.setItem(this.CHECKED_FLIGHTS_KEY, JSON.stringify(checkedFlights));
+  }
+
+  private readonly CHECKED_FLIGHTS_KEY = 'CHECKED_FLIGHTS';
 
   public get FlightSteps() {
     return FlightSteps;
@@ -201,4 +231,10 @@ export class PpoComponent implements OnInit, OnDestroy {
   public get UserRoles() {
     return UserRole;
   }
+}
+
+export interface CheckedFlights {
+  checkedLBZForwardChange: string[],
+  checkedLBZBackChange: string[],
+  checkedIsApproved: string[]
 }

@@ -3,7 +3,7 @@ import { ActivatedRoute, Route, Router } from '@angular/router';
 import { FLIGHT_ROUTES } from 'src/app/consts/consts';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
-import { User, UserRole } from 'src/app/models/user';
+import { Template, User, UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
 import { RoutingService } from 'src/app/services/routing.service';
@@ -39,11 +39,26 @@ export class PilotStartComponent implements OnInit {
     },
     dateOfFlight: new Date()
   };
+
+  selectedTemplate: Template| null = null;
+
   constructor(
     private route: Router,
     private flightService: FlightService,
     private optionsService: OptionsService,
     private userService: UserService) { }
+
+  public templateSelected() {
+    
+
+    if (this.selectedTemplate) {
+      this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == this.selectedTemplate?.assignment?.name?.toUpperCase());
+      this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == this.selectedTemplate?.model?.name?.toUpperCase());
+      this.flight.controlRange = this.selectedTemplate.controlRange;
+      this.flight.videoRange = this.selectedTemplate.videoRange;
+      this.flight.workingHeight = this.selectedTemplate.workingHeight;
+    }
+  }
 
   async ngOnInit(): Promise<void> {
     this.options = await this.optionsService.getAllOptions();

@@ -4,6 +4,7 @@ import { API_URL } from '../consts/consts';
 import { DroneOptions } from '../models/options';
 import { lastValueFrom } from 'rxjs';
 import { FlightSteps } from '../models/flight';
+import { Template } from '../models/user';
 
 @Injectable({
   providedIn: 'root'

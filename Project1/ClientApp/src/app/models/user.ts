@@ -1,3 +1,5 @@
+import { ValueColor } from "./droneModel";
+
 export enum UserRole {
     NOT_SELECTED = -1,
     ADMIN = 1,
@@ -20,5 +22,16 @@ export interface User {
         dronAppointment?: string;
         dronType?: string;
         unit?: string;
+        templates?: Template[];
     }
 };
+
+export interface Template {
+    id?: string;
+    templateName: string;
+    controlRange?: ValueColor;
+    videoRange?: ValueColor;
+    assignment?: ValueColor;
+    model?: ValueColor;
+    workingHeight?: string;
+}

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from 'src/app/models/user';
+import { Router } from '@angular/router';
+import { User, Template } from 'src/app/models/user';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -18,23 +19,19 @@ export class PersonalInfoComponent implements OnInit {
       dronModel: '',
       dronAppointment: '',
       unit: '',
+      templates: []
     }
   };
 
   oldPassword = '';
   newPassword = '';
 
-  constructor(private userService: UserService) { }
+  constructor(private router: Router,
+              private userService: UserService) { }
 
 
   ngOnInit(): void {
-    var ui = this.userService.getUserInfo();
-    if (ui) {
-      this.userInfo = ui;
-      if(!this.userInfo.userOptions) {
-        this.userInfo.userOptions = {}
-      }
-    }
+    this.initUserInfo();
   }
 
   async saveChanges() {
@@ -69,4 +66,22 @@ export class PersonalInfoComponent implements OnInit {
     }
   }
 
+  public async removeTemplate(templateId: string) {
+    await this.userService.removeTemplate(templateId);
+    this.initUserInfo();
+  }
+
+  public createTemplate() {
+    this.router.navigate(["template"]);
+  }
+
+  private async initUserInfo() {
+    var ui = this.userService.getUserInfo();
+    if (ui) {
+      this.userInfo = ui;
+      if(!this.userInfo.userOptions) {
+        this.userInfo.userOptions = {}
+      }
+    }
+  }
 }

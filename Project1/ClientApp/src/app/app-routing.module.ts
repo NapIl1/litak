@@ -21,6 +21,7 @@ import { PilotLbzHomeComponent } from './pages/pilot/lbz-home/lbz-home.component
 import { PilotReductionComponent } from './pages/pilot/reduction/reduction.component';
 import { PilotEndComponent } from './pages/pilot/end/end.component';
 import { FLIGHT_ROUTES } from './consts/consts';
+import { FlightTemplateComponent } from './pages/personal-info/flight-templates/flight-templates.component';
 
 const routes: Routes = [
   {
@@ -30,11 +31,15 @@ const routes: Routes = [
       {
         path: '',
         redirectTo: 'personal-info',
-        pathMatch: 'full'
+        pathMatch: 'full',
       },
       {
         path: 'personal-info',
-        component: PersonalInfoComponent
+        component: PersonalInfoComponent,
+      },
+      {
+        path: 'template',
+        component: FlightTemplateComponent
       },
       {
         path: 'flight',

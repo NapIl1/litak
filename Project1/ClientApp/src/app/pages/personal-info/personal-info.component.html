@@ -25,8 +25,8 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="inputText3" class="col-form-label">Номер Телефону</label>
-                                        <input [(ngModel)]="userInfo!.userOptions!.phoneNumber"
-                                            mask='(000) 000-0000' type="text" class="form-control">
+                                        <input [(ngModel)]="userInfo!.userOptions!.phoneNumber" mask='(000) 000-0000'
+                                            type="text" class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -68,10 +68,61 @@
                                 <button class="btn btn-success" (click)="changePassword()">Змінити пароль</button>
                             </div>
                         </div>
+
+                        <h5 class="card-header">Шаблони</h5>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-md-8 col-lg-10">
+                                    <ul style="max-height: 200px; overflow-y: auto;" class="list-group mb-2" >
+                                        <li *ngFor="let template of userInfo.userOptions?.templates" class="list-group-item">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <b>
+                                                        {{template.templateName}}
+                                                    </b>
+                                                    <span [style.backgroundColor]="template.assignment?.color" class="badge">
+                                                        {{template.assignment?.name}}
+                                                    </span>
+                                                    <span [style.backgroundColor]="template.model?.color" class="badge">
+                                                        {{template.model?.name}}
+                                                    </span>
+                                                    <span class="badge badge-info">
+                                                        <b>ДЧ Керування: </b>
+                                                         {{template.controlRange}}
+
+                                                    </span>
+                                                    <span class="badge badge-info">
+                                                        <b>ДЧ відео: </b>
+                                                        {{template.videoRange}}
+                                                    </span>
+                                                    <span class="badge badge-info">
+                                                        <b>Роб. висота: </b>
+                                                        {{template.workingHeight}}
+                                                    </span>
+                                                    
+                                                    
+                                                </div>
+                                                <div>
+                                                    <i class="fas fa-trash pointer" (click)="removeTemplate(template.id!)"></i>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-12 col-md-4 col-lg-2">
+                                
+                                    <div class="d-flex ">
+                                        <button class="btn btn-success w-100" (click)="createTemplate()">Створити шаблон</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+
+                        </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
