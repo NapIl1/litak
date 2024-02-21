@@ -1,5 +1,20 @@
 <div>
-  
+
+  <div class="row">
+    <div class="col-12">
+      <label class="col-form-label">Вибір шаблону</label>
+      <ng-select (change)="templateSelected()"
+        [(ngModel)]="selectedTemplate">
+        <ng-option *ngFor="let template of userInfo.userOptions?.templates" [value]="template">
+            <span class="badge">{{template.templateName}}</span>
+        </ng-option>
+      </ng-select>
+    </div>
+  </div>
+
+
+
+
   <div class="row">
     <div class="col-6">
       <label required class="col-form-label">Позивний</label>

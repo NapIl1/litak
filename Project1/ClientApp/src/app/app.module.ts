@@ -33,6 +33,8 @@ import { PilotReductionComponent } from './pages/pilot/reduction/reduction.compo
 import { PilotEndComponent } from './pages/pilot/end/end.component';
 import { WaitingApprovalComponent } from './pages/pilot/waiting-approval/waiting-approval.component';
 import { FlightCardComponent } from './pages/shared/flight-card/flight-card.component';
+import { SortDirective } from './directives/sort.directive';
+import { FlightTemplateComponent } from './pages/personal-info/flight-templates/flight-templates.component';
 
 @NgModule({
   declarations: [
@@ -55,13 +57,15 @@ import { FlightCardComponent } from './pages/shared/flight-card/flight-card.comp
     OptionsComponent,
     UsersComponent,
     PersonalInfoComponent,
+    FlightTemplateComponent,
     FlightsStatsComponent,
     BoardingStatusComponent,
     DronAppointmentComponent,
     DiscordStatusComponent,
     DronModelComponent,
     FlightStatusComponent,
-    FlightCardComponent
+    FlightCardComponent,
+    SortDirective
   ],
   imports: [
     BrowserModule,

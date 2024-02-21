@@ -86,4 +86,5 @@ export interface Flight {
     isRequireAttention: boolean;
 
     isChecked?: boolean;
+    isExpanded?: boolean;
 }

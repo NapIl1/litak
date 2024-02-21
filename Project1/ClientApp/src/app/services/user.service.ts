@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { User } from '../models/user';
+import { Template, User } from '../models/user';
 import { API_URL } from '../consts/consts';
 import { lastValueFrom } from 'rxjs';
 
@@ -36,6 +36,45 @@ export class UserService {
 
     }
   }
+
+  public async addTemplate(template: Template): Promise<void> {
+    const user = this.getUserInfo();
+
+    if(user) {
+
+      if (!user.userOptions) {
+        user.userOptions = {};
+      }
+
+      if (!user.userOptions.templates) {
+        user.userOptions.templates = [];
+      }
+
+      user.userOptions.templates.push(template);
+
+      await this.updateUser(user);
+    }
+  }
+
+  public async removeTemplate(templateId: string): Promise<void> {
+    const user = this.getUserInfo();
+
+    if(user) {
+
+      if (!user.userOptions) {
+        user.userOptions = {};
+      }
+
+      if (!user.userOptions.templates) {
+        user.userOptions.templates = [];
+      }
+
+      user.userOptions.templates = user.userOptions.templates.filter(x => x.id !== templateId);
+
+      await this.updateUser(user);
+    }
+  }
+
 
   public async updateUser(user: User): Promise<void> {
     const id = user._id;

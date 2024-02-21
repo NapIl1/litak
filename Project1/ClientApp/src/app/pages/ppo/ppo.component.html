@@ -7,17 +7,15 @@
             <div class="d-flex" style="flex-wrap: wrap;">
                 <div style="min-width: 240px;" *ngFor="let flight of flights">
                     <div class="card m-1"
-                    [class.not-approved]="(userRole == UserRoles.PPO && this.flight.flightStep.isApprovedByPPO === false 
-                    || userRole == UserRoles.REB && this.flight.flightStep.isApprovedByREB === false 
-                    || userRole == UserRoles.ADMIN && this.flight.flightStep.isApproved === false) || (flight.isRequireAttention)"
+                    [class.not-approved]="!flight.isChecked"
                     [style.backgroundColor]=" flight.flightStep.isApproved === true ? flight.assignment!.color : 'white'">
 
                         <div class="card-body p-1" >
-                            <div *ngIf="flight.isRequireAttention" style="text-align: center;" (click)="toggleSection(flight)">
+                            <div *ngIf="!flight.isExpanded" style="text-align: center;" (click)="toggleSection(flight)">
                                 <i  class="fas fa-angle-down"></i>
                             </div>
 
-                            <div *ngIf="!flight.isRequireAttention" style="text-align: center;" (click)="toggleSection(flight)">
+                            <div *ngIf="flight.isExpanded" style="text-align: center;" (click)="toggleSection(flight)">
                                 <i  class="fas fa-angle-up"></i>
                             </div>
                             
@@ -38,7 +36,7 @@
                                 <span class="badge badge-primary bg-dark">{{flight.unit}}</span>
                             </div>
             
-                            <div class="alert alert-info mb-0 mt-1" [class.hidden]="flight.isChecked">
+                            <div class="alert alert-info mb-0 mt-1" [class.hidden]="!flight.isExpanded">
                                 <div><b>Створений:</b> {{ flight.dateOfFlight | date : 'dd/MM/yy HH:mm'}}</div>
                                 <div><b>Виліт:</b> {{ flight.flightStartDate | date : 'dd/MM/yy HH:mm' }}</div>
                                 <div><b>ЛБЗ Вперед:</b> {{ flight.LBZForwardDate | date : 'dd/MM/yy HH:mm' }}</div>
@@ -46,7 +44,7 @@
                                 <div><b>ЛБЗ Назад:</b> {{ flight.LBZBackDate | date : 'dd/MM/yy HH:mm' }}</div>
                                 <div *ngIf="flight?.reductionDate !=(undefined || null)"><b>Зниження:</b> {{ flight.reductionDate | date : 'dd/MM/yy HH:mm' }}</div>
                             </div>
-                            <div class="alert alert-info mb-0" [class.hidden]="flight.isChecked" style="background-color: #afd7de !important;">
+                            <div class="alert alert-info mb-0" [class.hidden]="!flight.isExpanded" style="background-color: #afd7de !important;">
                                 <div><b>Призначення:</b> {{flight.assignment!.name}}</div>
                                 <div><b>Маршрут вперед:</b> {{ flight.routeForward }} </div>
 
