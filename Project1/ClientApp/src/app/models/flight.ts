@@ -29,8 +29,8 @@ export interface Flight {
     streamLink?: string;
     assignment?: ValueColor;
     model?: ValueColor;
-    controlRange?: ValueColor;
-    videoRange?: ValueColor;
+    controlRange?: string;
+    videoRange?: string;
     workingHeight?: string;
     taskPerformanceArea?: string;
 
