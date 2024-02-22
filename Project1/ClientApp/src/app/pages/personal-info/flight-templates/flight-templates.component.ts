@@ -33,7 +33,7 @@ export class FlightTemplateComponent implements OnInit {
 
     async createTemplate() {
       this.template.id = uuidv4();
-      this.userService.addTemplate(this.template);
+      await this.userService.addTemplate(this.template);
 
       alert(`Шаблон з іменем ${this.template.templateName} було успішно створено.`);
 
@@ -45,7 +45,8 @@ export class FlightTemplateComponent implements OnInit {
     }
 
     validateTemplate(){
-      // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        return false;
+      return this.template.templateName === null || this.template.templateName === ''
+      || this.template.assignment == null
+      || this.template.model == null
     }
 }

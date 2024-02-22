@@ -29,8 +29,8 @@ export interface User {
 export interface Template {
     id?: string;
     templateName: string;
-    controlRange?: ValueColor;
-    videoRange?: ValueColor;
+    controlRange?: string;
+    videoRange?: string;
     assignment?: ValueColor;
     model?: ValueColor;
     workingHeight?: string;
