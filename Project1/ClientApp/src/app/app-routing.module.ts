@@ -48,7 +48,7 @@ const routes: Routes = [
         data: { roles: [UserRole.ADMIN, UserRole.PILOT] },
         children:[
           {
-            path: FLIGHT_ROUTES.START,
+            path: FLIGHT_ROUTES.START + '/:usePrev',
             component: PilotStartComponent
           },
           {

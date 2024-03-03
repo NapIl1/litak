@@ -11,3 +11,5 @@ export const FLIGHT_ROUTES = {
     REDUCTION: 'reduction',
     END: 'end'
 }
+
+export const USE_PREVIOUS_PARAM = 'usePrev'

@@ -67,18 +67,12 @@ export class WaitingApprovalComponent implements OnInit, OnDestroy {
   }
 
   async initFlights() {
-    
     const allFlights = await this.flightService.getByUserIdAsync(this.userInfo._id);
-    const filtered = allFlights.filter(x => !x.isRejected);
-    
+
     this.flights = [];
-    this.flights.push(...filtered.filter(x => x.flightStep.isApproved === false))
+    this.flights.push(...allFlights);
 
-    this.options.dronAppointment?.forEach(c => {
-      this.flights.push(...filtered.filter(x => x.flightStep.isApproved === true && x.assignment?.name === c.name));
-    });
-
-    if(allFlights[0].flightStep.isApprovedByPPO == true && allFlights[0].flightStep.isApprovedByREB == true){
+    if(allFlights[0].flightStep.isApproved == true || allFlights[0].isRejected == true){
       await this.flightService.refreshActiveFlight();
     }
   }

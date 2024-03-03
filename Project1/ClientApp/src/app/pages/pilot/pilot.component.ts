@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FLIGHT_ROUTES } from 'src/app/consts/consts';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
@@ -71,9 +70,13 @@ export class PilotComponent implements OnInit {
     }
   }
 
-  private handleRouting(flight: Flight | null) {
+  private handleRouting(flight: Flight | null, usePrev = false) {
     if (!flight) {
-      this.router.navigate(["flight/" + FLIGHT_ROUTES.START]);
+      if (usePrev === true) {
+        this.router.navigate(["flight/" + FLIGHT_ROUTES.START, 'prev']);
+      } else {
+        this.router.navigate(["flight/" + FLIGHT_ROUTES.START, 'new']);
+      }
       return;
     }
 
@@ -123,7 +126,7 @@ export class PilotComponent implements OnInit {
     this.flight.flightStep.isApproved = isApproved;
 
     await this.flightService.updateFlightAsync(this.flight);
-    this.router.navigate(['flight']);
+    await this.flightService.refreshActiveFlight();
   }
 
   public async getLastFlight(isApproved: boolean){
@@ -133,30 +136,8 @@ export class PilotComponent implements OnInit {
     this.flight.flightStep.isApproved = isApproved;
 
     await this.flightService.updateFlightAsync(this.flight);
-    
-    this.flight.userId = this.userInfo._id;
-
-    const flightRecord = await this.flightService.getLastFlightByUserId();
-
-    if(flightRecord == null){
-      alert('Останню заявку не знайдено.');
-    }else{
-      this.flight.operator = flightRecord.operator;
-      this.flight.unit = flightRecord.unit;
-      this.flight.zone = flightRecord.zone;
-      this.flight.taskPerformanceArea = flightRecord.taskPerformanceArea;
-      this.flight.assignment = flightRecord.assignment;
-      this.flight.model = flightRecord.model;
-      this.flight.controlRange = flightRecord.controlRange;
-      this.flight.videoRange = flightRecord.videoRange;
-      this.flight.routeForward = flightRecord.routeForward;
-      this.flight.routeBack = flightRecord.routeBack;
-      this.flight.workingHeight = flightRecord.workingHeight;
-      this.flight.streamLink = flightRecord.streamLink;
-      this.flight.phoneNumber = flightRecord.phoneNumber;
-    }
-
-    this.router.navigate(['flight']);
+    this.flight.isRejected = false;
+    this.handleRouting(null, true);
   }
 
   public validateStep(step: FlightSteps) {

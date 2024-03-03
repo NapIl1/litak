@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Route, Router } from '@angular/router';
-import { FLIGHT_ROUTES } from 'src/app/consts/consts';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { USE_PREVIOUS_PARAM } from 'src/app/consts/consts';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
 import { Template, User, UserRole } from 'src/app/models/user';
@@ -44,6 +44,7 @@ export class PilotStartComponent implements OnInit {
 
   constructor(
     private route: Router,
+    private activatedRoute: ActivatedRoute,
     private flightService: FlightService,
     private optionsService: OptionsService,
     private userService: UserService) { }
@@ -65,24 +66,27 @@ export class PilotStartComponent implements OnInit {
 
     const ui = this.userService.getUserInfo();
 
-    if (ui) {
-      this.userInfo = ui;
+    this.activatedRoute.params.subscribe(async params => {
 
-      this.flight.phoneNumber = ui.userOptions?.phoneNumber;
-      this.flight.operator = ui.userOptions?.nickName;
-      this.flight.discordUrl = this.options.discordUrl;
-      this.flight.unit = ui.userOptions?.unit;
-      this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == ui.userOptions?.dronAppointment?.toUpperCase());
-      this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == ui.userOptions?.dronModel?.toUpperCase());
-      this.flight.isRequireAttention = false;
-    }
+      const isUsePrev = params[USE_PREVIOUS_PARAM] == 'prev';
+      if (isUsePrev) {
+        await this.getLastFlight();
+      } else {
+        if (ui) {
+          this.userInfo = ui;
+    
+          this.flight.phoneNumber = ui.userOptions?.phoneNumber;
+          this.flight.operator = ui.userOptions?.nickName;
+          this.flight.discordUrl = this.options.discordUrl;
+          this.flight.unit = ui.userOptions?.unit;
+          this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == ui.userOptions?.dronAppointment?.toUpperCase());
+          this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == ui.userOptions?.dronModel?.toUpperCase());
+          this.flight.isRequireAttention = false;
+        }
+      }
+    })
 
-    // this.flightService.activeFlight$.subscribe(res => {
-    //   if(res) {
-
-    //   }
-    // })
-
+    
   }
 
   public navigateToDiscordUrl() {
@@ -104,15 +108,17 @@ export class PilotStartComponent implements OnInit {
 
     const flightRecord = await this.flightService.getLastFlightByUserId();
 
-    if(flightRecord == null){
+    if (flightRecord == null) {
       alert('Останню заявку не знайдено.');
-    }else{
+    } else {
+
+      this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == flightRecord.assignment?.name?.toUpperCase());
+      this.flight.model = this.options.dronModels?.find(x => x.name.toUpperCase() == flightRecord.model?.name?.toUpperCase());
+      
       this.flight.operator = flightRecord.operator;
       this.flight.unit = flightRecord.unit;
       this.flight.zone = flightRecord.zone;
       this.flight.taskPerformanceArea = flightRecord.taskPerformanceArea;
-      this.flight.assignment = flightRecord.assignment;
-      this.flight.model = flightRecord.model;
       this.flight.controlRange = flightRecord.controlRange;
       this.flight.videoRange = flightRecord.videoRange;
       this.flight.routeForward = flightRecord.routeForward;

@@ -9,6 +9,12 @@ import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
 import { UserService } from 'src/app/services/user.service';
 
+export interface CompletedFlight {
+  flight: Flight,
+  msElapsed: number
+}
+
+
 @Component({
   selector: 'app-ppo',
   templateUrl: './ppo.component.html',
@@ -22,9 +28,11 @@ export class PpoComponent implements OnInit, OnDestroy {
   userRole?: UserRole;
   refreshFlightSubscription?: Subscription;
 
-  interval_ms = 2000;
+  interval_ms = 30000;
 
   flightStatuses: ValueColor[] = [];
+
+  completedFlights: CompletedFlight[] = [];
 
   constructor(private flightService: FlightService,
               private optionsService: OptionsService,
@@ -68,6 +76,12 @@ export class PpoComponent implements OnInit, OnDestroy {
     }
 
     this.refreshFlightSubscription = interval(this.interval_ms).subscribe(async x => {
+      this.completedFlights.forEach(flight => {
+        flight.msElapsed += this.interval_ms;
+      })
+
+      this.flights = this.flights.filter(x => !this.completedFlights.find(completed => completed.flight._id === x._id))
+      this.completedFlights = this.completedFlights.filter(x => x.msElapsed < (this.interval_ms * 5));
       await this.initFlights();
     })
   }
@@ -85,6 +99,11 @@ export class PpoComponent implements OnInit, OnDestroy {
       const checkedFlights = this.getCheckedFlights();
 
       if (flightToUpdate) {
+
+        const oldFlight = this.flights.find(x => x._id == flightId);
+        if (oldFlight) {
+          oldFlight.flightStep.isApproved = true;
+        }
 
         if (this.userRole == UserRole.PPO) {
           flightToUpdate.flightStep.isApprovedByPPO = true;
@@ -130,6 +149,11 @@ export class PpoComponent implements OnInit, OnDestroy {
       if (flightToUpdate) {
         flightToUpdate.isRejected = true;
 
+        const oldFlight = this.flights.find(x => x._id == id);
+        if(oldFlight) {
+          oldFlight.isRejected = true;
+        }
+
         if (this.userRole == UserRole.PPO) {
           flightToUpdate.isRejectedbyPPO = true;
         }
@@ -152,9 +176,10 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   async initFlights() {
     const nonCollapsedFlights = this.flights.filter(x => x.isExpanded === true);
-
-    const allFlights = await this.flightService.getActiveFlightAsync();
+    const oldFlights = [...this.flights.filter(x => x.isRejected !== true)];
     
+    const allFlights = await this.flightService.getActiveFlightAsync();
+
     const filtered = allFlights.filter(x => !x.isRejected);
     
     this.flights = [];
@@ -163,6 +188,21 @@ export class PpoComponent implements OnInit, OnDestroy {
     this.options.dronAppointment?.forEach(c => {
       this.flights.push(...filtered.filter(x => x.flightStep.isApproved === true && x.assignment?.name === c.name));
     });
+
+    // COMPLETED
+    oldFlights.forEach(flight => {
+      const isPresent = this.flights.find(x => x._id === flight._id);
+      if (!isPresent && !this.completedFlights.find(x => x.flight._id === flight._id)) {
+        flight.flightStep.visibleStep = FlightSteps.END;
+        flight.assignment!.color = 'gray';
+        this.completedFlights.push({
+          flight: flight,
+          msElapsed: 0
+        });
+      }
+    })
+
+    this.flights.push(...this.completedFlights.map(x => x.flight))
 
     this.flights.forEach(updatedFlight => {
       // Find the corresponding collapsed flight

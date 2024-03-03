@@ -8,7 +8,7 @@
                 <div style="min-width: 240px;" *ngFor="let flight of flights">
                     <div class="card m-1"
                     [class.not-approved]="!flight.isChecked"
-                    [style.backgroundColor]=" flight.flightStep.isApproved === true ? flight.assignment!.color : 'white'">
+                    [style.backgroundColor]="flight.flightStep.isApproved === true ? flight.assignment!.color : 'white'">
 
                         <div class="card-body p-1" >
                             <div *ngIf="!flight.isExpanded" style="text-align: center;" (click)="toggleSection(flight)">
