@@ -9,11 +9,13 @@
                 <div class="alert alert-danger w-100 mb-0" role="alert">
                     <h5 *ngIf="flight.isRejectedbyPPO">Заборонено ППО:</h5>
                     <h5 *ngIf="flight.isRejectedbyREB">Заборонено РЕБ:</h5>
+                    <h5 *ngIf="flight.isRejectedbyAdmin">Заборонено Черговим:</h5>
                     <div>
                         Причина: {{flight.rejectedReason}}
                     </div>
                     <div class="mt-2">
                         <button (click)="terminateFlight(false)" class="btn btn-success w-100">Зрозуміло</button>
+                        <button (click)="getLastFlight(false)" class="btn btn-success w-100">Створити згідно останньої заявки </button>
                     </div>
                 </div>
             </div>

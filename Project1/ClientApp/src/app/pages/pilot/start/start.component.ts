@@ -99,6 +99,30 @@ export class PilotStartComponent implements OnInit {
     //this.route.navigate(['flight/' + FLIGHT_ROUTES.WAITING_APPROVAL]);
   }
 
+  public async getLastFlight(){
+    this.flight.userId = this.userInfo._id;
+
+    const flightRecord = await this.flightService.getLastFlightByUserId();
+
+    if(flightRecord == null){
+      alert('Останню заявку не знайдено.');
+    }else{
+      this.flight.operator = flightRecord.operator;
+      this.flight.unit = flightRecord.unit;
+      this.flight.zone = flightRecord.zone;
+      this.flight.taskPerformanceArea = flightRecord.taskPerformanceArea;
+      this.flight.assignment = flightRecord.assignment;
+      this.flight.model = flightRecord.model;
+      this.flight.controlRange = flightRecord.controlRange;
+      this.flight.videoRange = flightRecord.videoRange;
+      this.flight.routeForward = flightRecord.routeForward;
+      this.flight.routeBack = flightRecord.routeBack;
+      this.flight.workingHeight = flightRecord.workingHeight;
+      this.flight.streamLink = flightRecord.streamLink;
+      this.flight.phoneNumber = flightRecord.phoneNumber;
+    }
+  }
+
   validateStep() {
     return this.flight.isInDiscord !== true
       || this.flight.assignment == null

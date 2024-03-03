@@ -48,6 +48,22 @@ export class FlightService {
     }
   }
 
+  public async getLastFlightByUserId(): Promise<Flight | null> {
+    const id = this.userService.getUserInfo()?._id;
+
+    if (!id) {
+      return null;
+    }
+
+    const flightRecord = await lastValueFrom(this.http.get<Flight>(this.RECORDS_URL + `/GetLastRecordByUserId?userId=${id}`));
+
+    if(flightRecord == null){
+      return null;
+    }else{
+      return flightRecord;
+    }
+  }
+
   public async getAllFlightsAsync(): Promise<Flight[]> {
     const flights = await lastValueFrom(this.http.get<Flight[]>(this.RECORDS_URL));
 

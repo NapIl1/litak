@@ -143,5 +143,25 @@ namespace litak_back_end.Controllers
 
             return convertedRecords.ConvertAll(BsonTypeMapper.MapToDotNetValue);
         }
+
+        [HttpGet("GetLastRecordByUserId")]
+        public async Task<object> GetLastRecordByUserId([FromQuery] string userId)
+        {
+            var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            var database = mongoClient.GetDatabase("sample_weatherdata");
+
+            var recordsCollection = database.GetCollection<BsonDocument>("records");
+
+            var filter = Builders<BsonDocument>.Filter.Eq("userId", userId);
+            var sort = Builders<BsonDocument>.Sort.Descending("dateOfFlight");
+            var result = await recordsCollection.Find(filter).Sort(sort).Limit(1).FirstOrDefaultAsync();
+
+            if(result is null){
+                return null;
+            }
+
+            result["_id"] = result["_id"].AsObjectId.ToString();
+            return BsonTypeMapper.MapToDotNetValue(result);
+        }
     }
 }
