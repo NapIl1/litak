@@ -88,15 +88,10 @@ export class UserService {
   }
 
   public async login(username: string, password: string): Promise<User | null> {
-    try {
-      const user = await lastValueFrom(this.http.get<User>(`${this.USERS_API}/${username}/${password}`))
+    const user = await lastValueFrom(this.http.get<User>(`${this.USERS_API}/${username}/${password}`))
 
-      localStorage.setItem(this.USERINFO_KEY, JSON.stringify(user));
-      return user;
-
-    } catch (error) {
-      return null;
-    }
+    localStorage.setItem(this.USERINFO_KEY, JSON.stringify(user));
+    return user;
   }
 
   public getUserInfo(): User | null {

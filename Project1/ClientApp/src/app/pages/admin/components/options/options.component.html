@@ -7,13 +7,6 @@
         <div class="tab-regular">
             <ul class="nav nav-tabs " id="myTab" role="tablist">
                 <li class="nav-item">
-                    <a (click)="changeLocalRoute('boardingStatus')" class="nav-link active p-2" id="home-tab" data-toggle="tab"
-                        href="#boardingStatus" role="tab" aria-controls="home" aria-selected="true">
-                        Статус повернення
-                    </a>
-                </li>
-
-                <li class="nav-item">
                     <a (click)="changeLocalRoute('dronAppointment')" class="nav-link p-2" data-toggle="tab" href="#dronAppointment"
                         role="tab" aria-controls="home" aria-selected="true">
                         Призначення Дронів
@@ -44,7 +37,6 @@
             </ul>
 
             <div class="tab-content" id="myTabContent">
-                <app-boarding-status-option *ngIf="defaultTabSelected == 'boardingStatus'" [options]='options'></app-boarding-status-option>
                 <app-dron-appointment-option *ngIf="defaultTabSelected == 'dronAppointment'" [options]='options'></app-dron-appointment-option>
                 <app-dron-model-option *ngIf="defaultTabSelected == 'dronModel'" [options]='options'></app-dron-model-option>
                 <app-flight-status-option *ngIf="defaultTabSelected == 'flightStatus'" [options]='options'></app-flight-status-option>

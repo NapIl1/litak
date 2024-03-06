@@ -141,15 +141,6 @@
         [disabled]="flight.flightStep.step != FlightSteps.START || ( flight.flightStep.step == FlightSteps.START && flight.flightStep.isApproved == true)"
         [(ngModel)]="flight.phoneNumber" type="text" class="form-control" mask='(000) 000-0000'>
     </div>
-    <div class="col-6">
-      <div>
-        <label class="col-form-label">Дата вильоту</label>
-        <input *ngIf="!flight.dateOfFlight" [ngModel]="dateNow | date:'yyyy-MM-dd HH:mm'" type="datetime-local"
-          disabled="true" class="form-control">
-        <input *ngIf="flight.dateOfFlight" [ngModel]="flight.dateOfFlight | date:'yyyy-MM-dd HH:mm'"
-          type="datetime-local" disabled="true" class="form-control">
-      </div>
-    </div>
   </div>
 
 

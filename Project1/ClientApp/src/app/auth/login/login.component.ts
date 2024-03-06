@@ -12,13 +12,16 @@ export class LoginComponent {
 
   username: string = '';
   password: string = '';
+  error = false;
 
   constructor(private userService: UserService, private router: Router) {
 
   }
 
   public async login(): Promise<void> {
-    const userInfo = await this.userService.login(this.username, this.password);
+    const userInfo = await this.userService.login(this.username, this.password).catch(x=> {
+      this.error = true;
+    });
     
     if (userInfo?.role == UserRole.ADMIN) {
       this.router.navigate(['admin']);

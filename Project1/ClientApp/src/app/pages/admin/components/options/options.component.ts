@@ -17,7 +17,7 @@ export class OptionsComponent {
     discordUrl: ''
   };
 
-  defaultTabSelected: string = 'boardingStatus';
+  defaultTabSelected: string = 'dronAppointment';
   name: string = '';
   color: string = '';
 

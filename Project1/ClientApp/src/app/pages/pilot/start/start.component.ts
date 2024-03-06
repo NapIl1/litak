@@ -95,7 +95,7 @@ export class PilotStartComponent implements OnInit {
 
   public async createFlight() {
     this.flight.userId = this.userInfo._id;
-
+    this.flight.dateOfFlight =  new Date();
     await this.flightService.addFlightAsync(this.flight);
 
     alert('Заявку подано');
