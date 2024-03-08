@@ -30,7 +30,7 @@ app.UseRouting();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("Content-Disposition"));
 app.UseAuthorization();
 app.MapControllers();
 

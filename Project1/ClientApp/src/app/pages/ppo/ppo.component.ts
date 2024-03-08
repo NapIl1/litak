@@ -30,6 +30,9 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   interval_ms = 30000;
 
+  private readonly timeRangeMinutes = 5;
+  endOptions: string[] = ['Завдання виконано', 'Борт пошкоджено', 'Борт втрачений'];
+
   flightStatuses: ValueColor[] = [];
 
   completedFlights: CompletedFlight[] = [];
@@ -176,35 +179,30 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   async initFlights() {
     const nonCollapsedFlights = this.flights.filter(x => x.isExpanded === true);
-    const oldFlights = [...this.flights.filter(x => x.isRejected !== true)];
-    
-    const allFlights = await this.flightService.getActiveFlightAsync();
+
+    const allFlights = await this.flightService.getFlightsWithTimeRange(this.timeRangeMinutes);
 
     const filtered = allFlights.filter(x => !x.isRejected);
     
-    this.flights = [];
-    this.flights.push(...filtered.filter(x => x.flightStep.isApproved === false))
+    const newFlights: Flight[] = [];
+
+    newFlights.push(...filtered.filter(x => x.flightStep.isApproved === false))
 
     this.options.dronAppointment?.forEach(c => {
-      this.flights.push(...filtered.filter(x => x.flightStep.isApproved === true && x.assignment?.name === c.name));
+      newFlights.push(...filtered.filter(x => x.flightStep.isApproved === true && x.assignment?.name === c.name));
     });
 
-    // COMPLETED
-    oldFlights.forEach(flight => {
-      const isPresent = this.flights.find(x => x._id === flight._id);
-      if (!isPresent && !this.completedFlights.find(x => x.flight._id === flight._id)) {
+    newFlights.forEach(flight => {
+      if (flight.flightStep.step == FlightSteps.END) {
         flight.flightStep.visibleStep = FlightSteps.END;
         flight.assignment!.color = 'gray';
-        this.completedFlights.push({
-          flight: flight,
-          msElapsed: 0
-        });
+        if (!this.endOptions.includes(flight.boardingStatus ?? '')) {
+          flight.boardingStatus = 'Інше';
+        }
       }
-    })
+    });
 
-    this.flights.push(...this.completedFlights.map(x => x.flight))
-
-    this.flights.forEach(updatedFlight => {
+    newFlights.forEach(updatedFlight => {
       // Find the corresponding collapsed flight
       const nonCollapsedFlight = nonCollapsedFlights.find(flight => flight._id === updatedFlight._id);
       if (nonCollapsedFlight && nonCollapsedFlight.isExpanded !== updatedFlight.isExpanded) {
@@ -212,9 +210,11 @@ export class PpoComponent implements OnInit, OnDestroy {
       }
     });
 
+    // Checked flight
+
     const checkedFlights = this.getCheckedFlights();
 
-    this.flights.forEach(flight => {
+    newFlights.forEach(flight => {
       flight.isChecked = checkedFlights.checkedIsApproved.includes(flight._id!);
 
       if (flight.isForwardChanged === true) {
@@ -232,12 +232,16 @@ export class PpoComponent implements OnInit, OnDestroy {
     });
   
     const filteredChecks: CheckedFlights = {
-      checkedIsApproved: checkedFlights.checkedIsApproved.filter(id => this.flights.some(x => x._id == id)),
-      checkedLBZBackChange: checkedFlights.checkedLBZBackChange.filter(id => this.flights.some(x => x._id == id)),
-      checkedLBZForwardChange: checkedFlights.checkedLBZForwardChange.filter(id => this.flights.some(x => x._id == id))
+      checkedIsApproved: checkedFlights.checkedIsApproved.filter(id => newFlights.some(x => x._id == id)),
+      checkedLBZBackChange: checkedFlights.checkedLBZBackChange.filter(id => newFlights.some(x => x._id == id)),
+      checkedLBZForwardChange: checkedFlights.checkedLBZForwardChange.filter(id => newFlights.some(x => x._id == id))
     };
 
     this.saveCheckedFlights(filteredChecks);
+
+    // Insert filtered flights
+    this.flights = [];
+    this.flights = [...newFlights];
   }
 
 

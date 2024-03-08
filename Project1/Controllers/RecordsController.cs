@@ -70,13 +70,11 @@ namespace litak_back_end.Controllers
 
             var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(recordId));
 
-            var update = Builders<BsonDocument>.Update.Set("endDate", document["endDate"]);
-
             var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
             var database = mongoClient.GetDatabase("sample_weatherdata");
             var collection = database.GetCollection<BsonDocument>("records");
 
-            await collection.UpdateOneAsync(filter, update);
+            await collection.ReplaceOneAsync(filter, document);
         }
 
         [HttpDelete]

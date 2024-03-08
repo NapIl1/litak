@@ -13,32 +13,44 @@ export class LoginComponent {
   username: string = '';
   password: string = '';
   error = false;
+  isLoading = false;
 
   constructor(private userService: UserService, private router: Router) {
 
   }
 
   public async login(): Promise<void> {
-    const userInfo = await this.userService.login(this.username, this.password).catch(x=> {
+    this.isLoading = true;
+
+    try {
+      const userInfo = await this.userService.login(this.username, this.password);
+
+      if (userInfo?.role == UserRole.ADMIN) {
+        this.router.navigate(['admin']);
+      }
+  
+      if (userInfo?.role == UserRole.PILOT) {
+        this.router.navigate(['flight']);
+      }
+  
+      if (userInfo?.role == UserRole.PPO) {
+        this.router.navigate(['ppo']);
+      }
+  
+      if (userInfo?.role == UserRole.REB) {
+        this.router.navigate(['ppo']);
+      }
+    } catch (error) {
       this.error = true;
-    });
-    
-    if (userInfo?.role == UserRole.ADMIN) {
-      this.router.navigate(['admin']);
     }
 
-    if (userInfo?.role == UserRole.PILOT) {
-      this.router.navigate(['flight']);
-    }
+    this.isLoading = false;
+  }
 
-    if (userInfo?.role == UserRole.PPO) {
-      this.router.navigate(['ppo']);
+  modelChanged() {
+    if(this.error === true) {
+      this.error = false;
     }
-
-    if (userInfo?.role == UserRole.REB) {
-      this.router.navigate(['ppo']);
-    }
-
   }
 
 }

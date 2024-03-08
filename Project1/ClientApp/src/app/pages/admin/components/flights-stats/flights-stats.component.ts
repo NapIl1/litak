@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import * as saveAs from 'file-saver';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { FlightService } from 'src/app/services/flight.service';
 
@@ -52,6 +53,17 @@ export class FlightsStatsComponent implements OnInit {
     this.expanded = this.flights[i];
     this.firstPart = [...this.flights];
     this.secondPart = [...this.firstPart.splice(i + 1)];
+  }
+
+  isLoading = false;
+  downloadFile(): void {
+    this.isLoading = true;
+    this.flightService.downloadFile().subscribe(res => {
+      var filename = res.headers.get('Content-Disposition')!.split(';')[1].split('filename')[1].split('=')[1].trim();
+      saveAs(res.body as Blob, filename);
+
+      this.isLoading = false;
+    });
   }
 
 }

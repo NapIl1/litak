@@ -2,7 +2,16 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="mb-0">Польоти</h3>
+                <div class="d-flex justify-content-between">
+                    <h3 class="mb-0">Польоти</h3>
+                    <button [disabled]="isLoading" (click)="downloadFile()" class="btn btn-sm btn-success">
+                        <i *ngIf="!isLoading" class="fas fa-download">
+                        </i>
+                        <img *ngIf="isLoading" style="height: 15px; margin-top: -5px;"  src="../../../../../assets/images/spinner.gif" alt="">
+
+                    </button>
+                </div>
+
             </div>
             <div class="card-body" style="overflow-x: auto; overflow-y: auto; max-height: 76vh;">
                     <table class="table table-striped" >

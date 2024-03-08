@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Flight, FlightSteps } from '../models/flight';
-import { v4 as uuidv4 } from 'uuid';
+import { Flight } from '../models/flight';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Subject, lastValueFrom } from 'rxjs';
+import { BehaviorSubject, lastValueFrom } from 'rxjs';
 import { API_URL } from '../consts/consts';
 import { UserService } from './user.service';
 
@@ -11,6 +10,7 @@ import { UserService } from './user.service';
 })
 export class FlightService {
   private readonly RECORDS_URL = API_URL + 'Records';
+  private readonly RECORD_FILE_URL = API_URL + 'RecordFile';
 
   private activeFlightSubject = new BehaviorSubject<Flight | null>(null);
   public activeFlight$ = this.activeFlightSubject.asObservable();
@@ -30,6 +30,11 @@ export class FlightService {
 
   public async getActiveFlightAsync(): Promise<Flight[]> {
     const flights = await lastValueFrom(this.http.get<Flight[]>(this.RECORDS_URL + '/GetNotFinishedRecords'));
+    return flights ?? [];
+  }
+
+  public async getFlightsWithTimeRange(timeRange: number): Promise<Flight[]> {
+    const flights = await lastValueFrom(this.http.get<Flight[]>(this.RECORDS_URL + '/GetNotFinishedRecordsOrItTenMinutesRange?timeRange=' + timeRange ));
     return flights ?? [];
   }
 
@@ -111,5 +116,9 @@ export class FlightService {
 
     this.http.put(`${this.RECORDS_URL}?id=${flight._id}`, flight);
 
+  }
+
+  public downloadFile() {
+    return this.http.get(this.RECORD_FILE_URL, { observe: 'response', responseType: 'blob' as 'json' });
   }
 }

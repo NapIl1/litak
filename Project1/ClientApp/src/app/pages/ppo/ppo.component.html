@@ -24,6 +24,10 @@
                                     class="badge badge-primary">
                                     {{ this.flightStatuses[flight.flightStep.visibleStep ?? 0].name.toUpperCase() }}
                                 </span>
+                                <span *ngIf="flight.flightStep.step === this.FlightSteps.END" [style.backgroundColor]="this.flightStatuses[flight.flightStep.visibleStep ?? 0].color"
+                                    class="badge badge-primary">
+                                    {{ flight.boardingStatus?.toUpperCase() }}
+                                </span>
                             </div>
                             <div>
                                 <span [style.backgroundColor]="flight.model?.color"
