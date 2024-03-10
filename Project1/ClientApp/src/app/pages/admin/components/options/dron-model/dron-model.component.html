@@ -5,12 +5,8 @@
             aria-labelledby="home-tab">
 
             <div class="row pb-2">
-                <div class="col-md-6 col-12 mb-2">
+                <div class="col-md-10 col-12 mb-2">
                     <input [(ngModel)]="name" placeholder="Назва" type="text" class="form-control">
-                </div>
-
-                <div class="col-md-4 col-12 mb-2">
-                    <input [(colorPicker)]="color" [style.background]="color" [placeholder]="color === '' ? 'Колір' : color" type="text" class="form-control">
                 </div>
 
                 <div class="col-md-2 col-12 mb-2">
@@ -25,15 +21,29 @@
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Назва</th>
-                                <th scope="col">Колір</th>
+                                <th scope="col">Змінити</th>
                                 <th scope="col">Видалити</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let item of options.dronModels; index as i">
                                 <th scope="row">{{i+1}}</th>
-                                <td>{{item.name}}</td>
-                                <td><span [style.backgroundColor]="item.color" style="color: white;" class="badge">{{colorPlaceholder}}</span></td>
+                                <td *ngIf="selectedOption !== i">{{ item.name }}</td>
+                                <td *ngIf="selectedOption === i">
+                                    <input [(ngModel)]="name" placeholder="Назва" type="text" class="form-control">
+                                </td>
+                                <td *ngIf="selectedOption !== i">
+                                    <button (click)="editOption(i,'dronModel')" class="btn btn-info btn-xs">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+
+                                <td *ngIf="selectedOption === i">
+                                    <button (click)="addNewOption('dronModel')" class="btn btn-info btn-xs">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </td>
+
                                 <td>
                                     <button (click)="removeOption(i,'dronModel')" class="btn btn-danger btn-xs">
                                         <i class="fas fa-trash"></i>

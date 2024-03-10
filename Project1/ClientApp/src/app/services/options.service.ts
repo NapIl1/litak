@@ -5,6 +5,7 @@ import { DroneOptions } from '../models/options';
 import { lastValueFrom } from 'rxjs';
 import { FlightSteps } from '../models/flight';
 import { Template } from '../models/user';
+import {v4 as uuidv4} from 'uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -52,10 +53,19 @@ export class OptionsService {
         options.dronAppointment = [];
       }
 
-      options.dronAppointment?.push({
-        color: color,
-        name: name
-      });
+      var dronAppointmentOption = options.dronAppointment.find(x => x.legacyId == legacyId)
+
+      if (dronAppointmentOption) {
+        dronAppointmentOption.color = color;
+        dronAppointmentOption.name = name;
+        dronAppointmentOption.legacyId = legacyId;
+      }else{
+        options.dronAppointment?.push({
+          color: color,
+          name: name,
+          legacyId: uuidv4()
+        });
+      }
     }
 
     if (type === 'dronModel') {
@@ -64,10 +74,18 @@ export class OptionsService {
         options.dronModels = [];
       }
 
-      options.dronModels?.push({
-        color: color,
-        name: name
-      });
+      var dronModelOption = options.dronModels.find(x => x.legacyId == legacyId)
+
+      if (dronModelOption) {
+        dronModelOption.name = name;
+        dronModelOption.legacyId = legacyId;
+      }else{
+        options.dronModels?.push({
+          color: color,
+          name: name,
+          legacyId: uuidv4()
+        });
+      }
     }
 
     if (type === 'flightStatus') {
@@ -76,11 +94,11 @@ export class OptionsService {
         options.flightStatus = [];
       }
 
-      var option = options.flightStatus.find(x => x.legacyId == legacyId)
+      var flightStatusOption = options.flightStatus.find(x => x.legacyId == legacyId)
 
-      if (option) {
-        option.color = color;
-        option.name = name;
+      if (flightStatusOption) {
+        flightStatusOption.color = color;
+        flightStatusOption.name = name;
       }
     }
     

@@ -17,6 +17,7 @@ export class DronAppointmentComponent {
     color: string = '';
     colorPlaceholder = 'Текст';
     selectedOption = -1;
+    legacyId = '';
     ngOnInit(): void {
         
     }
@@ -24,16 +25,26 @@ export class DronAppointmentComponent {
     }
 
     public async addNewOption(type: string) {
-        await this.optionsService.addOption(this.name, this.color, type, this.selectedOption.toString());
+        await this.optionsService.addOption(this.name, this.color, type, this.legacyId.toString());
         this.options = await this.optionsService.getAllOptions();
     
         this.name = '';
         this.color = '';
         this.selectedOption = -1;
+        this.legacyId = this.legacyId;
       }
 
     public async removeOption(index:number, type: string) {
         await this.optionsService.removeOption(index, type);
         this.options = await this.optionsService.getAllOptions();
+    }
+
+    public async editOption(index: number, type: string) {
+      this.selectedOption = index;
+      if (this.options.dronAppointment) {
+        this.name = this.options.dronAppointment[index].name;
+        this.color = this.options.dronAppointment[index].color;
+        this.legacyId = this.options.dronAppointment[index].legacyId ?? '';
+      }
     }
 }

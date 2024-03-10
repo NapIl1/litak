@@ -26,17 +26,31 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Назва</th>
                                 <th scope="col">Колір</th>
-                                <th scope="col">Видалити</th>
+                                <th scope="col">Редагувати</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let item of options.flightStatus; index as i">
-                                <th scope="row">{{i+1}}</th>
-                                <td>{{item.name}}</td>
-                                <td><span [style.backgroundColor]="item.color" style="color: white;" class="badge">{{colorPlaceholder}}</span></td>
-                                <td>
-                                    <button (click)="removeOption(i,'flightStatus')" class="btn btn-danger btn-xs">
-                                        <i class="fas fa-trash"></i>
+                                <th scope="row">{{ i+1 }}</th>
+                                <td *ngIf="selectedOption !== i">{{ item.name }}</td>
+                                <td *ngIf="selectedOption === i">
+                                    <input [(ngModel)]="name" placeholder="Назва" type="text" class="form-control">
+                                </td>
+
+                                <td *ngIf="selectedOption !== i"><span [style.backgroundColor]="item.color" style="color: white;" class="badge">{{colorPlaceholder}}</span></td>
+                                <td *ngIf="selectedOption === i">
+                                    <input [(colorPicker)]="color" [style.background]="color" [placeholder]="color === '' ? 'Колір' : color" type="text" class="form-control">
+                                </td>
+
+                                <td *ngIf="selectedOption !== i">
+                                    <button (click)="editOption(i,'flightStatus')" class="btn btn-info btn-xs">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+
+                                <td *ngIf="selectedOption === i">
+                                    <button (click)="addNewOption('flightStatus')" class="btn btn-info btn-xs">
+                                        <i class="fas fa-check"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -44,7 +58,6 @@
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

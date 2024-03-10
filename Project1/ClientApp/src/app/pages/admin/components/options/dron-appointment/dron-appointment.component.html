@@ -25,16 +25,33 @@
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Назва</th>
-                                <th scope="col">Колір</th>
+                                <th scope="col">Змінити</th>
                                 <th scope="col">Видалити</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let item of options.dronAppointment; index as i">
                                 <th scope="row">{{i+1}}</th>
-                                <td>{{item.name}}</td>
+                                <td *ngIf="selectedOption !== i">{{ item.name }}</td>
+                                <td *ngIf="selectedOption === i">
+                                    <input [(ngModel)]="name" placeholder="Назва" type="text" class="form-control">
+                                </td>
+
                                 <td><span [style.backgroundColor]="item.color" style="color: white;"
                                         class="badge">{{colorPlaceholder}}</span></td>
+
+                                <td *ngIf="selectedOption !== i">
+                                    <button (click)="editOption(i,'dronAppointment')" class="btn btn-info btn-xs">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+
+                                <td *ngIf="selectedOption === i">
+                                    <button (click)="addNewOption('dronAppointment')" class="btn btn-info btn-xs">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </td>
+
                                 <td>
                                     <button (click)="removeOption(i,'dronAppointment')" class="btn btn-danger btn-xs">
                                         <i class="fas fa-trash"></i>

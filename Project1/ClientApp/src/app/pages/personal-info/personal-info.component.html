@@ -11,8 +11,8 @@
                         <h3 class="section-title">Редагування персональних данних</h3>
                     </div>
                     <div class="card">
-                        <h5 class="card-header">Юзер : {{userInfo.login}}</h5>
-                        <div class="card-body">
+                        <h5 *ngIf="userRole != (UserRoles.PPO || UserRoles.REB)" class="card-header">Юзер : {{userInfo.login}}</h5>
+                        <div *ngIf="userRole != (UserRoles.PPO || UserRoles.REB)" class="card-body">
 
                             <div class="row">
                                 <div class="col-6">
@@ -69,8 +69,8 @@
                             </div>
                         </div>
 
-                        <h5 class="card-header">Шаблони</h5>
-                        <div class="card-body">
+                        <h5 *ngIf="userRole != (UserRoles.PPO || UserRoles.REB)" class="card-header">Шаблони</h5>
+                        <div *ngIf="userRole != (UserRoles.PPO || UserRoles.REB)" class="card-body">
                             <div class="row">
                                 <div class="col-12 col-md-8 col-lg-10">
                                     <ul style="max-height: 200px; overflow-y: auto;" class="list-group mb-2" >

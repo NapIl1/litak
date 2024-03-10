@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { User, Template } from 'src/app/models/user';
+import { User, Template, UserRole } from 'src/app/models/user';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -23,6 +23,7 @@ export class PersonalInfoComponent implements OnInit {
     }
   };
 
+  userRole?: UserRole;
   oldPassword = '';
   newPassword = '';
 
@@ -42,6 +43,7 @@ export class PersonalInfoComponent implements OnInit {
 
     if (ui) {
       this.userInfo = ui;
+      this.userRole = ui.role;
     }
   }
 
@@ -79,9 +81,14 @@ export class PersonalInfoComponent implements OnInit {
     var ui = this.userService.getUserInfo();
     if (ui) {
       this.userInfo = ui;
+      this.userRole = ui.role;
       if(!this.userInfo.userOptions) {
         this.userInfo.userOptions = {}
       }
     }
+  }
+
+  public get UserRoles() {
+    return UserRole;
   }
 }

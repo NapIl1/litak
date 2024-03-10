@@ -32,14 +32,14 @@
                 <li *ngIf="userInfo.role == userRoles.ADMIN" class="nav-item">
                     <a routerLink="ppo" class="nav-link nav-icons" href="#">
                         <i class="fas fa-fw fa-rocket"></i>
-                        ППО/РЕБ
+                        ППО/РЕБ/БпС
                     </a>
                 </li>
 
                 <li  *ngIf="userInfo.role == userRoles.ADMIN || userInfo.role == userRoles.PILOT" class="nav-item">
                     <a disabled="true" [routerLink]="!currentUrl.includes('flight')? 'flight' : null" class="nav-link nav-icons" href="#">
                         <i class="fas fa-fw fa-user"></i>
-                        Пілот
+                        Політ
                     </a>
                 </li>
 

@@ -77,7 +77,7 @@
   <div class="row">
     <div class="col-6">
       <div>
-        <label class="col-form-label">Д/Ч керування</label>
+        <label class="col-form-label">Д/Ч керування, Гц</label>
         <input
           [disabled]="flight.flightStep.step != FlightSteps.START || ( flight.flightStep.step == FlightSteps.START && flight.flightStep.isApproved == true)"
           [(ngModel)]="flight.controlRange" type="text" class="form-control"
@@ -86,7 +86,7 @@
     </div>
     <div class="col-6">
       <div>
-        <label class="col-form-label">Д/Ч відео</label>
+        <label class="col-form-label">Д/Ч відео, Гц</label>
         <input
           [disabled]="flight.flightStep.step != FlightSteps.START || ( flight.flightStep.step == FlightSteps.START && flight.flightStep.isApproved == true)"
           [(ngModel)]="flight.videoRange" type="text" class="form-control">
@@ -97,7 +97,7 @@
   <div class="row">
     <div class="col-6">
       <div>
-        <label class="col-form-label">Маршрут до ЛБЗ</label>
+        <label class="col-form-label">Маршрут до ЛБЗ, метри</label>
         <input
           [disabled]="flight.flightStep.step != FlightSteps.START || ( flight.flightStep.step == FlightSteps.START && flight.flightStep.isApproved == true)"
           [(ngModel)]="flight.routeForward" type="text" class="form-control">
@@ -106,7 +106,7 @@
 
     <div class="col-6">
       <div>
-        <label class="col-form-label">Маршрут від ЛБЗ</label>
+        <label class="col-form-label">Маршрут від ЛБЗ, метри</label>
         <input
           [disabled]="flight.flightStep.step != FlightSteps.START || ( flight.flightStep.step == FlightSteps.START && flight.flightStep.isApproved == true)"
           [(ngModel)]="flight.routeBack" type="text" class="form-control">
