@@ -6,7 +6,7 @@
                 <button
                     [disabled]="flight.flightStep.step !== FlightSteps.START || flight.flightStep.isApproved === false"
                     class="btn btn-success w-100" (click)="next()">
-                    Виліт
+                    <b>Виліт</b>
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
@@ -19,7 +19,7 @@
                 <button
                     [disabled]="flight.flightStep.step !== FlightSteps.START || flight.flightStep.isApproved === false"
                     class="btn btn-danger w-100" (click)="terminateFlight(true)">
-                    Скасувати заявку
+                    <b>Скасувати заявку</b>
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </div>

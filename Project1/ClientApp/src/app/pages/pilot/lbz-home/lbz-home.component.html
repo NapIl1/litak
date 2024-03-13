@@ -5,7 +5,7 @@
                 <div class="mt-3 d-flex justify-content-end">
                     <button class="btn btn-success w-100"
                         (click)="next()">
-                        ЛБЗ Назад
+                        <b>ЛБЗ Назад</b>
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
@@ -17,7 +17,7 @@
                 <div class="mt-3 d-flex justify-content-end">
                     <button class="btn btn-danger w-100"
                         (click)="isChangeRoute = true">
-                        Зміна ЛБЗ
+                        <b>Зміна ЛБЗ</b>
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
@@ -29,7 +29,7 @@
                 <div class="mt-3 d-flex justify-content-end">
                     <button class="btn btn-light w-100"
                         (click)="next(true)">
-                        Пропустити
+                        <b>Пропустити</b>
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
@@ -53,7 +53,7 @@
                 <div class="mt-3 d-flex justify-content-end">
                     <button [disabled]="validateStep()" class="btn btn-success w-100"
                         (click)="next()">
-                        Підтвердити
+                        <b>Підтвердити</b>
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>

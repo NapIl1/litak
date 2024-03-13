@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12">
       <label class="col-form-label">Вибір шаблону</label>
-      <ng-select (change)="templateSelected()" [(ngModel)]="selectedTemplate">
+      <ng-select class="select-with-border" (change)="templateSelected()" [(ngModel)]="selectedTemplate">
         <ng-option
           *ngFor="let template of userInfo.userOptions?.templates"
           [value]="template"
@@ -14,7 +14,7 @@
   </div>
 
   <div class="row">
-    <div class="col-6">
+    <div class="col-md-12 col-lg-6">
       <label required class="col-form-label">Позивний</label>
       <input
         [disabled]="
@@ -27,7 +27,7 @@
         class="form-control"
       />
     </div>
-    <div class="col-6">
+    <div class="col-md-12 col-lg-6">
       <label class="col-form-label">Підрозділ</label>
       <input
         [disabled]="
@@ -43,7 +43,7 @@
   </div>
 
   <div class="row">
-    <div class="col-6">
+    <div class="col-md-12 col-lg-6">
       <div>
         <label class="col-form-label">Смуга виконання завдання</label>
         <input
@@ -58,7 +58,7 @@
         />
       </div>
     </div>
-    <div class="col-6">
+    <div class="col-md-12 col-lg-6">
       <div>
         <label class="col-form-label">РВЗ</label>
         <input
@@ -76,9 +76,9 @@
   </div>
 
   <div class="row">
-    <div class="col-6">
-      <label class="col-form-label">Призначення дрону</label>
-      <ng-select
+    <div class="col-md-12 col-lg-6">
+      <label class="col-form-label">Тип дрону</label>
+      <ng-select class="select-with-border"
         [disabled]="
           flight.flightStep.step != FlightSteps.START ||
           (flight.flightStep.step == FlightSteps.START &&
@@ -93,10 +93,10 @@
         </ng-option>
       </ng-select>
     </div>
-    <div class="col-6">
+    <div class="col-md-12 col-lg-6">
       <div>
         <label class="col-form-label">Модель</label>
-        <ng-select
+        <ng-select class="select-with-border"
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
             (flight.flightStep.step == FlightSteps.START &&
@@ -115,9 +115,9 @@
   </div>
 
   <div class="row">
-    <div class="col-6">
+    <div class="col-md-12 col-lg-6">
       <div>
-        <label class="col-form-label">Д/Ч керування (МГц)</label>
+        <label class="col-form-label">Частота керування (МГц)</label>
         <input
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
@@ -131,9 +131,9 @@
         />
       </div>
     </div>
-    <div class="col-6">
+    <div class="col-md-12 col-lg-6">
       <div>
-        <label class="col-form-label">Д/Ч відео (МГц)</label>
+        <label class="col-form-label">Частота відео (МГц)</label>
         <input
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
@@ -149,9 +149,9 @@
   </div>
 
   <div class="row">
-    <div class="col-6">
+    <div class="col-md-12 col-lg-6">
       <div>
-        <label class="col-form-label">Маршрут до ЛБЗ (Населені пункти)</label>
+        <label class="col-form-label">Маршрут до ЛБЗ (населені пункти)</label>
         <input
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
@@ -165,9 +165,9 @@
       </div>
     </div>
 
-    <div class="col-6">
+    <div class="col-md-12 col-lg-6">
       <div>
-        <label class="col-form-label">Маршрут від ЛБЗ (Населені пункти)</label>
+        <label class="col-form-label">Маршрут від ЛБЗ (населені пункти)</label>
         <input
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
@@ -183,9 +183,9 @@
   </div>
 
   <div class="row">
-    <div class="col-6">
+    <div class="col-md-12 col-lg-6">
       <div>
-        <label class="col-form-label">Робоча висота (Метри)</label>
+        <label class="col-form-label">Висота польоту (метри)</label>
         <input
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
@@ -199,7 +199,7 @@
       </div>
     </div>
 
-    <div class="col-6">
+    <div class="col-md-12 col-lg-6">
       <div>
         <label class="col-form-label">Посилання на стрім</label>
         <input
@@ -217,7 +217,7 @@
   </div>
 
   <div class="row">
-    <div class="col-6">
+    <div class="col-md-12 col-lg-6">
       <label class="col-form-label">Телефон</label>
       <input
         [disabled]="
@@ -277,7 +277,7 @@
           href="#"
           class="btn btn-warning w-100"
         >
-          Створити згідно останньої заявки
+          <b>Створити згідно останньої заявки</b>
           <i class="fas fa-arrow-right"></i>
         </button>
       </div>
@@ -294,7 +294,7 @@
           href="#"
           class="btn btn-success w-100"
         >
-          Створити політ
+          <b>Створити політ</b>
           <i class="fas fa-arrow-right"></i>
         </button>
       </div>

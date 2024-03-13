@@ -52,12 +52,12 @@
                                     data-type="date"><b>ЛБЗ назад</b></th>
                                 <th scope="col" data-type="date">Зниження</th>
                                 <th [appSort]="flights" data-order="desc" data-name="workingHeight" scope="col">
-                                    <b>Робоча висота</b>
+                                    <b>Висота польоту</b>
                                 </th>
-                                <th [appSort]="flights" data-order="desc" data-name="videoRange" scope="col"><b>Д/Ч
+                                <th [appSort]="flights" data-order="desc" data-name="videoRange" scope="col"><b>Частота
                                         відео</b></th>
                                 <th [appSort]="flights" data-order="desc" data-name="controlRange" scope="col">
-                                    <b>Д/Ч керування</b>
+                                    <b>Частота керування</b>
                                 </th>
                                 <th [appSort]="flights" data-order="desc" data-name="taskPerformanceArea" scope="col">
                                     <b>Район завдання</b></th>
@@ -91,9 +91,9 @@
                                     {{ item.reductionDistance}} км. Район {{ item.reductionLocation}}
                                 </td>
                                 <td *ngIf="!item.hasOwnProperty('reductionDistance')"></td> <!--Зниження порожнє-->
-                                <td>{{item.workingHeight}}</td> <!--Робоча висота-->
-                                <td>{{item.videoRange}}</td> <!--Д/Ч відео-->
-                                <td>{{item.controlRange}}</td> <!--Д/Ч керування-->
+                                <td>{{item.workingHeight}}</td> <!--Висота польоту-->
+                                <td>{{item.videoRange}}</td> <!--Частота відео-->
+                                <td>{{item.controlRange}}</td> <!--Частота керування-->
                                 <td>{{item.taskPerformanceArea}}</td> <!--Район завдання-->
                                 <td> <!--Одобрено-->
                                     {{

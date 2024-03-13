@@ -28,9 +28,9 @@ public class RecordFileController : ControllerBase
         "Зниження",
         "ЛБЗ назад",
         "Зниження інформація",
-        "Робоча висота",
-        "Д/Ч відео",
-        "Д/Ч керування",
+        "Висота польоту",
+        "Частота відео",
+        "Частота керування",
         "Район завдання",
         "Одобрено",
         "Заборона",
@@ -127,11 +127,11 @@ public class RecordFileController : ControllerBase
         var reductionInfo = record.GetValue("reductionDistance") != string.Empty ? $"{record["reductionDistance"]}км. Район {record["reductionLocation"]}" : null;
         //Зниження інформація
         rowData.Cells[index + 2, 16].Value = $"{reductionInfo}";
-        //Робоча висота
+        //Висота польоту
         rowData.Cells[index + 2, 17].Value = $"{record.GetValue("workingHeight")}";
-        //Д/Ч відео
+        //Частота відео
         rowData.Cells[index + 2, 18].Value = $"{record.GetValue("videoRange")}";
-        //Д/Ч керування
+        //Частота керування
         rowData.Cells[index + 2, 19].Value = $"{record.GetValue("controlRange")}";
         //Район завдання
         rowData.Cells[index + 2, 20].Value = $"{record.GetValue("taskPerformanceArea")}";

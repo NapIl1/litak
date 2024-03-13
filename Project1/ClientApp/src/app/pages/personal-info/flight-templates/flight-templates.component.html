@@ -28,7 +28,7 @@
                           
                             <div class="row">
                               <div class="col-6">
-                                <label class="col-form-label">Призначення дрону</label>
+                                <label class="col-form-label">Тип дрону</label>
                                 <ng-select
                                   [(ngModel)]="template.assignment">
                                   <ng-option *ngFor="let item of options.dronAppointment" [value]="item">
@@ -52,7 +52,7 @@
                             <div class="row">
                               <div class="col-6">
                                 <div>
-                                  <label class="col-form-label">Д/Ч керування</label>
+                                  <label class="col-form-label">Частота керування</label>
                                   <input
                                     [(ngModel)]="template.controlRange" type="text" class="form-control"
                                     aria-describedby="addon-mh">
@@ -60,7 +60,7 @@
                               </div>
                               <div class="col-6">
                                 <div>
-                                  <label class="col-form-label">Д/Ч відео</label>
+                                  <label class="col-form-label">Частота відео</label>
                                   <input
                                     [(ngModel)]="template.videoRange" type="text" class="form-control">
                                 </div>
@@ -70,7 +70,7 @@
                             <div class="row">
                               <div class="col-6">
                                 <div>
-                                  <label class="col-form-label">Робоча висота</label>
+                                  <label class="col-form-label">Висота польоту</label>
                                   <input
                                   [(ngModel)]="template.workingHeight" type="text" class="form-control">
                                 </div>
