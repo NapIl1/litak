@@ -43,6 +43,15 @@ export class PilotReductionComponent implements OnInit, OnDestroy {
             return;
         }
 
+        
+        if (isSkipped) {
+            const res = confirm("Ви впевнені?");
+      
+            if (res === false) {
+              return;
+            }
+        }
+
         this.flight.flightStep.step = FlightSteps.REDUCTION;
         this.flight.flightStep.isApproved = true;
     

@@ -56,6 +56,34 @@ export class UserService {
     }
   }
 
+  public async editTemplate(template: Template): Promise<void> {
+    const user = this.getUserInfo();
+
+    if(user) {
+
+      if (!user.userOptions) {
+        user.userOptions = {};
+      }
+
+      if (!user.userOptions.templates) {
+        user.userOptions.templates = [];
+      }
+
+      const userTemplate = user.userOptions.templates.find(x => x.id === template.id);
+
+      if (userTemplate) {
+        userTemplate.assignment = template.assignment;
+        userTemplate.controlRange = template.controlRange;
+        userTemplate.model = template.model;
+        userTemplate.templateName = template.templateName;
+        userTemplate.videoRange = template.videoRange;
+        userTemplate.workingHeight = template.workingHeight;
+      }
+
+      await this.updateUser(user);
+    }
+  }
+
   public async removeTemplate(templateId: string): Promise<void> {
     const user = this.getUserInfo();
 

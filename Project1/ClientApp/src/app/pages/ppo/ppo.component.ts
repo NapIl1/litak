@@ -28,7 +28,7 @@ export class PpoComponent implements OnInit, OnDestroy {
   userRole?: UserRole;
   refreshFlightSubscription?: Subscription;
 
-  interval_ms = 30000;
+  interval_ms = 10000;
 
   private readonly timeRangeMinutes = 5;
   endOptions: string[] = ['Завдання виконано', 'Борт пошкоджено', 'Борт втрачений'];
@@ -189,8 +189,10 @@ export class PpoComponent implements OnInit, OnDestroy {
     newFlights.push(...filtered.filter(x => x.flightStep.isApproved === false))
 
     this.options.dronAppointment?.forEach(c => {
-      newFlights.push(...filtered.filter(x => x.flightStep.isApproved === true && x.assignment?.name === c.name));
+      newFlights.push(...filtered.filter(x => x.flightStep.isApproved === true && x.assignment?.name === c.name && x.flightStep.step !== FlightSteps.END));
     });
+
+    newFlights.push(...filtered.filter(x => x.flightStep.step === FlightSteps.END));
 
     newFlights.forEach(flight => {
       if (flight.flightStep.step == FlightSteps.END) {

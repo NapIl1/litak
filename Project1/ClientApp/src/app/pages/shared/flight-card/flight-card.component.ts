@@ -14,7 +14,7 @@ export class FlightCardComponent implements OnInit {
 
   @Input() isCollapsable = false;
 
-  @Input() flight!: Flight;
+  @Input() flight: Flight | null = null;
 
   userRole?: UserRole;
 
@@ -39,21 +39,7 @@ export class FlightCardComponent implements OnInit {
     }
   }
 
-  toggleSection(flight: any) {
-    if(this.isCollapsable) {
-      flight.isRequireAttention = !flight.isRequireAttention;
-    }
-  }
-
   public get UserRoles() {
     return UserRole;
-  }
-
-  public async approve(id: string | undefined) {
-
-  }
-
-  public async discard(id: string | undefined) {
-
   }
 }

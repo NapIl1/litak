@@ -44,6 +44,14 @@ export class PilotLbzForwardComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (isSkipped) {
+      const res = confirm("Ви впевнені?");
+
+      if (res === false) {
+        return;
+      }
+    }
+
     if (this.isChangeRoute) {
       this.flight.isForwardChanged = true;
       this.flight.isRequireAttention = true;
@@ -69,5 +77,13 @@ export class PilotLbzForwardComponent implements OnInit, OnDestroy {
 
   public get FlightSteps() {
     return FlightSteps;
+  }
+
+  changeRoute() {
+    var res = confirm("Ви впевнені?");
+
+    if(res === true) {
+      this.isChangeRoute = true;
+    }
   }
 }

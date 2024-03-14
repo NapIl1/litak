@@ -52,7 +52,7 @@
                             <div class="row">
                               <div class="col-6">
                                 <div>
-                                  <label class="col-form-label">Частота керування</label>
+                                  <label class="col-form-label">Частота керування (МГц)</label>
                                   <input
                                     [(ngModel)]="template.controlRange" type="text" class="form-control"
                                     aria-describedby="addon-mh">
@@ -60,7 +60,7 @@
                               </div>
                               <div class="col-6">
                                 <div>
-                                  <label class="col-form-label">Частота відео</label>
+                                  <label class="col-form-label">Частота відео (МГц)</label>
                                   <input
                                     [(ngModel)]="template.videoRange" type="text" class="form-control">
                                 </div>
@@ -70,7 +70,7 @@
                             <div class="row">
                               <div class="col-6">
                                 <div>
-                                  <label class="col-form-label">Висота польоту</label>
+                                  <label class="col-form-label">Висота польоту (метри)</label>
                                   <input
                                   [(ngModel)]="template.workingHeight" type="text" class="form-control">
                                 </div>
@@ -79,9 +79,15 @@
                             <div class="row">
                               <div class="col-12">
                                 <div class="mt-3 d-flex justify-content-end">
-                                  <button  [disabled]="validateTemplate()" (click)="createTemplate()" href="#"
+                                  <button *ngIf="templateId == null" [disabled]="validateTemplate()" (click)="createTemplate()" href="#"
                                     class="btn btn-success w-100">
                                     Створити шаблон
+                                    <i class="fas fa-arrow-right"></i>
+                                  </button>
+
+                                  <button *ngIf="templateId != null" [disabled]="validateTemplate()" (click)="editTemplate()" href="#"
+                                    class="btn btn-success w-100">
+                                    Змінити шаблон
                                     <i class="fas fa-arrow-right"></i>
                                   </button>
                                 </div>

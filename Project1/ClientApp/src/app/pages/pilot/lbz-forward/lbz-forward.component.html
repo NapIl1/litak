@@ -16,7 +16,7 @@
             <div class="col-12">
                 <div class="mt-3 d-flex justify-content-end">
                     <button [disabled]="flight.flightStep.step !== FlightSteps.FLIGHT" class="btn btn-danger w-100"
-                        (click)="isChangeRoute = true">
+                        (click)="changeRoute()">
                         <b>Зміна ЛБЗ</b>
                         <i class="fas fa-arrow-right"></i>
                     </button>

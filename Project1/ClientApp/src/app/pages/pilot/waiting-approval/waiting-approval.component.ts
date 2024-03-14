@@ -1,13 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subscription, interval, switchMap } from 'rxjs';
+import { Subscription, interval } from 'rxjs';
 import { ValueColor } from 'src/app/models/droneModel';
 import { Flight } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
 import { User, UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
-import { RoutingService } from 'src/app/services/routing.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -21,9 +19,9 @@ export class WaitingApprovalComponent implements OnInit, OnDestroy {
   userInfo: User = {};
 
   flightStatuses: ValueColor[] = [];
-  isNewFlight: boolean = true;
 
-  flights: Flight[] = [];
+  flight: Flight | null = null;
+
   options: DroneOptions = {
     boardingStatuses: [],
     dronAppointment: [],
@@ -32,12 +30,11 @@ export class WaitingApprovalComponent implements OnInit, OnDestroy {
 
   interval_ms = 10000;
   refreshFlightSubscription?: Subscription;
+  
   constructor(
-    private router: Router,
     private flightService: FlightService,
     private optionsService: OptionsService,
-    private userService: UserService,
-    private routingService: RoutingService) { }
+    private userService: UserService) { }
 
   ngOnDestroy(): void {
     this.refreshFlightSubscription?.unsubscribe();
@@ -69,11 +66,11 @@ export class WaitingApprovalComponent implements OnInit, OnDestroy {
   async initFlights() {
     const allFlights = await this.flightService.getByUserIdAsync(this.userInfo._id);
 
-    this.flights = [];
-    this.flights.push(...allFlights);
-
-    if(allFlights[0].flightStep.isApproved == true || allFlights[0].isRejected == true){
-      await this.flightService.refreshActiveFlight();
+    if(allFlights && allFlights[0]) {
+      this.flight = allFlights[0];
+      if(this.flight.flightStep.isApproved == true || this.flight.isRejected == true){
+        await this.flightService.refreshActiveFlight();
+      }
     }
   }
 

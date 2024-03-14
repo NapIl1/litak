@@ -40,6 +40,14 @@ export class PilotReturnComponent implements OnInit, OnDestroy {
             return;
         }
 
+        if (isSkipped) {
+            const res = confirm("Ви впевнені?");
+
+            if (res === false) {
+                return;
+            }
+        }
+
         this.flight.flightStep.step = FlightSteps.RETURN;
         this.flight.flightStep.isApproved = true;
     

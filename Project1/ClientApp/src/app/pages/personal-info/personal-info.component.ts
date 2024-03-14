@@ -73,6 +73,10 @@ export class PersonalInfoComponent implements OnInit {
     this.initUserInfo();
   }
 
+  editTemplate(templateId: string) {
+    this.router.navigate(["template/" + templateId]);
+  }
+
   public createTemplate() {
     this.router.navigate(["template"]);
   }

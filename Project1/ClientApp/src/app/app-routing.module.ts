@@ -42,6 +42,10 @@ const routes: Routes = [
         component: FlightTemplateComponent
       },
       {
+        path: 'template/:id',
+        component: FlightTemplateComponent
+      },
+      {
         path: 'flight',
         component: PilotComponent,
         canActivate: [RoleGuard],
