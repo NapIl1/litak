@@ -1,127 +1,236 @@
 <app-sidebar></app-sidebar>
 
 <div class="dashboard-wrapper">
-    <div class="dashboard-ecommerce">
-        <div class="container-fluid dashboard-content ">
+  <div class="dashboard-ecommerce">
+    <div class="container-fluid dashboard-content">
+      <div class="d-flex" style="flex-wrap: wrap">
+        <div
+          style="min-width: 240px; max-width: 330px"
+          *ngFor="let flight of flights"
+        >
+          <div
+            class="card m-1"
+            [class.not-approved]="!flight.isChecked"
+            [style.backgroundColor]="
+              flight.flightStep.step !== FlightSteps.START
+                ? flight.assignment!.color
+                : 'black'
+            "
+          >
+            <div class="card-body p-1" style="border: 2px solid black">
+              <div
+                *ngIf="!flight.isExpanded"
+                style="text-align: center"
+                (click)="toggleSection(flight)"
+              >
+                <i class="fas fa-angle-down"></i>
+              </div>
 
-            <div class="d-flex" style="flex-wrap: wrap; ">
-                <div style="min-width: 240px; max-width: 330px;" *ngFor="let flight of flights">
-                    <div class="card m-1"
-                    [class.not-approved]="!flight.isChecked"
-                    [style.backgroundColor]="flight.flightStep.step !== FlightSteps.START ? flight.assignment!.color : 'black'">
+              <div
+                *ngIf="flight.isExpanded"
+                style="text-align: center"
+                (click)="toggleSection(flight)"
+              >
+                <i class="fas fa-angle-up"></i>
+              </div>
 
-                        <div class="card-body p-1" style="border: 2px solid black;">
-                            <div *ngIf="!flight.isExpanded" style="text-align: center;" (click)="toggleSection(flight)">
-                                <i  class="fas fa-angle-down"></i>
-                            </div>
+              <div class="header-step mb-1">
+                <span
+                  [style.backgroundColor]="
+                    this.flightStatuses[flight.flightStep.visibleStep ?? 0]
+                      .color
+                  "
+                  class="badge badge-primary"
+                >
+                  {{
+                    this.flightStatuses[
+                      flight.flightStep.visibleStep ?? 0
+                    ].name.toUpperCase()
+                  }}
+                </span>
+                <span
+                  *ngIf="flight.flightStep.step === this.FlightSteps.END"
+                  [style.backgroundColor]="
+                    this.flightStatuses[flight.flightStep.visibleStep ?? 0]
+                      .color
+                  "
+                  class="badge badge-primary"
+                >
+                  {{ flight.boardingStatus?.toUpperCase() }}
+                </span>
+              </div>
+              <div>
+                <span class="badge badge-primary bg-white" style="color: black">
+                  <b>Модель: {{ flight.model?.name?.toUpperCase() }}</b>
+                </span>
 
-                            <div *ngIf="flight.isExpanded" style="text-align: center;" (click)="toggleSection(flight)">
-                                <i  class="fas fa-angle-up"></i>
-                            </div>
-                            
-                            <div class="header-step mb-1">
-                                <span [style.backgroundColor]="this.flightStatuses[flight.flightStep.visibleStep ?? 0].color"
-                                    class="badge badge-primary">
-                                    {{ this.flightStatuses[flight.flightStep.visibleStep ?? 0].name.toUpperCase() }}
-                                </span>
-                                <span *ngIf="flight.flightStep.step === this.FlightSteps.END" [style.backgroundColor]="this.flightStatuses[flight.flightStep.visibleStep ?? 0].color"
-                                    class="badge badge-primary">
-                                    {{ flight.boardingStatus?.toUpperCase() }}
-                                </span>
-                            </div>
-                            <div>
-                                <span class="badge badge-primary bg-white" style="color: black;">
-                                     <b>Модель: {{flight.model?.name?.toUpperCase()}}</b>
-                                </span>
+                <span class="badge badge-primary bg-white" style="color: black">
+                  <b>Смуга: {{ flight.zone?.toUpperCase() }}</b>
+                </span>
+              </div>
 
-                                <span class="badge badge-primary bg-white" style="color: black;">
-                                     <b>Смуга: {{flight.zone?.toUpperCase()}}</b>
-                                </span>
-                            </div>
-            
-                            <div>
-                                <span style="color:black" class="badge badge-primary bg-white"> <b>Позивний: {{flight.operator?.toUpperCase()}}</b> </span>
-                            </div>
-                            <div>
-                                <span style="color:black" class="badge badge-primary bg-white"> <b>Підрозділ: {{flight.unit?.toUpperCase()}}</b></span>
-                            </div>
-            
-                            <div class="alert alert-info mb-1 mt-1" [class.hidden]="!flight.isExpanded">
-                                <div><b>Створений:</b> {{ flight.dateOfFlight | date : 'dd/MM/yy HH:mm'}}</div>
-                                <div><b>Виліт:</b> {{ flight.flightStartDate | date : 'dd/MM/yy HH:mm' }}</div>
-                                <div><b>ЛБЗ Вперед:</b> {{ flight.LBZForwardDate | date : 'dd/MM/yy HH:mm' }}</div>
-                                <div><b>Повернення:</b> {{ flight.returnDate | date : 'dd/MM/yy HH:mm' }}</div>
-                                <div><b>ЛБЗ Назад:</b> {{ flight.LBZBackDate | date : 'dd/MM/yy HH:mm' }}</div>
-                                <div *ngIf="flight?.reductionDate !=(undefined || null)"><b>Зниження:</b> {{ flight.reductionDate | date : 'dd/MM/yy HH:mm' }}</div>
-                                <div><b>Завершення:</b> {{ flight.endDate | date : 'dd/MM/yy HH:mm' }}</div>
-                            </div>
-                            <div class="alert alert-info mb-0" [class.hidden]="!flight.isExpanded" style="background-color: white !important;">
-                                <div><b>Призначення:</b> {{flight.assignment!.name}}</div>
-                                <div><b>Маршрут вперед:</b> {{ flight.routeForward }} </div>
+              <div>
+                <span style="color: black" class="badge badge-primary bg-white">
+                  <b>Позивний: {{ flight.operator?.toUpperCase() }}</b>
+                </span>
+              </div>
+              <div>
+                <span style="color: black" class="badge badge-primary bg-white">
+                  <b>Підрозділ: {{ flight.unit?.toUpperCase() }}</b></span
+                >
+              </div>
 
-                                <div class="changed-route" *ngIf="flight.isForwardChanged">
-                                    <b>Маршрут до ЛБЗ:</b> {{ flight.changedForwardRoute }} </div>
-
-                                <div><b>Маршрут назад:</b> {{ flight.routeBack }} </div>
-
-                                <div class="changed-route" *ngIf="flight.isReturnChanged">
-                                    <b>Маршрут від ЛБЗ:</b> {{ flight.changedReturnRoute }} 
-                                </div>
-                                <div *ngIf="!flight.hasOwnProperty('reductionDistance')"> <b>Початок зниження: </b></div>
-                                <div *ngIf="flight.hasOwnProperty('reductionDistance')"> <b>Початок зниження: </b> за <b>{{flight.reductionDistance}} км</b> в район <b>{{flight.reductionLocation}}</b></div>
-                                <div><b>РВЗ:</b> {{flight.taskPerformanceArea}}</div>
-                                <div><b>Висота польоту:</b> {{ flight.workingHeight}}</div>
-                                <div><b>Частота Керування:</b> {{ flight.controlRange}}</div>
-                                <div><b>Частота Відео:</b> {{ flight.videoRange}}</div>
-                                
-                                <div *ngIf="flight.streamLink"><b>Стрім: </b> <a target="_blank" [href]="flight.streamLink">Посилання</a></div>
-                                <div *ngIf="!flight.streamLink"><b>Стрім: </b> без стріму </div>
-                            </div>
-        
-                            <div *ngIf="(userRole == UserRoles.PPO) && !flight.flightStep.isApprovedByPPO" class="d-flex justify-content-center mt-1">                     
-                                <button (click)="approve(flight._id)" class="btn btn-success w-50 m-1">
-                                    <b>Дозволити</b>
-                                </button>
-                                <button (click)="discard(flight._id)" class="btn btn-danger w-50 m-1">
-                                    <b>Заборонити</b>
-                                </button>
-                            </div>
-                            
-                            <div *ngIf="(userRole == UserRoles.REB) && !flight.flightStep.isApprovedByREB" class="d-flex justify-content-center mt-1">
-                                <button (click)="approve(flight._id)" class="btn btn-success w-50 m-1">
-                                    <b>Дозволити</b>
-                                </button>
-                                <button (click)="discard(flight._id)" class="btn btn-danger w-50 m-1">
-                                    <b>Заборонити</b>
-                                </button>
-                            </div>
-
-                            <div *ngIf="userRole == UserRoles.ADMIN && (flight.flightStep.isApprovedByPPO == false && flight.flightStep.isApprovedByREB == false)" class="alert alert-warning mt-2 mb-0">
-                                <div *ngIf="flight.flightStep.isApprovedByPPO == false"><b>Очікується дозвіл від ППО</b></div>
-                                <div *ngIf="flight.flightStep.isApprovedByREB == false"><b>Очікується дозвіл від РЕБ</b></div>
-                            </div>
-
-                            <div *ngIf="(userRole == UserRoles.ADMIN) && !flight.flightStep.isApprovedByAdmin"
-                            class="d-flex justify-content-center mt-1">
-                            <button (click)="approve(flight._id)" class="btn btn-success w-50 m-1">
-                                <b>Дозволити</b>
-                            </button>
-                            <button (click)="discard(flight._id)" class="btn btn-danger w-50 m-1">
-                                <b>Заборонити</b>
-                            </button>
-                        </div>
-        
-                        </div>
-                    </div>
-        
+              <div
+                class="alert alert-info mb-1 mt-1"
+                [class.hidden]="!flight.isExpanded"
+              >
+                <div>
+                  <b>Створений:</b>
+                  {{ flight.dateOfFlight | date : "dd/MM/yy HH:mm" }}
                 </div>
-        
+                <div>
+                  <b>Виліт:</b>
+                  {{ flight.flightStartDate | date : "dd/MM/yy HH:mm" }}
+                </div>
+                <div>
+                  <b>ЛБЗ Вперед:</b>
+                  {{ flight.LBZForwardDate | date : "dd/MM/yy HH:mm" }}
+                </div>
+                <div>
+                  <b>Повернення:</b>
+                  {{ flight.returnDate | date : "dd/MM/yy HH:mm" }}
+                </div>
+                <div>
+                  <b>ЛБЗ Назад:</b>
+                  {{ flight.LBZBackDate | date : "dd/MM/yy HH:mm" }}
+                </div>
+                <div *ngIf="flight?.reductionDate != (undefined || null)">
+                  <b>Зниження:</b>
+                  {{ flight.reductionDate | date : "dd/MM/yy HH:mm" }}
+                </div>
+                <div>
+                  <b>Завершення:</b>
+                  {{ flight.endDate | date : "dd/MM/yy HH:mm" }}
+                </div>
+              </div>
+              <div
+                class="alert alert-info mb-0"
+                [class.hidden]="!flight.isExpanded"
+                style="background-color: white !important"
+              >
+                <div><b>Призначення:</b> {{ flight.assignment!.name }}</div>
+                <div><b>Маршрут вперед:</b> {{ flight.routeForward }}</div>
+
+                <div class="changed-route" *ngIf="flight.isForwardChanged">
+                  <b>Маршрут до ЛБЗ:</b> {{ flight.changedForwardRoute }}
+                </div>
+
+                <div><b>Маршрут назад:</b> {{ flight.routeBack }}</div>
+
+                <div class="changed-route" *ngIf="flight.isReturnChanged">
+                  <b>Маршрут від ЛБЗ:</b> {{ flight.changedReturnRoute }}
+                </div>
+                <div *ngIf="!flight.hasOwnProperty('reductionDistance')">
+                  <b>Початок зниження: </b>
+                </div>
+                <div *ngIf="flight.hasOwnProperty('reductionDistance')">
+                  <b>Початок зниження: </b> за {{ flight.reductionDistance }} км
+                  в район {{ flight.reductionLocation }}
+                </div>
+                <div><b>РВЗ:</b> {{ flight.taskPerformanceArea }}</div>
+                <div><b>Висота польоту:</b> {{ flight.workingHeight }}</div>
+                <div><b>Частота Керування:</b> {{ flight.controlRange }}</div>
+                <div><b>Частота Відео:</b> {{ flight.videoRange }}</div>
+
+                <div *ngIf="flight.streamLink">
+                  <b>Стрім: </b>
+                  <a target="_blank" [href]="flight.streamLink">Посилання</a>
+                </div>
+                <div *ngIf="!flight.streamLink"><b>Стрім: </b> без стріму</div>
+              </div>
+
+              <div
+                *ngIf="
+                  userRole == UserRoles.PPO &&
+                  !flight.flightStep.isApprovedByPPO
+                "
+                class="d-flex justify-content-center mt-1"
+              >
+                <button
+                  (click)="approve(flight._id)"
+                  class="btn btn-success w-50 m-1"
+                >
+                  <b>Дозволити</b>
+                </button>
+                <button
+                  (click)="discard(flight._id)"
+                  class="btn btn-danger w-50 m-1"
+                >
+                  <b>Заборонити</b>
+                </button>
+              </div>
+
+              <div
+                *ngIf="
+                  userRole == UserRoles.REB &&
+                  !flight.flightStep.isApprovedByREB
+                "
+                class="d-flex justify-content-center mt-1"
+              >
+                <button
+                  (click)="approve(flight._id)"
+                  class="btn btn-success w-50 m-1"
+                >
+                  <b>Дозволити</b>
+                </button>
+                <button
+                  (click)="discard(flight._id)"
+                  class="btn btn-danger w-50 m-1"
+                >
+                  <b>Заборонити</b>
+                </button>
+              </div>
+
+              <div
+                *ngIf="
+                  userRole == UserRoles.ADMIN &&
+                  flight.flightStep.isApprovedByPPO == false &&
+                    flight.flightStep.isApprovedByREB == false
+                "
+                class="alert alert-warning mt-2 mb-0"
+              >
+                <div *ngIf="flight.flightStep.isApprovedByPPO == false">
+                  <b>Очікується дозвіл від ППО</b>
+                </div>
+                <div *ngIf="flight.flightStep.isApprovedByREB == false">
+                  <b>Очікується дозвіл від РЕБ</b>
+                </div>
+              </div>
+
+              <div
+                *ngIf="
+                  userRole == UserRoles.ADMIN &&
+                  !flight.flightStep.isApprovedByAdmin
+                "
+                class="d-flex justify-content-center mt-1"
+              >
+                <button
+                  (click)="approve(flight._id)"
+                  class="btn btn-success w-50 m-1"
+                >
+                  <b>Дозволити</b>
+                </button>
+                <button
+                  (click)="discard(flight._id)"
+                  class="btn btn-danger w-50 m-1"
+                >
+                  <b>Заборонити</b>
+                </button>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
-
-
-
-
-
