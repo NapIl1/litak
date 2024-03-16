@@ -31,7 +31,7 @@ export class PpoComponent implements OnInit, OnDestroy {
   interval_ms = 10000;
 
   private readonly timeRangeMinutes = 5;
-  endOptions: string[] = ['Завдання виконано', 'Борт пошкоджено', 'Борт втрачений'];
+  endOptions: string[] = ['Успішно', 'Не успішно', 'Борт пошкоджено','Борт втрачено'];
 
   flightStatuses: ValueColor[] = [];
 
@@ -78,15 +78,15 @@ export class PpoComponent implements OnInit, OnDestroy {
       this.flightStatuses = this.options.flightStatus;
     }
 
-    this.refreshFlightSubscription = interval(this.interval_ms).subscribe(async x => {
-      this.completedFlights.forEach(flight => {
-        flight.msElapsed += this.interval_ms;
-      })
+    // this.refreshFlightSubscription = interval(this.interval_ms).subscribe(async x => {
+    //   this.completedFlights.forEach(flight => {
+    //     flight.msElapsed += this.interval_ms;
+    //   })
 
-      this.flights = this.flights.filter(x => !this.completedFlights.find(completed => completed.flight._id === x._id))
-      this.completedFlights = this.completedFlights.filter(x => x.msElapsed < (this.interval_ms * 5));
-      await this.initFlights();
-    })
+    //   this.flights = this.flights.filter(x => !this.completedFlights.find(completed => completed.flight._id === x._id))
+    //   this.completedFlights = this.completedFlights.filter(x => x.msElapsed < (this.interval_ms * 5));
+    //   await this.initFlights();
+    // })
   }
 
   public async getOptions() {
@@ -192,7 +192,11 @@ export class PpoComponent implements OnInit, OnDestroy {
       newFlights.push(...filtered.filter(x => x.flightStep.isApproved === true && x.assignment?.name === c.name && x.flightStep.step !== FlightSteps.END));
     });
 
-    newFlights.push(...filtered.filter(x => x.flightStep.step === FlightSteps.END));
+    newFlights.push(...filtered.filter(x => x.flightStep.step === FlightSteps.END).sort((a : Flight, b : Flight) => {
+      const endDateA = new Date(a.endDate ?? '').getTime();
+      const endDateB = new Date(b.endDate ?? '').getTime();
+      return endDateB - endDateA;
+    }));
 
     newFlights.forEach(flight => {
       if (flight.flightStep.step == FlightSteps.END) {

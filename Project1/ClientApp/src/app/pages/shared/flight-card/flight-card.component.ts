@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ValueColor } from 'src/app/models/droneModel';
-import { Flight } from 'src/app/models/flight';
+import { Flight, FlightSteps } from 'src/app/models/flight';
 import { UserRole } from 'src/app/models/user';
 import { OptionsService } from 'src/app/services/options.service';
 import { UserService } from 'src/app/services/user.service';
@@ -41,5 +41,9 @@ export class FlightCardComponent implements OnInit {
 
   public get UserRoles() {
     return UserRole;
+  }
+
+  public get FlightSteps() {
+    return FlightSteps;
   }
 }

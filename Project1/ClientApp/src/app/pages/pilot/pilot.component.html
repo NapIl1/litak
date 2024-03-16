@@ -26,11 +26,11 @@
                         <div class="card-body">
                             <div class="justify-content-end d-flex"
                                 *ngIf="(flight.flightStep.step != FlightSteps.START || flight.flightStep.isApproved === true)">
-                                <button *ngIf="!isRequestOpened" class="btn btn-warning" style="width: 100px;"
+                                <button *ngIf="!isRequestOpened" class="btn btn-warning" style="width: 100%;"
                                     (click)="navigateToRequest()">
                                     Заявка
                                 </button>
-                                <button *ngIf="isRequestOpened" class="btn btn-warning" style="width: 100px;"
+                                <button *ngIf="isRequestOpened" class="btn btn-warning" style="width: 100%;"
                                     (click)="navigateToRequest()">
                                     <i class="fas fa-arrow-left"></i>
                                 </button>

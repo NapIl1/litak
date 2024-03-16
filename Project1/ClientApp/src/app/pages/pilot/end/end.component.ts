@@ -13,8 +13,9 @@ export class PilotEndComponent implements OnInit, OnDestroy {
   dateNow = Date.now();
   isNextStep = false;
   subs: Subscription[] = [];
+  successWithoutComments = 'Успішно';
   customOptionSelector = 'Свій варіант';
-  endOptions: string[] = ['Завдання виконано', 'Борт пошкоджено', 'Борт втрачений', this.customOptionSelector];
+  endOptions: string[] = [ this.successWithoutComments, 'Не успішно', 'Борт пошкоджено','Борт втрачено', this.customOptionSelector];
 
   custom = '';
 
@@ -45,10 +46,7 @@ export class PilotEndComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if(this.flight.boardingStatus === this.customOptionSelector) {
-      this.flight.boardingStatus = this.custom;
-    }
-
+    this.flight.boardingStatusComments = this.custom;
     this.flight.endDate = new Date;
     this.flight.flightStep.step = FlightSteps.END;
     this.flight.flightStep.isApproved = true;

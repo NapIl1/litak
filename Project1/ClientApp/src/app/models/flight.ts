@@ -56,6 +56,7 @@ export interface Flight {
     changedReturnRoute?: string;
 
     boardingStatus?: string;
+    boardingStatusComments?: string;
 
     LBZBackDate?: Date;
     isLBZBack?: boolean;

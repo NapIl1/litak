@@ -53,7 +53,7 @@
 
 
     <!-- refactor later -->
-    <div *ngIf="flight.boardingStatus === customOptionSelector" class="row mt-2">
+    <div *ngIf="flight.hasOwnProperty('boardingStatus') && flight.boardingStatus !== successWithoutComments" class="row mt-2">
         <div  class="col-12">
             <div>
               <input [(ngModel)]="custom" type="text" class="form-control">

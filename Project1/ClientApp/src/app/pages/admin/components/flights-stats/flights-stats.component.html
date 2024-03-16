@@ -71,7 +71,7 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let item of flights">
-                                <td>{{ item.flightStartDate | date: 'ddMMyy-HHmm' }}-{{item.operator}}-{{item.unit}}
+                                <td>{{ item.dateOfFlight | date: 'ddMMyy-HHmm' }}-{{item.operator}}
                                 </td> <!--Місія-->
                                 <td>{{item.dateOfFlight | date: 'ddMMyy-HHmm'}}</td>
                                 <td>{{ item.assignment!.name }}</td> <!--Дрон-->

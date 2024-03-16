@@ -95,7 +95,7 @@ public class RecordFileController : ControllerBase
     private static void BuildRecordCell(ExcelWorksheet rowData, IDictionary<string, object>? record, int index)
     {
         // Місія
-        rowData.Cells[index + 2, 1].Value = $"{record.FormatDateTime("flightStartDate", true)}-{record.GetValue("operator")}-{record.GetValue("unit")}";
+        rowData.Cells[index + 2, 1].Value = $"{record.FormatDateTime("dateOfFlight", true)}-{record.GetValue("operator")}";
         //Створений
         rowData.Cells[index + 2, 2].Value = $"{record.FormatDateTime("dateOfFlight")}";
         //Призначення
