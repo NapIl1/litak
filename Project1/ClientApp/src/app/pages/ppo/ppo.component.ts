@@ -78,15 +78,15 @@ export class PpoComponent implements OnInit, OnDestroy {
       this.flightStatuses = this.options.flightStatus;
     }
 
-    // this.refreshFlightSubscription = interval(this.interval_ms).subscribe(async x => {
-    //   this.completedFlights.forEach(flight => {
-    //     flight.msElapsed += this.interval_ms;
-    //   })
+     this.refreshFlightSubscription = interval(this.interval_ms).subscribe(async x => {
+       this.completedFlights.forEach(flight => {
+         flight.msElapsed += this.interval_ms;
+       })
 
-    //   this.flights = this.flights.filter(x => !this.completedFlights.find(completed => completed.flight._id === x._id))
-    //   this.completedFlights = this.completedFlights.filter(x => x.msElapsed < (this.interval_ms * 5));
-    //   await this.initFlights();
-    // })
+       this.flights = this.flights.filter(x => !this.completedFlights.find(completed => completed.flight._id === x._id))
+       this.completedFlights = this.completedFlights.filter(x => x.msElapsed < (this.interval_ms * 5));
+       await this.initFlights();
+     })
   }
 
   public async getOptions() {
