@@ -5,6 +5,8 @@ import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
 import { User } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
+import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-pilot-lbz-home',
@@ -19,7 +21,8 @@ export class PilotLbzHomeComponent implements OnInit, OnDestroy {
     subs: Subscription[] = [];
 
     constructor(
-        private flightService: FlightService) { }
+        private flightService: FlightService,
+        private modalService: NgbModal) { }
 
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe());
@@ -42,13 +45,24 @@ export class PilotLbzHomeComponent implements OnInit, OnDestroy {
         }
 
         if (isSkipped) {
-            const res = confirm("Ви впевнені?");
-      
-            if (res === false) {
-              return;
-            }
-        }
+            const modal = this.modalService.open(YesNoModalComponent);
+            modal.componentInstance.text = 'Ви впевнені?';
+            modal.componentInstance.yes = 'Так';
+            modal.componentInstance.no = 'Ні';
+          
+            modal.closed.subscribe(async res => {
 
+                if (res == true) {
+                    await this.nextStep(isSkipped);
+                }
+            });
+        } 
+        else {
+            await this.nextStep(isSkipped);
+        }
+    }
+
+    public async nextStep(isSkipped: boolean) {
         if (this.isChangeRoute) {
             this.flight.isReturnChanged = true;
             this.flight.isRequireAttention = true;
@@ -75,10 +89,15 @@ export class PilotLbzHomeComponent implements OnInit, OnDestroy {
     }
 
     changeRoute() {
-        var res = confirm("Ви впевнені?");
-    
-        if(res === true) {
-          this.isChangeRoute = true;
-        }
-      }
+        const modal = this.modalService.open(YesNoModalComponent);
+        modal.componentInstance.text = 'Ви впевнені?';
+        modal.componentInstance.yes = 'Так';
+        modal.componentInstance.no = 'Ні';
+
+        modal.closed.subscribe(res => {
+            if (res === true) {
+                this.isChangeRoute = true;
+            }
+        });
+    }
 }

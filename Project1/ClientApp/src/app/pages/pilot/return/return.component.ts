@@ -5,6 +5,8 @@ import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
 import { User } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
+import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-pilot-return',
@@ -18,7 +20,8 @@ export class PilotReturnComponent implements OnInit, OnDestroy {
     subs: Subscription[] = [];
 
     constructor(
-        private flightService: FlightService) { }
+        private flightService: FlightService,
+        private modalService: NgbModal) { }
 
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe());
@@ -41,19 +44,28 @@ export class PilotReturnComponent implements OnInit, OnDestroy {
         }
 
         if (isSkipped) {
-            const res = confirm("Ви впевнені?");
+            const modal = this.modalService.open(YesNoModalComponent);
+            modal.componentInstance.text = 'Ви впевнені?';
+            modal.componentInstance.yes = 'Так';
+            modal.componentInstance.no = 'Ні';
 
-            if (res === false) {
-                return;
-            }
+            modal.closed.subscribe(async res => {
+                if (res == true) {
+                    await this.nextStep(isSkipped);
+                }
+            });
+        } else {
+            await this.nextStep(isSkipped);
         }
+    }
 
+    public async nextStep(isSkipped: boolean) {
         this.flight.flightStep.step = FlightSteps.RETURN;
         this.flight.flightStep.isApproved = true;
-    
+
         if (!isSkipped) {
-          this.flight.returnDate = new Date;
-          this.flight.flightStep.visibleStep = FlightSteps.RETURN;
+            this.flight.returnDate = new Date;
+            this.flight.flightStep.visibleStep = FlightSteps.RETURN;
         }
 
         await this.flightService.updateFlightAsync(this.flight);

@@ -15,7 +15,7 @@
       <div class="header-step mb-1">
         <span [style.backgroundColor]="
             this.flightStatuses[flight.flightStep.visibleStep ?? 0].color
-          " class="badge badge-primary">
+          " class="badge badge-primary" style="color: white;">
           {{
           this.flightStatuses[
           flight.flightStep.visibleStep ?? 0
@@ -23,24 +23,44 @@
           }}
         </span>
       </div>
-      <div>
-        <span class="badge badge-primary bg-white" style="color: black">
-          <b>Модель: {{ flight.model?.name?.toUpperCase() }}</b>
-        </span>
+      <div class="px-1 bg-white" style="border-radius: 0.25rem;">
+        <div>
+          <div class="d-flex justify-content-between" style="color: black">                
+            <div>
+              <b>Модель:</b>
+            </div>
+            <div>
+              <b>{{ flight.model?.name?.toUpperCase() }}</b>
+            </div>
+          </div>   
+        </div>
 
-        <span class="badge badge-primary bg-white" style="color: black">
-          <b>Смуга: {{ flight.zone?.toUpperCase() }}</b>
-        </span>
-      </div>
+        <div class="d-flex justify-content-between" style="color: black">
+          <div>
+            <b>Смуга:</b>
+          </div>
+          <div>
+            <b>{{ flight.zone?.toUpperCase() }}</b>
+          </div>
+        </div>
 
-      <div>
-        <span style="color: black" class="badge badge-primary bg-white">
-          <b>Позивний: {{ flight.operator?.toUpperCase() }}</b>
-        </span>
-      </div>
-      <div>
-        <span style="color: black" class="badge badge-primary bg-white">
-          <b>Підрозділ: {{ flight.unit?.toUpperCase() }}</b></span>
+        <div class="d-flex justify-content-between" style="color: black">
+          <div>
+            <b>Позивний:</b>
+          </div>
+          <div>
+            <b>{{ flight.operator?.toUpperCase() }}</b>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between" style="color: black">
+          <div>
+            <b>Підрозділ:</b>
+          </div>
+          <div>
+            <b>{{ flight.unit?.toUpperCase() }}</b>
+          </div>
+        </div>
       </div>
 
       <div class="alert alert-info mb-1 mt-1">
@@ -65,8 +85,7 @@
           <span class="section-name">ЛБЗ Назад:</span>
           <span class="section-value">{{ flight.LBZBackDate | date : "dd/MM/yy HH:mm" }}</span>
         </div>
-        <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.REDUCTION"
-          *ngIf="flight?.reductionDate != (undefined || null)">
+        <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.REDUCTION">
           <span class="section-name">Зниження:</span>
           <span class="section-value"> {{ flight.reductionDate | date : "dd/MM/yy HH:mm" }}</span>
         </div>
@@ -137,14 +156,14 @@
 
       <div *ngIf="flight.flightStep.isApproved == false" class="alert alert-warning mt-2 mb-0"
         style="background-color: white !important">
-        <div *ngIf="flight.flightStep.isApprovedByPPO == false">
-          <b class="waiting-approval-text">Очікується дозвіл ППО</b>
+        <div class="waiting-approval-text" style="border-bottom: 2px solid black;" *ngIf="flight.flightStep.isApprovedByPPO == false">
+          <b>Очікується дозвіл ППО</b>
         </div>
-        <div *ngIf="flight.flightStep.isApprovedByREB == false">
-          <b class="waiting-approval-text">Очікується дозвіл РЕБ</b>
+        <div class="waiting-approval-text" style="border-bottom: 2px solid black;" *ngIf="flight.flightStep.isApprovedByREB == false">
+          <b>Очікується дозвіл РЕБ</b>
         </div>
-        <div *ngIf="flight.flightStep.isApprovedByAdmin == false">
-          <b class="waiting-approval-text">Очікується дозвіл БпС</b>
+        <div class="waiting-approval-text" *ngIf="flight.flightStep.isApprovedByAdmin == false">
+          <b>Очікується дозвіл БпС</b>
         </div>
       </div>
     </div>

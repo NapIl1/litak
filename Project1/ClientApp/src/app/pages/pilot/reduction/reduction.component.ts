@@ -7,6 +7,8 @@ import { User } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
 import { UserService } from 'src/app/services/user.service';
+import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-pilot-reduction',
@@ -21,7 +23,8 @@ export class PilotReductionComponent implements OnInit, OnDestroy {
     reductions = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 
     constructor(
-        private flightService: FlightService) { }
+        private flightService: FlightService,
+        private modalService: NgbModal) { }
 
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe());
@@ -45,19 +48,29 @@ export class PilotReductionComponent implements OnInit, OnDestroy {
 
         
         if (isSkipped) {
-            const res = confirm("Ви впевнені?");
-      
-            if (res === false) {
-              return;
-            }
+            const modal = this.modalService.open(YesNoModalComponent);
+            modal.componentInstance.text = 'Ви впевнені?';
+            modal.componentInstance.yes = 'Так';
+            modal.componentInstance.no = 'Ні';
+
+            modal.closed.subscribe(async res => {
+                if (res == true) {
+                    await this.nextStep(isSkipped);
+                }
+            });
+        } else {
+            await this.nextStep(isSkipped);
         }
 
+    }
+
+    public async nextStep(isSkipped: boolean) {
         this.flight.flightStep.step = FlightSteps.REDUCTION;
         this.flight.flightStep.isApproved = true;
-    
+
         if (!isSkipped) {
-          this.flight.reductionDate = new Date;
-          this.flight.flightStep.visibleStep = FlightSteps.REDUCTION;
+            this.flight.reductionDate = new Date;
+            this.flight.flightStep.visibleStep = FlightSteps.REDUCTION;
         }
 
         await this.flightService.updateFlightAsync(this.flight);

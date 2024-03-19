@@ -8,6 +8,8 @@ import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
 import { RoutingService } from 'src/app/services/routing.service';
 import { UserService } from 'src/app/services/user.service';
+import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-pilot-flight',
@@ -29,7 +31,8 @@ export class PilotFlightComponent implements OnInit {
       private optionsService: OptionsService,
       private userService: UserService,
       private route: ActivatedRoute,
-      private routingService: RoutingService) { }
+      private routingService: RoutingService,
+      private modalService: NgbModal) { }
 
     async ngOnInit(): Promise<void> {
       this.options = await this.optionsService.getAllOptions();
@@ -67,17 +70,24 @@ export class PilotFlightComponent implements OnInit {
     }
   
     public async terminateFlight(isApproved: boolean) {
-      const res = confirm("Ви впевнені що хочете завершити політ?")
-      if (res) {
-        this.flight.isTerminated = true;
-        this.flight.endDate = new Date;
-        this.flight.flightStep.step = FlightSteps.END;
-        this.flight.flightStep.visibleStep = FlightSteps.END;
-        this.flight.flightStep.isApproved = isApproved;
 
-        await this.flightService.updateFlightAsync(this.flight);
-        await this.flightService.refreshActiveFlight();
-      }
+      const modal = this.modalService.open(YesNoModalComponent);
+      modal.componentInstance.text = 'Ви впевнені?';
+      modal.componentInstance.yes = 'Так';
+      modal.componentInstance.no = 'Ні';
+
+      modal.closed.subscribe(async res => {
+        if (res == true) {
+          this.flight.isTerminated = true;
+          this.flight.endDate = new Date;
+          this.flight.flightStep.step = FlightSteps.END;
+          this.flight.flightStep.visibleStep = FlightSteps.END;
+          this.flight.flightStep.isApproved = isApproved;
+
+          await this.flightService.updateFlightAsync(this.flight);
+          await this.flightService.refreshActiveFlight();
+        }
+      });
     }
 
   

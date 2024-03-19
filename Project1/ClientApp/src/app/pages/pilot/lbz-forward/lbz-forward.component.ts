@@ -1,5 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
@@ -7,6 +8,7 @@ import { User } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
 import { UserService } from 'src/app/services/user.service';
+import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
 
 @Component({
   selector: 'app-pilot-lbz-forward',
@@ -22,7 +24,8 @@ export class PilotLbzForwardComponent implements OnInit, OnDestroy {
   subs: Subscription[] = [];
 
   constructor(
-      private flightService: FlightService) { }
+      private flightService: FlightService,
+      private modalService: NgbModal) { }
 
   ngOnDestroy(): void {
       this.subs.forEach(s => s.unsubscribe());
@@ -45,13 +48,22 @@ export class PilotLbzForwardComponent implements OnInit, OnDestroy {
     }
 
     if (isSkipped) {
-      const res = confirm("Ви впевнені?");
+      const modal = this.modalService.open(YesNoModalComponent);
+      modal.componentInstance.text = 'Ви впевнені?';
+      modal.componentInstance.yes = 'Так';
+      modal.componentInstance.no = 'Ні';
 
-      if (res === false) {
-        return;
-      }
+      modal.closed.subscribe(async res => {
+        if (res === true) {
+          await this.nextStep(isSkipped);
+        }
+      });
+    } else {
+      await this.nextStep(isSkipped);
     }
+  }
 
+  public async nextStep(isSkipped: boolean) {
     if (this.isChangeRoute) {
       this.flight.isForwardChanged = true;
       this.flight.isRequireAttention = true;
@@ -69,7 +81,7 @@ export class PilotLbzForwardComponent implements OnInit, OnDestroy {
 
     await this.flightService.updateFlightAsync(this.flight);
     await this.flightService.refreshActiveFlight();
-  }
+}
 
   public validateStep() {
     return this.flight.changedForwardRoute == null || this.flight.changedForwardRoute == ''
@@ -79,11 +91,16 @@ export class PilotLbzForwardComponent implements OnInit, OnDestroy {
     return FlightSteps;
   }
 
-  changeRoute() {
-    var res = confirm("Ви впевнені?");
-
-    if(res === true) {
-      this.isChangeRoute = true;
-    }
+  async changeRoute() {
+    const modal = this.modalService.open(YesNoModalComponent);
+    modal.componentInstance.text = 'Ви впевнені?';
+    modal.componentInstance.yes = 'Так';
+    modal.componentInstance.no = 'Ні';
+  
+    modal.closed.subscribe(res => {
+      if (res === true) {
+        this.isChangeRoute = true;
+      }
+    });
   }
 }

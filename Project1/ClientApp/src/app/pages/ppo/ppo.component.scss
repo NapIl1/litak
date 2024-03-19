@@ -9,7 +9,7 @@
 
 
 .not-approved {
-    border: 5px solid red;
+    border: 7px solid red;
     /* Set border properties */
     border-radius: 5px;
     /* Optional: Adjust border radius */
@@ -67,10 +67,6 @@
     }
 }
 
-.alert-info{
-    background-color: white !important;
-}
-
 a {
     color: #007bff;
 }
@@ -106,4 +102,5 @@ a {
     /* Set border properties */
     border-radius: 5px;
     /* Optional: Adjust border radius */
+    margin-left: -3px;
 }

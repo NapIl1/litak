@@ -15,8 +15,8 @@
 
   <div class="row">
     <div class="col-md-12 col-lg-6">
-      <label required class="col-form-label">Позивний</label>
-      <input
+      <label class="col-form-label">Позивний</label>
+      <input [class.invalid-field]="flight.operator == null || flight.operator == ''"
         [disabled]="
           flight.flightStep.step != FlightSteps.START ||
           (flight.flightStep.step == FlightSteps.START &&
@@ -186,7 +186,7 @@
     <div class="col-md-12 col-lg-6">
       <div>
         <label class="col-form-label">Висота польоту (метри)</label>
-        <input
+        <input [class.invalid-field]="flight.workingHeight == null || flight.workingHeight == ''"
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
             (flight.flightStep.step == FlightSteps.START &&

@@ -18,70 +18,74 @@
             "
           >
             <div class="card-body p-1" style="border: 2px solid black">
-              <div
-                *ngIf="!flight.isExpanded"
-                style="text-align: center;"
-                (click)="toggleSection(flight)"
-              >
-                <i class="fas fa-angle-down"></i>
+              <div *ngIf="!flight.isExpanded" style="text-align: right; float: right;" (click)="toggleSection(flight)">
+                <span class="bg-white px-2 py-1" style="border: 1px solid black;">
+                  <i class="fas fa-angle-down"></i>
+                </span>
               </div>
 
-              <div
-                *ngIf="flight.isExpanded"
-                style="text-align: center;"
-                (click)="toggleSection(flight)"
-              >
-                <i class="fas fa-angle-up"></i>
+              <div *ngIf="flight.isExpanded" style="text-align: right; float: right;" (click)="toggleSection(flight)">
+                <span class="bg-white px-2 py-1" style="border: 1px solid black;">
+                  <i class="fas fa-angle-up"></i>
+                </span>
               </div>
 
               <div class="header-step mb-1">
-                <span
-                  [style.backgroundColor]="
-                    this.flightStatuses[flight.flightStep.visibleStep ?? 0]
-                      .color
-                  "
-                  class="badge badge-primary"
-                >
+                <span [style.backgroundColor]="this.flightStatuses[flight.flightStep.visibleStep ?? 0].color" 
+                  class="badge badge-primary" style="color: white;">
                   {{
                     this.flightStatuses[
                       flight.flightStep.visibleStep ?? 0
                     ].name.toUpperCase()
                   }}
                 </span>
-                <span
-                  *ngIf="flight.flightStep.step === this.FlightSteps.END"
-                  [style.backgroundColor]="
-                    this.flightStatuses[flight.flightStep.visibleStep ?? 0]
-                      .color
-                  "
-                  class="badge badge-primary"
-                >
+                <span *ngIf="flight.flightStep.step === this.FlightSteps.END" [style.backgroundColor]="this.flightStatuses[flight.flightStep.visibleStep ?? 0].color"
+                  class="badge badge-primary" style="color: white;">
                   {{ flight.boardingStatus?.toUpperCase() }}
                 </span>
               </div>
-              <div>
-                <span class="badge badge-primary bg-white" style="color: black">
-                  <b>Модель: {{ flight.model?.name?.toUpperCase() }}</b>
-                </span>
-
-                <span class="badge badge-primary bg-white" style="color: black">
-                  <b>Смуга: {{ flight.zone?.toUpperCase() }}</b>
-                </span>
-              </div>
-
-              <div>
-                <span style="color: black" class="badge badge-primary bg-white">
-                  <b>Позивний: {{ flight.operator?.toUpperCase() }}</b>
-                </span>
-              </div>
-              <div>
-                <span style="color: black" class="badge badge-primary bg-white">
-                  <b>Підрозділ: {{ flight.unit?.toUpperCase() }}</b></span
-                >
+              <div class="px-1 bg-white" style="border-radius: 0.25rem;">
+                <div>
+                  <div class="d-flex justify-content-between" style="color: black">                
+                    <div>
+                      <b>Модель:</b>
+                    </div>
+                    <div>
+                      <b>{{ flight.model?.name?.toUpperCase() }}</b>
+                    </div>
+                  </div>   
+                </div>
+  
+                <div class="d-flex justify-content-between" style="color: black">
+                  <div>
+                    <b>Смуга:</b>
+                  </div>
+                  <div>
+                    <b>{{ flight.zone?.toUpperCase() }}</b>
+                  </div>
+                </div>
+  
+                <div class="d-flex justify-content-between" style="color: black">
+                  <div>
+                    <b>Позивний:</b>
+                  </div>
+                  <div>
+                    <b>{{ flight.operator?.toUpperCase() }}</b>
+                  </div>
+                </div>
+  
+                <div class="d-flex justify-content-between" style="color: black">
+                  <div>
+                    <b>Підрозділ:</b>
+                  </div>
+                  <div>
+                    <b>{{ flight.unit?.toUpperCase() }}</b>
+                  </div>
+                </div>
               </div>
 
               <div
-                class="alert alert-info mb-1 mt-1"
+                class="alert bg-white mb-1 mt-1"
                 [class.hidden]="!flight.isExpanded"
               >
                 <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.START">
@@ -105,7 +109,7 @@
                     <span class="section-name">ЛБЗ Назад:</span>
                     <span class="section-value">{{ flight.LBZBackDate | date : "dd/MM/yy HH:mm" }}</span>
                 </div>
-                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.REDUCTION" *ngIf="flight?.reductionDate != (undefined || null)">
+                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.REDUCTION">
                     <span class="section-name">Зниження:</span>
                     <span class="section-value"> {{ flight.reductionDate | date : "dd/MM/yy HH:mm" }}</span>
                 </div>
@@ -234,11 +238,11 @@
                 class="alert alert-warning mt-2 mb-0"
                 style="background-color: white;"
               >
-                <div *ngIf="flight.flightStep.isApprovedByPPO == false">
-                  <b class="waiting-approval-text">Очікується дозвіл ППО</b>
+                <div class="waiting-approval-text" *ngIf="flight.flightStep.isApprovedByPPO == false" style="border-bottom: 2px solid black;">
+                  <b >Очікується дозвіл ППО</b>
                 </div>
-                <div *ngIf="flight.flightStep.isApprovedByREB == false">
-                  <b class="waiting-approval-text">Очікується дозвіл РЕБ</b>
+                <div class="waiting-approval-text" *ngIf="flight.flightStep.isApprovedByREB == false">
+                  <b >Очікується дозвіл РЕБ</b>
                 </div>
               </div>
 

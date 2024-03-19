@@ -29,7 +29,7 @@
                             <div class="row">
                               <div class="col-6">
                                 <label class="col-form-label">Тип дрону</label>
-                                <ng-select
+                                <ng-select class="select-with-border"
                                   [(ngModel)]="template.assignment">
                                   <ng-option *ngFor="let item of options.dronAppointment" [value]="item">
                                     <span [style.backgroundColor]="item.color" class="badge">{{item.name}}</span>
@@ -39,7 +39,7 @@
                               <div class="col-6">
                                 <div>
                                   <label class="col-form-label">Модель</label>
-                                  <ng-select 
+                                  <ng-select class="select-with-border"
                                     [(ngModel)]="template.model">
                                     <ng-option *ngFor="let item of options.dronModels" [value]="item">
                                       <span [style.backgroundColor]="item.color" class="badge">{{item.name}}</span>

@@ -35,6 +35,8 @@ import { WaitingApprovalComponent } from './pages/pilot/waiting-approval/waiting
 import { FlightCardComponent } from './pages/shared/flight-card/flight-card.component';
 import { SortDirective } from './directives/sort.directive';
 import { FlightTemplateComponent } from './pages/personal-info/flight-templates/flight-templates.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { YesNoModalComponent } from './pages/shared/yes-no-modal/yes-no-modal.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +67,7 @@ import { FlightTemplateComponent } from './pages/personal-info/flight-templates/
     DronModelComponent,
     FlightStatusComponent,
     FlightCardComponent,
-    SortDirective
+    SortDirective,
   ],
   imports: [
     BrowserModule,
@@ -74,7 +76,9 @@ import { FlightTemplateComponent } from './pages/personal-info/flight-templates/
     NgSelectModule,
     NgxMaskDirective,
     HttpClientModule,
-    ColorPickerModule
+    ColorPickerModule,
+    NgbModule,
+    YesNoModalComponent,
   ],
   providers: [provideNgxMask()],
   bootstrap: [AppComponent]

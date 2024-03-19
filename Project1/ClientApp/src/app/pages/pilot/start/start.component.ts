@@ -42,6 +42,8 @@ export class PilotStartComponent implements OnInit {
 
   selectedTemplate: Template| null = null;
 
+  isLoading = false;
+
   constructor(
     private route: Router,
     private activatedRoute: ActivatedRoute,
@@ -94,12 +96,14 @@ export class PilotStartComponent implements OnInit {
   }
 
   public async createFlight() {
+    this.isLoading = true;
     this.flight.userId = this.userInfo._id;
     this.flight.dateOfFlight =  new Date();
     await this.flightService.addFlightAsync(this.flight);
 
     alert('Заявку подано');
     await this.flightService.refreshActiveFlight();
+    this.isLoading = false;
     //this.route.navigate(['flight/' + FLIGHT_ROUTES.WAITING_APPROVAL]);
   }
 
@@ -133,7 +137,7 @@ export class PilotStartComponent implements OnInit {
     return this.flight.isInDiscord !== true
       || this.flight.assignment == null
       || this.flight.model == null
-      || this.flight.operator == null || this.flight.operator === ''
+      || this.flight.operator == null || this.flight.operator === '' || this.isLoading == true;
   }
 
   public get FlightSteps() {
