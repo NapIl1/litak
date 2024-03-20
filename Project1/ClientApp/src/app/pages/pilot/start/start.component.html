@@ -29,7 +29,7 @@
     </div>
     <div class="col-md-12 col-lg-6">
       <label class="col-form-label">Підрозділ</label>
-      <input
+      <input [class.invalid-field]="flight.unit == null || flight.unit == ''"
         [disabled]="
           flight.flightStep.step != FlightSteps.START ||
           (flight.flightStep.step == FlightSteps.START &&
@@ -46,7 +46,7 @@
     <div class="col-md-12 col-lg-6">
       <div>
         <label class="col-form-label">Смуга виконання завдання</label>
-        <input
+        <input [class.invalid-field]="flight.zone == null || flight.zone == ''"
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
             (flight.flightStep.step == FlightSteps.START &&
@@ -61,7 +61,7 @@
     <div class="col-md-12 col-lg-6">
       <div>
         <label class="col-form-label">РВЗ</label>
-        <input
+        <input [class.invalid-field]="flight.taskPerformanceArea == null || flight.taskPerformanceArea == ''"
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
             (flight.flightStep.step == FlightSteps.START &&
@@ -78,7 +78,7 @@
   <div class="row">
     <div class="col-md-12 col-lg-6">
       <label class="col-form-label">Тип дрону</label>
-      <ng-select class="select-with-border"
+      <ng-select class="select-with-border" [class.invalid-field]="flight.assignment?.name == null || flight.assignment?.name == ''"
         [disabled]="
           flight.flightStep.step != FlightSteps.START ||
           (flight.flightStep.step == FlightSteps.START &&
@@ -96,7 +96,7 @@
     <div class="col-md-12 col-lg-6">
       <div>
         <label class="col-form-label">Модель</label>
-        <ng-select class="select-with-border"
+        <ng-select class="select-with-border" [class.invalid-field]="flight.model?.name == null || flight.model?.name == ''"
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
             (flight.flightStep.step == FlightSteps.START &&
@@ -118,7 +118,7 @@
     <div class="col-md-12 col-lg-6">
       <div>
         <label class="col-form-label">Частота керування (МГц)</label>
-        <input
+        <input [class.invalid-field]="flight.controlRange == null || flight.controlRange == ''"
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
             (flight.flightStep.step == FlightSteps.START &&
@@ -134,7 +134,7 @@
     <div class="col-md-12 col-lg-6">
       <div>
         <label class="col-form-label">Частота відео (МГц)</label>
-        <input
+        <input [class.invalid-field]="flight.videoRange == null || flight.videoRange == ''"
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
             (flight.flightStep.step == FlightSteps.START &&
@@ -152,7 +152,7 @@
     <div class="col-md-12 col-lg-6">
       <div>
         <label class="col-form-label">Маршрут до ЛБЗ (населені пункти)</label>
-        <input
+        <input [class.invalid-field]="flight.routeForward == null || flight.routeForward == ''"
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
             (flight.flightStep.step == FlightSteps.START &&
@@ -168,7 +168,7 @@
     <div class="col-md-12 col-lg-6">
       <div>
         <label class="col-form-label">Маршрут від ЛБЗ (населені пункти)</label>
-        <input
+        <input [class.invalid-field]="flight.routeBack == null || flight.routeBack == ''"
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
             (flight.flightStep.step == FlightSteps.START &&
@@ -202,7 +202,7 @@
     <div class="col-md-12 col-lg-6">
       <div>
         <label class="col-form-label">Посилання на стрім</label>
-        <input
+        <input [class.invalid-field]="flight.streamLink == null || flight.streamLink == ''"
           [disabled]="
             flight.flightStep.step != FlightSteps.START ||
             (flight.flightStep.step == FlightSteps.START &&
@@ -219,7 +219,7 @@
   <div class="row">
     <div class="col-md-12 col-lg-6">
       <label class="col-form-label">Телефон</label>
-      <input
+      <input [class.invalid-field]="flight.phoneNumber == null || flight.phoneNumber == ''"
         [disabled]="
           flight.flightStep.step != FlightSteps.START ||
           (flight.flightStep.step == FlightSteps.START &&
@@ -261,7 +261,7 @@
           checked=""
           class="custom-control-input"
         />
-        <span class="custom-control-label">
+        <span class="custom-control-label" style="font-weight: bold; color: black;">
           Зайшов у Діскорд <b>(обов'язково)</b>
         </span>
       </label>

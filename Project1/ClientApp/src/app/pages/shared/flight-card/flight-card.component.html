@@ -30,7 +30,7 @@
               <b>Модель:</b>
             </div>
             <div>
-              <b>{{ flight.model?.name?.toUpperCase() }}</b>
+              <b style="color: blue;">{{ flight.model?.name?.toUpperCase() }}</b>
             </div>
           </div>   
         </div>
@@ -40,7 +40,7 @@
             <b>Смуга:</b>
           </div>
           <div>
-            <b>{{ flight.zone?.toUpperCase() }}</b>
+            <b style="color: blue;">{{ flight.zone?.toUpperCase() }}</b>
           </div>
         </div>
 
@@ -49,7 +49,7 @@
             <b>Позивний:</b>
           </div>
           <div>
-            <b>{{ flight.operator?.toUpperCase() }}</b>
+            <b style="color: blue;">{{ flight.operator?.toUpperCase() }}</b>
           </div>
         </div>
 
@@ -58,7 +58,7 @@
             <b>Підрозділ:</b>
           </div>
           <div>
-            <b>{{ flight.unit?.toUpperCase() }}</b>
+            <b style="color: blue;">{{ flight.unit?.toUpperCase() }}</b>
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@
           <span class="section-value">{{ flight.LBZBackDate | date : "dd/MM/yy HH:mm" }}</span>
         </div>
         <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.REDUCTION">
-          <span class="section-name">Зниження:</span>
+          <span class="section-name">Початок зниження::</span>
           <span class="section-value"> {{ flight.reductionDate | date : "dd/MM/yy HH:mm" }}</span>
         </div>
         <div>

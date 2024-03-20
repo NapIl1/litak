@@ -134,10 +134,20 @@ export class PilotStartComponent implements OnInit {
   }
 
   validateStep() {
-    return this.flight.isInDiscord !== true
+    return this.flight.operator == null || this.flight.operator === ''  
+      || this.flight.unit == null || this.flight.unit === ''
+      || this.flight.zone == null || this.flight.zone === ''
+      || this.flight.taskPerformanceArea == null || this.flight.taskPerformanceArea === ''
       || this.flight.assignment == null
       || this.flight.model == null
-      || this.flight.operator == null || this.flight.operator === '' || this.isLoading == true;
+      || this.flight.controlRange == null || this.flight.controlRange === ''
+      || this.flight.videoRange == null || this.flight.videoRange === ''
+      || this.flight.routeForward == null || this.flight.routeForward === ''
+      || this.flight.routeBack == null || this.flight.routeBack === ''
+      || this.flight.workingHeight == null || this.flight.workingHeight === ''
+      || this.flight.phoneNumber == null || this.flight.phoneNumber === ''
+      || this.flight.isInDiscord !== true
+      || this.isLoading == true;
   }
 
   public get FlightSteps() {
