@@ -1,6 +1,6 @@
 {
   "name": "dr-manager",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 44436",

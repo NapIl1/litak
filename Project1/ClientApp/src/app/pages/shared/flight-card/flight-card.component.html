@@ -86,7 +86,7 @@
           <span class="section-value">{{ flight.LBZBackDate | date : "dd/MM/yy HH:mm" }}</span>
         </div>
         <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.REDUCTION">
-          <span class="section-name">Початок зниження::</span>
+          <span class="section-name">Початок зниження:</span>
           <span class="section-value"> {{ flight.reductionDate | date : "dd/MM/yy HH:mm" }}</span>
         </div>
         <div>

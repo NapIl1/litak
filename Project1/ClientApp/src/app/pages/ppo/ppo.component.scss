@@ -9,15 +9,48 @@
 
 
 .not-approved {
-    border: 7px solid red;
+    //border: 7px solid red;
     /* Set border properties */
-    border-radius: 5px;
+    //border-radius: 5px;
     /* Optional: Adjust border radius */
     animation: shimmer 1500ms infinite;
     /* Apply shimmer animation */
 }
 
 @keyframes shimmer {
+    0% {
+        background-color: white;
+        /* Start with transparent border */
+    }
+
+    25% {
+        background-color: var(--bg-color);
+        /* Halfway through, make the border visible */
+    }
+
+    50% {
+        background-color: var(--bg-color);
+        /* Halfway through, make the border visible */
+    }
+
+    100% {
+        background-color: white;
+        /* At the end, make it transparent again */
+    }
+}
+
+.changed-route{
+    border: 3px solid red;
+    /* Set border properties */
+    border-radius: 5px;
+    /* Optional: Adjust border radius */
+    animation: route-changed 1500ms infinite;
+
+    margin-left: -10px;
+    padding-left: 7px;
+}
+
+@keyframes route-changed {
     0% {
         border-color: transparent;
         /* Start with transparent border */
@@ -32,14 +65,6 @@
         border-color: transparent;
         /* At the end, make it transparent again */
     }
-}
-
-.changed-route{
-    border: 3px solid red;
-    /* Set border properties */
-    border-radius: 5px;
-    /* Optional: Adjust border radius */
-    animation: shimmer 1500ms infinite;
 }
 
 .hidden{
@@ -102,6 +127,6 @@ a {
     /* Set border properties */
     border-radius: 5px;
     /* Optional: Adjust border radius */
-    margin-left: -11px;
+    margin-left: -10px;
     padding-left: 7px;
 }

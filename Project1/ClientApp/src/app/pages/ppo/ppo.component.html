@@ -11,13 +11,16 @@
           <div
             class="card m-1"
             [class.not-approved]="!flight.isChecked"
+            [style.--bg-color] ="
+            flight.flightStep.step !== FlightSteps.START
+              ? flight.assignment!.color
+              : 'black'"
             [style.backgroundColor]="
               flight.flightStep.step !== FlightSteps.START
                 ? flight.assignment!.color
-                : 'black'
-            "
+                : 'black'"
           >
-            <div class="card-body p-1" style="border: 2px solid black">
+            <div class="card-body p-1">
               <div *ngIf="!flight.isExpanded" style="text-align: right; float: right;" (click)="toggleSection(flight)">
                 <span class="bg-white px-2 py-1" style="border: 1px solid black;">
                   <i class="fas fa-angle-down"></i>
@@ -110,7 +113,7 @@
                     <span class="section-value">{{ flight.LBZBackDate | date : "dd/MM/yy HH:mm" }}</span>
                 </div>
                 <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.REDUCTION">
-                    <span class="section-name">Початок зниження::</span>
+                    <span class="section-name">Початок зниження:</span>
                     <span class="section-value"> {{ flight.reductionDate | date : "dd/MM/yy HH:mm" }}</span>
                 </div>
                 <div>
