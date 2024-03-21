@@ -20,7 +20,7 @@ export class PilotReductionComponent implements OnInit, OnDestroy {
     dateNow = Date.now();
     isNextStep = false;
     subs: Subscription[] = [];
-    reductions = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+    reductions = [0.5,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 
     constructor(
         private flightService: FlightService,

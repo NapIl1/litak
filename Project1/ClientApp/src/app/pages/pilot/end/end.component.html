@@ -42,7 +42,7 @@
     <div class="row">
         <div class="col-12">
             <label class="col-form-label">Варіанти завершення</label>
-            <ng-select class="select-with-border"
+            <ng-select class="select-with-border" [class.invalid-field]="flight.boardingStatus == null || flight.boardingStatus == ''"
               [(ngModel)]="flight.boardingStatus">
               <ng-option *ngFor="let item of endOptions" [value]="item">
                 <span class="badge">{{item}}</span>
@@ -54,9 +54,9 @@
 
     <!-- refactor later -->
     <div *ngIf="flight.hasOwnProperty('boardingStatus') && flight.boardingStatus !== successWithoutComments" class="row mt-2">
-        <div  class="col-12">
+        <div class="col-12">
             <div>
-              <input style="border: 2px solid black;" [(ngModel)]="custom" type="text" class="form-control">
+              <input [class.invalid-field]="custom == null || custom == ''" [(ngModel)]="custom" type="text" class="form-control">
             </div>
         </div>
     </div>

@@ -37,7 +37,7 @@ export class PilotEndComponent implements OnInit, OnDestroy {
   }
 
   public validateStep() {
-    return this.flight.boardingStatus == null || this.flight.boardingStatus == '' || (this.flight.boardingStatus == this.customOptionSelector && this.custom === '')
+    return this.flight.boardingStatus == null || this.flight.boardingStatus == '' || (this.flight.boardingStatus != this.successWithoutComments && this.custom === '')
   }
 
   public async next() {
