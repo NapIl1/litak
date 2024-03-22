@@ -36,7 +36,8 @@ public class RecordFileController : ControllerBase
         "Заборона",
         "Посадка",
         "Статус",
-        "Закінчення"
+        "Закінчення",
+        "Коментарі до посадки"
     };
     [HttpGet]
     public async Task<IActionResult> BuildFile()
@@ -151,5 +152,7 @@ public class RecordFileController : ControllerBase
         rowData.Cells[index + 2, 24].Value = $"{record.GetStatus()}";
         //Закінчення
         rowData.Cells[index + 2, 25].Value = $"{record.FormatDateTime("endDate")}";
+        // коментарі до посадки
+        rowData.Cells[index + 2, 26].Value = $"{record.GetValue("boardingStatusComments")}";
     }
 }

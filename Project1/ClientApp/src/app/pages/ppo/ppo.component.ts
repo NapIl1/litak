@@ -8,6 +8,8 @@ import { User, UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
 import { UserService } from 'src/app/services/user.service';
+import { ConfirmModalComponent } from '../shared/confirm-modal/confirm.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 export interface CompletedFlight {
   flight: Flight,
@@ -39,7 +41,8 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   constructor(private flightService: FlightService,
               private optionsService: OptionsService,
-              private userService: UserService) {
+              private userService: UserService,
+              private modalService: NgbModal) {
 
   }
   ngOnDestroy(): void {
@@ -69,7 +72,7 @@ export class PpoComponent implements OnInit, OnDestroy {
     await this.initFlights();
 
     var ui = this.userService.getUserInfo();
-
+    
     if (ui) {
       this.userRole = ui.role;
     }
@@ -146,6 +149,13 @@ export class PpoComponent implements OnInit, OnDestroy {
   }
 
   public async discard(id: string | undefined) {
+
+    const rejectedReason = prompt("Введіть причину заборони");
+
+    if(rejectedReason == null || rejectedReason == undefined){
+      return;
+    }
+
     if (id) {
       const flightToUpdate = this.flights.find(x => x._id == id);
 
@@ -169,7 +179,7 @@ export class PpoComponent implements OnInit, OnDestroy {
           flightToUpdate.isRejectedbyAdmin = true;
         }
 
-        flightToUpdate.rejectedReason = prompt("Введіть причину заборони") ?? undefined;
+        flightToUpdate.rejectedReason = rejectedReason;
         await this.flightService.updateFlightAsync(flightToUpdate);
       }
     }

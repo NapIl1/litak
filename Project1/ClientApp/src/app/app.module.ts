@@ -37,6 +37,7 @@ import { SortDirective } from './directives/sort.directive';
 import { FlightTemplateComponent } from './pages/personal-info/flight-templates/flight-templates.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { YesNoModalComponent } from './pages/shared/yes-no-modal/yes-no-modal.component';
+import { ConfirmModalComponent } from './pages/shared/confirm-modal/confirm.component';
 
 @NgModule({
   declarations: [
@@ -79,6 +80,7 @@ import { YesNoModalComponent } from './pages/shared/yes-no-modal/yes-no-modal.co
     ColorPickerModule,
     NgbModule,
     YesNoModalComponent,
+    ConfirmModalComponent
   ],
   providers: [provideNgxMask()],
   bootstrap: [AppComponent]
