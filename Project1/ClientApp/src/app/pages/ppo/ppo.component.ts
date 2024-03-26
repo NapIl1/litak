@@ -33,11 +33,13 @@ export class PpoComponent implements OnInit, OnDestroy {
   interval_ms = 10000;
 
   private readonly timeRangeMinutes = 5;
-  endOptions: string[] = ['Успішно', 'Не успішно', 'Борт пошкоджено','Борт втрачено'];
+  endOptions: string[] = ['Успішно', 'Не успішно', 'Пошкоджено','Втрачено'];
 
   flightStatuses: ValueColor[] = [];
 
   completedFlights: CompletedFlight[] = [];
+
+  dateNow = new Date();
 
   constructor(private flightService: FlightService,
               private optionsService: OptionsService,
@@ -209,6 +211,9 @@ export class PpoComponent implements OnInit, OnDestroy {
     }));
 
     newFlights.forEach(flight => {
+
+      this.calculateTimePassed(flight);
+
       if (flight.flightStep.step == FlightSteps.END) {
         flight.flightStep.visibleStep = FlightSteps.END;
         flight.assignment!.color = 'gray';
@@ -290,6 +295,47 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   public get UserRoles() {
     return UserRole;
+  }
+
+  private calculateTimePassed(flight: Flight) {
+    let dateFrom = null;
+
+    switch (flight.flightStep.step) {
+      case FlightSteps.START:
+        dateFrom = flight.dateOfFlight
+        break;
+      case FlightSteps.FLIGHT:
+        dateFrom = flight.flightStartDate
+        break;
+      case FlightSteps.LBZ_FORWARD:
+        dateFrom = flight.LBZForwardDate
+        break;
+      case FlightSteps.LBZ_HOME:
+        dateFrom = flight.LBZBackDate
+        break;
+      case FlightSteps.REDUCTION:
+        dateFrom = flight.reductionDate
+        break;
+      case FlightSteps.RETURN:
+        dateFrom = flight.returnDate
+        break;
+    }
+
+    if(dateFrom != null) {
+      const diff = new Date().getTime() - new Date(dateFrom).getTime();
+
+      const minutes = Math.floor(diff / 1000 / 60);
+
+      if(minutes > 60) {
+        const hours =  Math.floor(minutes / 60);
+        flight.timeFromLastStep = `${hours} г ${minutes - (hours * 60)} хв.`
+      } else {
+        flight.timeFromLastStep = `${minutes} хв.`
+      }
+
+    } else {
+      flight.timeFromLastStep = '';
+    }
   }
 }
 

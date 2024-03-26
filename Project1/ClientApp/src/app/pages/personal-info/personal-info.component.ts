@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { User, Template, UserRole } from 'src/app/models/user';
+import { ToastsService } from 'src/app/services/toasts.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -26,6 +27,8 @@ export class PersonalInfoComponent implements OnInit {
   userRole?: UserRole;
   oldPassword = '';
   newPassword = '';
+
+  private toastService = inject(ToastsService);
 
   constructor(private router: Router,
               private userService: UserService) { }
@@ -59,12 +62,14 @@ export class PersonalInfoComponent implements OnInit {
         this.userInfo = ui;
       }
 
-      alert('Пароль було змінено');
+      // alert('Пароль було змінено');
+      this.toastService.showSuccess('Пароль було змінено.');
       this.newPassword = '';
       this.oldPassword = '';
 
     } else {
-      alert('Невірний пароль!');
+      // alert('Невірний пароль!');
+      this.toastService.showError('Невірний пароль!');
     }
   }
 

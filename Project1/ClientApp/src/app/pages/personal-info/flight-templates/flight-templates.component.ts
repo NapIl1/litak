@@ -1,9 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DroneOptions } from 'src/app/models/options';
 import { User, Template } from 'src/app/models/user';
 import { OptionsService } from 'src/app/services/options.service';
+import { ToastsService } from 'src/app/services/toasts.service';
 import { UserService } from 'src/app/services/user.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -27,6 +28,7 @@ export class FlightTemplateComponent implements OnInit, OnDestroy {
   templateId: string | null = null;
   ui: User | null = null;
   
+  private toastService = inject(ToastsService);
 
   constructor(private userService: UserService,
     private optionsService: OptionsService,
@@ -66,7 +68,8 @@ export class FlightTemplateComponent implements OnInit, OnDestroy {
   async editTemplate() {
     await this.userService.editTemplate(this.template);
 
-    alert(`Шаблон з іменем ${this.template.templateName} було успішно змінено.`);
+    // alert(`Шаблон з іменем ${this.template.templateName} було успішно змінено.`);
+    this.toastService.showSuccess(`Шаблон з іменем ${this.template.templateName} було успішно змінено.`);
 
     this.router.navigate(["personal-info"]);
 
@@ -79,7 +82,8 @@ export class FlightTemplateComponent implements OnInit, OnDestroy {
     this.template.id = uuidv4();
     await this.userService.addTemplate(this.template);
 
-    alert(`Шаблон з іменем ${this.template.templateName} було успішно створено.`);
+    // alert(`Шаблон з іменем ${this.template.templateName} було успішно створено.`);
+    this.toastService.showSuccess(`Шаблон з іменем ${this.template.templateName} було успішно створено.`);
 
     this.router.navigate(["personal-info"]);
 

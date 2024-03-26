@@ -88,4 +88,6 @@ export interface Flight {
 
     isChecked?: boolean;
     isExpanded?: boolean;
+
+    timeFromLastStep?: string;
 }

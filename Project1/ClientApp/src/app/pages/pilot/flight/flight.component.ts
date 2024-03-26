@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FLIGHT_ROUTES } from 'src/app/consts/consts';
 import { Flight, FlightSteps } from 'src/app/models/flight';
@@ -10,6 +10,7 @@ import { RoutingService } from 'src/app/services/routing.service';
 import { UserService } from 'src/app/services/user.service';
 import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastsService } from 'src/app/services/toasts.service';
 
 @Component({
     selector: 'app-pilot-flight',
@@ -24,6 +25,8 @@ export class PilotFlightComponent implements OnInit {
     localRouterPath!: string;
     isNewFlight: boolean = true;
     dateNow = Date.now();
+
+    private toastService = inject(ToastsService);
 
     constructor(
       private router: Router,
@@ -53,20 +56,28 @@ export class PilotFlightComponent implements OnInit {
   
     public async next() {
       if (this.flight.flightStep.isApproved == false && this.flight.flightStep.step === FlightSteps.START) {
-        alert('Не дозволено!');
+        // alert('Не дозволено!');
+        this.toastService.showError('Не дозволено!');
         return;
       }
 
-      this.flight.flightStartDate = new Date;
-      this.flight.flightStep.step = FlightSteps.FLIGHT;
-      this.flight.flightStep.visibleStep = FlightSteps.FLIGHT;
-      this.flight.flightStep.isApproved = true;
-      this.flight.isRequireAttention = true;
+      const modal = this.modalService.open(YesNoModalComponent);
+      modal.componentInstance.text = 'Ви впевнені?';
+      modal.componentInstance.yes = 'Так';
+      modal.componentInstance.no = 'Ні';
 
+      modal.closed.subscribe(async res => {
+        if (res == true) {
+          this.flight.flightStartDate = new Date;
+          this.flight.flightStep.step = FlightSteps.FLIGHT;
+          this.flight.flightStep.visibleStep = FlightSteps.FLIGHT;
+          this.flight.flightStep.isApproved = true;
+          this.flight.isRequireAttention = true;
 
-  
-      await this.flightService.updateFlightAsync(this.flight);
-      await this.flightService.refreshActiveFlight();
+          await this.flightService.updateFlightAsync(this.flight);
+          await this.flightService.refreshActiveFlight();
+        }
+      });
     }
   
     public async terminateFlight(isApproved: boolean) {

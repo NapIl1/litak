@@ -33,9 +33,10 @@
                 </span>
               </div>
 
-              <div class="header-step mb-1">
-                <span [style.backgroundColor]="this.flightStatuses[flight.flightStep.visibleStep ?? 0].color" 
-                  class="badge badge-primary" style="color: white;">
+              <div class="header-step mb-1" >
+                <span [style.backgroundColor]="this.flightStatuses[flight.flightStep.visibleStep ?? 0].color"
+                  [ngbPopover]="flight.timeFromLastStep" triggers="mouseenter:mouseleave" placement="right"
+                  popoverTitle="Час у поточному статусі" class="badge badge-primary" style="color: white;">
                   {{
                     this.flightStatuses[
                       flight.flightStep.visibleStep ?? 0

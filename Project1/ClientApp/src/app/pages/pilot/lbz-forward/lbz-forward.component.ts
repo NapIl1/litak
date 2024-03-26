@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -9,6 +9,7 @@ import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
 import { UserService } from 'src/app/services/user.service';
 import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
+import { ToastsService } from 'src/app/services/toasts.service';
 
 @Component({
   selector: 'app-pilot-lbz-forward',
@@ -22,6 +23,8 @@ export class PilotLbzForwardComponent implements OnInit, OnDestroy {
   isNextStep = false;
   isChangeRoute = false;
   subs: Subscription[] = [];
+
+	private toastService = inject(ToastsService);
 
   constructor(
       private flightService: FlightService,
@@ -43,24 +46,21 @@ export class PilotLbzForwardComponent implements OnInit, OnDestroy {
 
   public async next(isSkipped = false) {
     if (this.flight.flightStep.isApproved == false && this.flight.flightStep.step === FlightSteps.START) {
-      alert('Не дозволено!');
+      // alert('Не дозволено!');
+      this.toastService.showError('Не дозволено!');
       return;
     }
 
-    if (isSkipped) {
-      const modal = this.modalService.open(YesNoModalComponent);
-      modal.componentInstance.text = 'Ви впевнені?';
-      modal.componentInstance.yes = 'Так';
-      modal.componentInstance.no = 'Ні';
+    const modal = this.modalService.open(YesNoModalComponent);
+    modal.componentInstance.text = 'Ви впевнені?';
+    modal.componentInstance.yes = 'Так';
+    modal.componentInstance.no = 'Ні';
 
-      modal.closed.subscribe(async res => {
-        if (res === true) {
-          await this.nextStep(isSkipped);
-        }
-      });
-    } else {
-      await this.nextStep(isSkipped);
-    }
+    modal.closed.subscribe(async res => {
+      if (res === true) {
+        await this.nextStep(isSkipped);
+      }
+    });
   }
 
   public async nextStep(isSkipped: boolean) {
