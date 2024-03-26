@@ -1,7 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { FlightService } from 'src/app/services/flight.service';
+import { ToastsService } from 'src/app/services/toasts.service';
 
 @Component({
   selector: 'app-pilot-end',
@@ -15,9 +16,11 @@ export class PilotEndComponent implements OnInit, OnDestroy {
   subs: Subscription[] = [];
   successWithoutComments = 'Успішно';
   customOptionSelector = 'Свій варіант';
-  endOptions: string[] = [ this.successWithoutComments, 'Не успішно', 'Борт пошкоджено','Борт втрачено', this.customOptionSelector];
+  endOptions: string[] = [ this.successWithoutComments, 'Не успішно', 'Пошкоджено','Втрачено', this.customOptionSelector];
 
   custom = '';
+
+	private toastService = inject(ToastsService);
 
   constructor(
     private flightService: FlightService) { }
@@ -42,7 +45,8 @@ export class PilotEndComponent implements OnInit, OnDestroy {
 
   public async next() {
     if (this.flight.flightStep.isApproved == false && this.flight.flightStep.step === FlightSteps.START) {
-      alert('Не дозволено!');
+      // alert('Не дозволено!');
+      this.toastService.showError('Не дозволено!');
       return;
     }
 

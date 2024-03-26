@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { USE_PREVIOUS_PARAM } from 'src/app/consts/consts';
 import { Flight, FlightSteps } from 'src/app/models/flight';
@@ -7,6 +7,7 @@ import { Template, User, UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
 import { RoutingService } from 'src/app/services/routing.service';
+import { ToastsService } from 'src/app/services/toasts.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -43,6 +44,8 @@ export class PilotStartComponent implements OnInit {
   selectedTemplate: Template| null = null;
 
   isLoading = false;
+
+	private toastService = inject(ToastsService);
 
   constructor(
     private route: Router,
@@ -101,11 +104,14 @@ export class PilotStartComponent implements OnInit {
     this.flight.dateOfFlight =  new Date();
     await this.flightService.addFlightAsync(this.flight);
 
-    alert('Заявку подано');
+    // alert('Заявку подано');
+    this.toastService.showSuccess("Заявку подано.");
     await this.flightService.refreshActiveFlight();
     this.isLoading = false;
     //this.route.navigate(['flight/' + FLIGHT_ROUTES.WAITING_APPROVAL]);
   }
+
+
 
   public async getLastFlight(){
     this.flight.userId = this.userInfo._id;
@@ -113,7 +119,8 @@ export class PilotStartComponent implements OnInit {
     const flightRecord = await this.flightService.getLastFlightByUserId();
 
     if (flightRecord == null) {
-      alert('Останню заявку не знайдено.');
+      // alert('Останню заявку не знайдено.');
+      this.toastService.showWarning("Останню заявку не знайдено.");
     } else {
 
       this.flight.assignment = this.options.dronAppointment?.find(x => x.name.toUpperCase() == flightRecord.assignment?.name?.toUpperCase());

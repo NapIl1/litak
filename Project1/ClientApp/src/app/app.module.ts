@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -38,6 +38,9 @@ import { FlightTemplateComponent } from './pages/personal-info/flight-templates/
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { YesNoModalComponent } from './pages/shared/yes-no-modal/yes-no-modal.component';
 import { ConfirmModalComponent } from './pages/shared/confirm-modal/confirm.component';
+import { GlobalToastComponent } from './pages/shared/global-toast/global-toast.component';
+import { ToastsContainerComponent } from './pages/shared/toasts-container/toasts-container.component';
+import { AppErrorHandler } from './utils/error-handler';
 
 @NgModule({
   declarations: [
@@ -69,6 +72,8 @@ import { ConfirmModalComponent } from './pages/shared/confirm-modal/confirm.comp
     FlightStatusComponent,
     FlightCardComponent,
     SortDirective,
+    GlobalToastComponent,
+    ToastsContainerComponent
   ],
   imports: [
     BrowserModule,
@@ -82,7 +87,8 @@ import { ConfirmModalComponent } from './pages/shared/confirm-modal/confirm.comp
     YesNoModalComponent,
     ConfirmModalComponent
   ],
-  providers: [provideNgxMask()],
+  providers: [provideNgxMask(),
+    {provide: ErrorHandler, useClass: AppErrorHandler}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

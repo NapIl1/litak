@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { User, UserRole } from 'src/app/models/user';
+import { ToastsService } from 'src/app/services/toasts.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -17,6 +18,8 @@ export class UsersComponent implements OnInit {
   password: string = '';
   role?: UserRole = UserRole.NOT_SELECTED;
 
+	private toastService = inject(ToastsService);
+
   constructor(private userService: UserService) {}
 
 
@@ -28,7 +31,8 @@ export class UsersComponent implements OnInit {
     if(!id) return;
 
     await this.userService.removeUser(id);
-    alert('Користувач був видалений');
+    // alert('Користувач був видалений');
+    this.toastService.showSuccess('Користувач був видалений.');
 
     this.users = await this.userService.getAllUsers();
   }
