@@ -1,158 +1,220 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using OfficeOpenXml;
 using Project1.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 
-namespace litak_back_end.Controllers;
-
-[Route("api/[controller]")]
-[ApiController]
-public class RecordFileController : ControllerBase
+namespace litak_back_end.Controllers
 {
-    private static List<string> _headers = new List<string>()
+    [Route("api/[controller]")]
+    [ApiController]
+    public class RecordFileController : ControllerBase
     {
-        "Місія",
-        "Створений",
-        "Призначення",
-        "Дрон",
-        "Підрозділ",
-        "Смуга",
-        "Машршрут вперед",
-        "Машршрут вперед змін",
-        "Виліт",
-        "ЛБЗ Вперед",
-        "Повернення",
-        "Машршрут назад",
-        "Машршрут назад змін",
-        "Зниження",
-        "ЛБЗ назад",
-        "Зниження інформація",
-        "Висота польоту",
-        "Частота відео",
-        "Частота керування",
-        "Район завдання",
-        "Одобрено",
-        "Заборона",
-        "Посадка",
-        "Статус",
-        "Закінчення",
-        "Коментарі до посадки"
-    };
-    [HttpGet]
-    public async Task<IActionResult> BuildFile()
-    {
-        var records = await GetAllRecords();
-
-        return await BuildExcelFile(records);
-    }
-
-    private async Task<List<object>> GetAllRecords()
-    {
-        var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
-        var database = mongoClient.GetDatabase("sample_weatherdata");
-
-        var recordsCollection = database.GetCollection<BsonDocument>("records");
-        var records = (await recordsCollection.FindAsync(_ => true)).ToList();
-
-        var convertedRecords = records.ConvertAll(record =>
+        private static List<string> _headers = new List<string>()
         {
-            if (record.Contains("_id") && record["_id"].IsObjectId)
-            {
-                record["_id"] = record["_id"].AsObjectId.ToString();
-            }
-            return record;
-        });
-
-        return convertedRecords.ConvertAll(BsonTypeMapper.MapToDotNetValue);
-    }
-
-    private async Task<IActionResult> BuildExcelFile(List<object> records)
-    {
-        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        using var package = new ExcelPackage();
-        var worksheet = package.Workbook.Worksheets.Add("Records");
-
-        for (int i = 0; i < _headers.Count(); i++)
-        {
-            worksheet.Cells[1, i + 1].Value = _headers[i];
-        }
-
-        // Add data
-        for (int i = 0; i < records.Count; i++)
-        {
-            var record = records[i] as IDictionary<string, object>;
-            BuildRecordCell(worksheet, record, i);
-        }
-
-        var excelContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-        var excelFileName = $"{DateTime.Now:MM-dd-yyyy-HH-mm}.xlsx";
-
-        var content = await package.GetAsByteArrayAsync();
-
-        return File(content, excelContentType, excelFileName);
-    }
-
-    private static void BuildRecordCell(ExcelWorksheet rowData, IDictionary<string, object>? record, int index)
-    {
-        // Місія
-        rowData.Cells[index + 2, 1].Value = $"{record.FormatDateTime("dateOfFlight", true)}-{record.GetValue("operator")}";
-        //Створений
-        rowData.Cells[index + 2, 2].Value = $"{record.FormatDateTime("dateOfFlight")}";
-        //Призначення
-        rowData.Cells[index + 2, 3].Value = $"{record.GetNestedProperty("assignment","name")}";
-        //Дрон
-        rowData.Cells[index + 2, 4].Value = $"{record.GetNestedProperty("model", "name")}";
-        //Підрозділ
-        rowData.Cells[index + 2, 5].Value = $"{record.GetValue("unit")}";
-        //Смуга
-        rowData.Cells[index + 2, 6].Value = $"{record.GetValue("zone")}";
-        //Машршрут вперед
-        rowData.Cells[index + 2, 7].Value = $"{record.GetValue("routeForward")}";
-        //Машршрут вперед змін
-        rowData.Cells[index + 2, 8].Value = $"{record.GetValue("changedForwardRoute")}";
-        //Виліт
-        rowData.Cells[index + 2, 9].Value = $"{record.FormatDateTime("flightStartDate")}";
-        //ЛБЗ Вперед
-        rowData.Cells[index + 2, 10].Value = $"{record.FormatDateTime("LBZForwardDate")}";
-        //Повернення
-        rowData.Cells[index + 2, 11].Value = $"{record.FormatDateTime("returnDate")}";
-        //Машршрут назад
-        rowData.Cells[index + 2, 12].Value = $"{record.GetValue("routeBack")}";
-        //Машршрут назад змін
-        rowData.Cells[index + 2, 13].Value = $"{record.GetValue("changedReturnRoute")}";
-        //Зниження
-        rowData.Cells[index + 2, 14].Value = $"{record.FormatDateTime("reductionDate")}";
-        //ЛБЗ назад
-        rowData.Cells[index + 2, 15].Value = $"{record.FormatDateTime("LBZBackDate")}";
-        var reductionInfo = record.GetValue("reductionDistance") != string.Empty ? $"{record["reductionDistance"]}км. Район {record["reductionLocation"]}" : null;
-        //Зниження інформація
-        rowData.Cells[index + 2, 16].Value = $"{reductionInfo}";
-        //Висота польоту
-        rowData.Cells[index + 2, 17].Value = $"{record.GetValue("workingHeight")}";
-        //Частота відео
-        rowData.Cells[index + 2, 18].Value = $"{record.GetValue("videoRange")}";
-        //Частота керування
-        rowData.Cells[index + 2, 19].Value = $"{record.GetValue("controlRange")}";
-        //Район завдання
-        rowData.Cells[index + 2, 20].Value = $"{record.GetValue("taskPerformanceArea")}";
-        var isApproved = record.GetNestedProperty("flightStep", "isApproved") switch
-        {
-            "True" => "Так",
-            "False" => "Ні",
-            _ => string.Empty
+            "Місія",
+            "Створений",
+            "Призначення",
+            "Дрон",
+            "Підрозділ",
+            "Смуга",
+            "Машршрут вперед",
+            "Машршрут вперед змін",
+            "Виліт",
+            "ЛБЗ Вперед",
+            "Повернення",
+            "Машршрут назад",
+            "Машршрут назад змін",
+            "Зниження",
+            "ЛБЗ назад",
+            "Зниження інформація",
+            "Висота польоту",
+            "Частота відео",
+            "Частота керування",
+            "Район завдання",
+            "Одобрено",
+            "Заборона",
+            "Посадка",
+            "Статус",
+            "Закінчення",
+            "Коментарі до посадки"
         };
-        //Одобрено
-        rowData.Cells[index + 2, 21].Value = $"{isApproved}";
-        //Заборона
-        rowData.Cells[index + 2, 22].Value = $"{record.GetRejection()}";
-        //Посадка
-        rowData.Cells[index + 2, 23].Value = $"{record.GetValue("boardingStatus")}";
-        //Статус
-        rowData.Cells[index + 2, 24].Value = $"{record.GetStatus()}";
-        //Закінчення
-        rowData.Cells[index + 2, 25].Value = $"{record.FormatDateTime("endDate")}";
-        // коментарі до посадки
-        rowData.Cells[index + 2, 26].Value = $"{record.GetValue("boardingStatusComments")}";
+
+        [HttpGet]
+        public async Task<IActionResult> BuildFile()
+        {
+            var records = await GetAllRecords();
+
+            return await BuildExcelFile(records);
+        }
+
+        private async Task<List<object>> GetAllRecords()
+        {
+            var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            var database = mongoClient.GetDatabase("sample_weatherdata");
+
+            var recordsCollection = database.GetCollection<BsonDocument>("records");
+            var records = (await recordsCollection.FindAsync(_ => true)).ToList();
+
+            var convertedRecords = records.ConvertAll(record =>
+            {
+                if (record.Contains("_id") && record["_id"].IsObjectId)
+                {
+                    record["_id"] = record["_id"].AsObjectId.ToString();
+                }
+
+                return record;
+            });
+
+            return convertedRecords.ConvertAll(BsonTypeMapper.MapToDotNetValue);
+        }
+
+        private async Task<IActionResult> BuildExcelFile(List<object> records)
+        {
+            var memoryStream = new MemoryStream();
+
+            using (var spreadsheetDocument = SpreadsheetDocument.Create(memoryStream, SpreadsheetDocumentType.Workbook))
+            {
+                var workbookPart = spreadsheetDocument.AddWorkbookPart();
+                workbookPart.Workbook = new Workbook();
+
+                var worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+                var sheetData = new SheetData();
+                worksheetPart.Worksheet = new Worksheet(sheetData);
+
+                var sheets = spreadsheetDocument.WorkbookPart.Workbook.AppendChild(new Sheets());
+
+                var sheet = new Sheet()
+                    { Id = spreadsheetDocument.WorkbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = "Записи" };
+                sheets.Append(sheet);
+
+                var headerRow = new Row();
+                for (int i = 0; i < _headers.Count; i++)
+                {
+                    headerRow.Append(
+                        new Cell() { DataType = CellValues.String, CellValue = new CellValue(_headers[i]) });
+                }
+
+                sheetData.AppendChild(headerRow);
+                foreach (var record in records)
+                {
+                    var recordRow = new Row();
+                    BuildRecordCell(recordRow, record as IDictionary<string, object>);
+                    sheetData.AppendChild(recordRow);
+                }
+            }
+
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            var excelContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            var excelFileName = $"{DateTime.Now:MM-dd-yyyy-HH-mm}.xlsx";
+
+            return File(memoryStream, excelContentType, excelFileName);
+        }
+
+        private static void BuildRecordCell(Row rowData, IDictionary<string, object> record)
+        {
+            // Місія
+            rowData.Append(CreateCell($"{record.FormatDateTime("dateOfFlight", true)}-{record.GetValue("operator")}",
+                CellValues.String));
+
+            // Створений
+            rowData.Append(CreateCell($"{record.FormatDateTime("dateOfFlight")}", CellValues.Date));
+
+            // Призначення
+            rowData.Append(CreateCell($"{record.GetNestedProperty("assignment", "name")}", CellValues.String));
+
+            // Дрон
+            rowData.Append(CreateCell($"{record.GetNestedProperty("model", "name")}", CellValues.String));
+
+            // Підрозділ
+            rowData.Append(CreateCell($"{record.GetValue("unit")}", CellValues.String));
+
+            // Смуга
+            rowData.Append(CreateCell($"{record.GetValue("zone")}", CellValues.String));
+
+            // Машршрут вперед
+            rowData.Append(CreateCell($"{record.GetValue("routeForward")}", CellValues.String));
+
+            // Машршрут вперед змін
+            rowData.Append(CreateCell($"{record.GetValue("changedForwardRoute")}", CellValues.String));
+
+            // Виліт
+            rowData.Append(CreateCell($"{record.FormatDateTime("flightStartDate")}", CellValues.Date));
+
+            // ЛБЗ Вперед
+            rowData.Append(CreateCell($"{record.FormatDateTime("LBZForwardDate")}", CellValues.Date));
+
+            // Повернення
+            rowData.Append(CreateCell($"{record.FormatDateTime("returnDate")}", CellValues.Date));
+
+            // Машршрут назад
+            rowData.Append(CreateCell($"{record.GetValue("routeBack")}", CellValues.String));
+
+            // Машршрут назад змін
+            rowData.Append(CreateCell($"{record.GetValue("changedReturnRoute")}", CellValues.String));
+
+            // Зниження
+            rowData.Append(CreateCell($"{record.FormatDateTime("reductionDate")}", CellValues.Date));
+
+            // ЛБЗ назад
+            rowData.Append(CreateCell($"{record.FormatDateTime("LBZBackDate")}", CellValues.Date));
+
+            // Зниження інформація
+            var reductionInfo = record.GetValue("reductionDistance") != string.Empty
+                ? $"{record.GetValue("reductionDistance")}км. Район {record.GetValue("reductionLocation")}"
+                : null;
+            rowData.Append(CreateCell($"{reductionInfo}", CellValues.String));
+
+            // Висота польоту
+            rowData.Append(CreateCell($"{record.GetValue("workingHeight")}", CellValues.String));
+
+            // Частота відео
+            rowData.Append(CreateCell($"{record.GetValue("videoRange")}", CellValues.String));
+
+            // Частота керування
+            rowData.Append(CreateCell($"{record.GetValue("controlRange")}", CellValues.String));
+
+            // Район завдання
+            rowData.Append(CreateCell($"{record.GetValue("taskPerformanceArea")}", CellValues.String));
+
+            // Одобрено
+            var isApproved = record.GetNestedProperty("flightStep", "isApproved") switch
+            {
+                "True" => "Так",
+                "False" => "Ні",
+                _ => string.Empty
+            };
+            rowData.Append(CreateCell($"{isApproved}", CellValues.String));
+
+            // Заборона
+            rowData.Append(CreateCell($"{record.GetRejection()}", CellValues.String));
+
+            // Посадка
+            rowData.Append(CreateCell($"{record.GetValue("boardingStatus")}", CellValues.String));
+
+            // Статус
+            rowData.Append(CreateCell($"{record.GetStatus()}", CellValues.String));
+
+            // Закінчення
+            rowData.Append(CreateCell($"{record.FormatDateTime("endDate")}", CellValues.Date));
+            // Коментарі до посадки
+            rowData.Append(CreateCell($"{record.GetValue("boardingStatusComments")}", CellValues.String));
+        }
+
+        private static Cell CreateCell(string text, CellValues cellType)
+        {
+            return new Cell()
+            {
+                DataType = cellType,
+                CellValue = new CellValue(text)
+            };
+        }
     }
 }

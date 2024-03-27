@@ -30,6 +30,11 @@ public static class DictionaryExtensions
     {
         try
         {
+            if (!record.ContainsKey(key))
+            {
+                return string.Empty;
+            }
+
             var isBooleanResult = bool.TryParse((record[key] as Dictionary<string, object>)?[nested].ToString(), out bool boolResult);
             return isBooleanResult ? boolResult.ToString() : (string)(record[key] as Dictionary<string, object>)?[nested];
         }
@@ -41,19 +46,21 @@ public static class DictionaryExtensions
 
     public static string GetRejection(this IDictionary<string, object>? record)
     {
+        var rejectionReason = GetValue(record, "rejectedReason");
+
         if (record.GetBooleanValue("isRejectedbyPPO"))
         {
-            return $"Заборонено ППО по причині: {GetValue(record, "rejectedReason")}";
+            return $"Заборонено ППО по причині: {rejectionReason}";
         }
 
         if (record.GetBooleanValue("isRejectedbyREB"))
         {
-            return $"Заборонено РЕБ по причині: {GetValue(record, "rejectedReason")}";
+            return $"Заборонено РЕБ по причині: {rejectionReason}";
         }
 
         if (record.GetBooleanValue( "isRejectedbyAdmin"))
         {
-            return $"Заборонено ЧЕРГОВОГО по причині: {GetValue(record, "rejectedReason")}";
+            return $"Заборонено ЧЕРГОВОГО по причині: {rejectionReason}";
         }
 
         return string.Empty;
@@ -63,7 +70,12 @@ public static class DictionaryExtensions
     {
         try
         {
-            return (bool)record[key];
+            if (!record.ContainsKey(key))
+            {
+                return false;
+            }
+
+            return (bool)record?[key];
         }
         catch
         {
@@ -75,8 +87,21 @@ public static class DictionaryExtensions
     {
         try
         {
+            if (!record.ContainsKey(key))
+            {
+                return string.Empty;
+            }
+
             var formatter = isForMission == false ? "dd/MM/yy HH:mm" : "ddMMyy-HHmm";
-            var res =  $"{DateTime.Parse(record[key].ToString()).ToString(formatter)}";
+
+            var isParsed = DateTime.TryParse(record[key].ToString(), out var date);
+
+            if (!isParsed)
+            {
+                return string.Empty;
+            }
+
+            var res =  $"{date.ToString(formatter)}";
             return res;
         }
         catch(Exception ex)
@@ -89,8 +114,12 @@ public static class DictionaryExtensions
     {
         try
         {
-            var isNumber = int.TryParse(obj[key].ToString(), out int number);
-            return isNumber ? number.ToString() : (string)obj[key];
+            if (!obj.ContainsKey(key))
+            {
+                return string.Empty;
+            }
+
+            return (string)obj[key];
         }
         catch (Exception ex)
         {
