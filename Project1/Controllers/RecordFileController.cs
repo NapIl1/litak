@@ -212,8 +212,8 @@ namespace litak_back_end.Controllers
         {
             return new Cell()
             {
-                DataType = cellType,
-                CellValue = new CellValue(text)
+                InlineString = new InlineString() { Text = new Text(text)},
+                DataType = CellValues.InlineString,
             };
         }
     }
