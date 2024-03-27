@@ -94,7 +94,7 @@ public static class DictionaryExtensions
 
             var formatter = isForMission == false ? "dd/MM/yy HH:mm" : "ddMMyy-HHmm";
 
-            var isParsed = DateTime.TryParse(record[key].ToString(), out var date);
+            var isParsed = DateTimeOffset.TryParse(record[key].ToString(), out var date)
 
             if (!isParsed)
             {
