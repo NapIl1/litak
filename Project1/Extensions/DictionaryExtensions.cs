@@ -94,14 +94,17 @@ public static class DictionaryExtensions
 
             var formatter = isForMission == false ? "dd/MM/yy HH:mm" : "ddMMyy-HHmm";
 
-            var isParsed = DateTimeOffset.TryParse(record[key].ToString(), out var date)
+            var isParsed = DateTimeOffset.TryParse(record[key].ToString(), out var date);
 
             if (!isParsed)
             {
                 return string.Empty;
             }
 
-            var res =  $"{date.ToString(formatter)}";
+            var kievTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Kiev");
+            var kievTime = TimeZoneInfo.ConvertTime(date, kievTimeZone);
+
+            var res =  $"{kievTime.ToString(formatter)}";
             return res;
         }
         catch(Exception ex)
