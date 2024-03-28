@@ -41,6 +41,7 @@ namespace litak_back_end.Controllers
             "Район завдання",
             "Одобрено",
             "Заборона",
+            "Скасованно пілотом",
             "Посадка",
             "Статус",
             "Закінчення",
@@ -103,6 +104,7 @@ namespace litak_back_end.Controllers
                 }
 
                 sheetData.AppendChild(headerRow);
+                
                 foreach (var record in records)
                 {
                     var recordRow = new Row();
@@ -195,6 +197,9 @@ namespace litak_back_end.Controllers
 
             // Заборона
             rowData.Append(CreateCell($"{record.GetRejection()}", CellValues.String));
+
+            // Скасовано пілотом
+            rowData.Append(CreateCell($"{record.GetValue("terminatedPilotReason")}", CellValues.String));
 
             // Посадка
             rowData.Append(CreateCell($"{record.GetValue("boardingStatus")}", CellValues.String));

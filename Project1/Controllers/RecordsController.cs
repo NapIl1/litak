@@ -44,7 +44,20 @@ namespace litak_back_end.Controllers
                 var database = mongoClient.GetDatabase("sample_weatherdata");
 
                 var recordsCollection = database.GetCollection<BsonDocument>("records");
-                await recordsCollection.InsertOneAsync(record);
+                var filter1 = Builders<BsonDocument>.Filter.Eq("userId", record["userId"]);
+                var filter2 = Builders<BsonDocument>.Filter.Ne("flightStep.step", 6);
+                var combinedFilter = Builders<BsonDocument>.Filter.And(filter1, filter2);
+
+                var previousRecord = (await recordsCollection.FindAsync(combinedFilter)).FirstOrDefault();
+
+                if (previousRecord is not null)
+                {
+                    await recordsCollection.ReplaceOneAsync(combinedFilter, record);
+                }
+                else
+                {
+                    await recordsCollection.InsertOneAsync(record);
+                }
 
                 return Ok("Record saved successfully");
             }
@@ -86,6 +99,20 @@ namespace litak_back_end.Controllers
             var recordsCollection = database.GetCollection<BsonDocument>("records");
             var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(recordId));
             await recordsCollection.DeleteOneAsync(filter);
+        }
+
+        [HttpPost]
+        [Route("delete-record-list")]
+        public async Task DeleteRecords([FromBody] List<string> recordIds)
+        {
+            var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            var database = mongoClient.GetDatabase("sample_weatherdata");
+
+            var recordsCollection = database.GetCollection<BsonDocument>("records");
+
+            var filter = Builders<BsonDocument>.Filter.In("_id", recordIds.Select(id => new ObjectId(id)));
+
+            await recordsCollection.DeleteManyAsync(filter);
         }
 
         [HttpGet("GetNotFinishedRecords")]

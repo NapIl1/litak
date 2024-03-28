@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription, interval } from 'rxjs';
+import { Subject, Subscription, interval, takeUntil } from 'rxjs';
 import { ValueColor } from 'src/app/models/droneModel';
 import { Flight, FlightStep, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
@@ -10,6 +10,9 @@ import { OptionsService } from 'src/app/services/options.service';
 import { UserService } from 'src/app/services/user.service';
 import { ConfirmModalComponent } from '../shared/confirm-modal/confirm.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastsService } from 'src/app/services/toasts.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { PromptModalComponent } from '../shared/prompt-modal/prompt-modal.component';
 
 export interface CompletedFlight {
   flight: Flight,
@@ -33,7 +36,7 @@ export class PpoComponent implements OnInit, OnDestroy {
   interval_ms = 10000;
 
   private readonly timeRangeMinutes = 5;
-  endOptions: string[] = ['Успішно', 'Не успішно', 'Пошкоджено','Втрачено'];
+  endOptions: string[] = ['Успішно', 'Не успішно', 'Пошкоджено', 'Втрачено'];
 
   flightStatuses: ValueColor[] = [];
 
@@ -41,12 +44,16 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   dateNow = new Date();
 
+  gotError$ = new Subject<void>();
+
   constructor(private flightService: FlightService,
-              private optionsService: OptionsService,
-              private userService: UserService,
-              private modalService: NgbModal) {
+    private optionsService: OptionsService,
+    private userService: UserService,
+    private toastsService: ToastsService,
+    private modalService: NgbModal) {
 
   }
+  
   ngOnDestroy(): void {
     this.refreshFlightSubscription?.unsubscribe();
   }
@@ -56,12 +63,12 @@ export class PpoComponent implements OnInit, OnDestroy {
 
     const checkedFlights = this.getCheckedFlights();
 
-    if(flight.isForwardChanged === true && !checkedFlights.checkedLBZForwardChange.includes(flight._id!)) {
+    if (flight.isForwardChanged === true && !checkedFlights.checkedLBZForwardChange.includes(flight._id!)) {
       checkedFlights.checkedLBZForwardChange.push(flight._id!);
       flight.isChecked = true;
     }
 
-    if(flight.isReturnChanged === true && !checkedFlights.checkedLBZBackChange.includes(flight._id!)) {
+    if (flight.isReturnChanged === true && !checkedFlights.checkedLBZBackChange.includes(flight._id!)) {
       checkedFlights.checkedLBZBackChange.push(flight._id!);
       flight.isChecked = true;
     }
@@ -74,7 +81,7 @@ export class PpoComponent implements OnInit, OnDestroy {
     await this.initFlights();
 
     var ui = this.userService.getUserInfo();
-    
+
     if (ui) {
       this.userRole = ui.role;
     }
@@ -83,19 +90,29 @@ export class PpoComponent implements OnInit, OnDestroy {
       this.flightStatuses = this.options.flightStatus;
     }
 
-     this.refreshFlightSubscription = interval(this.interval_ms).subscribe(async x => {
-       this.completedFlights.forEach(flight => {
-         flight.msElapsed += this.interval_ms;
-       })
+    this.refreshFlightSubscription = interval(this.interval_ms).pipe(takeUntil(this.gotError$)).subscribe(async x => {
+      this.completedFlights.forEach(flight => {
+        flight.msElapsed += this.interval_ms;
+      })
 
-       this.flights = this.flights.filter(x => !this.completedFlights.find(completed => completed.flight._id === x._id))
-       this.completedFlights = this.completedFlights.filter(x => x.msElapsed < (this.interval_ms * 5));
-       await this.initFlights();
-     })
+      this.flights = this.flights.filter(x => !this.completedFlights.find(completed => completed.flight._id === x._id))
+      this.completedFlights = this.completedFlights.filter(x => x.msElapsed < (this.interval_ms * 5));
+      await this.initFlights();
+    })
   }
 
   public async getOptions() {
-    this.options = await this.optionsService.getAllOptions();
+    try {
+      this.options = await this.optionsService.getAllOptions();
+    } catch (error) {
+      if (error instanceof HttpErrorResponse) {
+        if (error.status === 0) {
+          this.toastsService.showError("Проблема з інтернет з'єднанням. Оновіть сторінку і спробуйте знову.");
+        }
+      } else {
+        this.toastsService.showError("Сталась помилка. Оновіть сторінку і спробуйте знову.");
+      }
+    }
   }
 
   public async approve(flightId: string | undefined) {
@@ -129,140 +146,162 @@ export class PpoComponent implements OnInit, OnDestroy {
         this.saveCheckedFlights(checkedFlights);
 
         if (flightToUpdate.flightStep.isApprovedByPPO == true
-           && flightToUpdate.flightStep.isApprovedByREB == true
-           && flightToUpdate.flightStep.isApprovedByAdmin == true) {
+          && flightToUpdate.flightStep.isApprovedByREB == true
+          && flightToUpdate.flightStep.isApprovedByAdmin == true) {
           flightToUpdate.flightStep.isApproved = true;
           flightToUpdate.isRequireAttention = false;
         }
 
-        
+
 
         const fl = this.flights.find(x => x._id === flightId);
-        if(fl) {
+        if (fl) {
           fl.isExpanded = false;
         }
-      
+
         await this.flightService.updateFlightAsync(flightToUpdate);
         await this.initFlights();
       }
     }
 
-    
+
   }
 
   public async discard(id: string | undefined) {
+    // const rejectedReason = prompt("Введіть причину заборони");
+    const modal = this.modalService.open(PromptModalComponent);
+    modal.componentInstance.text = 'Введіть причину заборони.';
+    modal.componentInstance.yes = 'Ок';
+    modal.componentInstance.no = 'Назад';
 
-    const rejectedReason = prompt("Введіть причину заборони");
+    modal.closed.subscribe(async rejectedReason => {
 
-    if(rejectedReason == null || rejectedReason == undefined){
-      return;
-    }
-
-    if (id) {
-      const flightToUpdate = this.flights.find(x => x._id == id);
-
-      if (flightToUpdate) {
-        flightToUpdate.isRejected = true;
-
-        const oldFlight = this.flights.find(x => x._id == id);
-        if(oldFlight) {
-          oldFlight.isRejected = true;
-        }
-
-        if (this.userRole == UserRole.PPO) {
-          flightToUpdate.isRejectedbyPPO = true;
-        }
-
-        if (this.userRole == UserRole.REB) {
-          flightToUpdate.isRejectedbyREB = true;
-        }
-
-        if (this.userRole == UserRole.ADMIN) {
-          flightToUpdate.isRejectedbyAdmin = true;
-        }
-
-        flightToUpdate.rejectedReason = rejectedReason;
-        await this.flightService.updateFlightAsync(flightToUpdate);
+      if (rejectedReason == null || rejectedReason == undefined) {
+        return;
       }
-    }
+  
+      if (id) {
+        const flightToUpdate = this.flights.find(x => x._id == id);
+  
+        if (flightToUpdate) {
+          flightToUpdate.isRejected = true;
+  
+          const oldFlight = this.flights.find(x => x._id == id);
+          if (oldFlight) {
+            oldFlight.isRejected = true;
+          }
+  
+          if (this.userRole == UserRole.PPO) {
+            flightToUpdate.isRejectedbyPPO = true;
+          }
+  
+          if (this.userRole == UserRole.REB) {
+            flightToUpdate.isRejectedbyREB = true;
+          }
+  
+          if (this.userRole == UserRole.ADMIN) {
+            flightToUpdate.isRejectedbyAdmin = true;
+          }
+  
+          flightToUpdate.rejectedReason = rejectedReason;
+          await this.flightService.updateFlightAsync(flightToUpdate);
+        }
+      }
+  
+      await this.initFlights();
 
-    await this.initFlights();
+    });
   }
 
   async initFlights() {
     const nonCollapsedFlights = this.flights.filter(x => x.isExpanded === true);
 
-    const allFlights = await this.flightService.getFlightsWithTimeRange(this.timeRangeMinutes);
+    try {
+      const allFlights = await this.flightService.getFlightsWithTimeRange(this.timeRangeMinutes);
 
-    const filtered = allFlights.filter(x => !x.isRejected);
-    
-    const newFlights: Flight[] = [];
+      const filtered = allFlights.filter(x => !x.isRejected);
 
-    newFlights.push(...filtered.filter(x => x.flightStep.isApproved === false))
+      const newFlights: Flight[] = [];
 
-    this.options.dronAppointment?.forEach(c => {
-      newFlights.push(...filtered.filter(x => x.flightStep.isApproved === true && x.assignment?.name === c.name && x.flightStep.step !== FlightSteps.END));
-    });
+      newFlights.push(...filtered.filter(x => x.flightStep.isApproved === false))
 
-    newFlights.push(...filtered.filter(x => x.flightStep.step === FlightSteps.END).sort((a : Flight, b : Flight) => {
-      const endDateA = new Date(a.endDate ?? '').getTime();
-      const endDateB = new Date(b.endDate ?? '').getTime();
-      return endDateB - endDateA;
-    }));
+      this.options.dronAppointment?.forEach(c => {
+        newFlights.push(...filtered.filter(x => x.flightStep.isApproved === true && x.assignment?.name === c.name && x.flightStep.step !== FlightSteps.END));
+      });
 
-    newFlights.forEach(flight => {
+      newFlights.push(...filtered.filter(x => x.flightStep.step === FlightSteps.END).sort((a: Flight, b: Flight) => {
+        const endDateA = new Date(a.endDate ?? '').getTime();
+        const endDateB = new Date(b.endDate ?? '').getTime();
+        return endDateB - endDateA;
+      }));
 
-      this.calculateTimePassed(flight);
+      newFlights.forEach(flight => {
 
-      if (flight.flightStep.step == FlightSteps.END) {
-        flight.flightStep.visibleStep = FlightSteps.END;
-        flight.assignment!.color = 'gray';
-        if (!this.endOptions.includes(flight.boardingStatus ?? '')) {
-          flight.boardingStatus = 'Інше';
+        this.calculateTimePassed(flight);
+
+        if (flight.flightStep.step == FlightSteps.END) {
+          flight.flightStep.visibleStep = FlightSteps.END;
+          flight.assignment!.color = 'gray';
+          if (!this.endOptions.includes(flight.boardingStatus ?? '')) {
+            flight.boardingStatus = 'Інше';
+          }
         }
+      });
+
+      newFlights.forEach(updatedFlight => {
+        // Find the corresponding collapsed flight
+        const nonCollapsedFlight = nonCollapsedFlights.find(flight => flight._id === updatedFlight._id);
+        if (nonCollapsedFlight && nonCollapsedFlight.isExpanded !== updatedFlight.isExpanded) {
+          updatedFlight.isExpanded = nonCollapsedFlight.isExpanded;
+        }
+      });
+
+      // Checked flight
+
+      const checkedFlights = this.getCheckedFlights();
+
+      newFlights.forEach(flight => {
+        flight.isChecked = checkedFlights.checkedIsApproved.includes(flight._id!);
+
+        if (flight.isForwardChanged === true) {
+          flight.isChecked = checkedFlights.checkedLBZForwardChange.includes(flight._id!);
+        }
+
+
+        if (flight.isReturnChanged === true) {
+          flight.isChecked = checkedFlights.checkedLBZBackChange.includes(flight._id!);
+        }
+
+        if (flight.isChecked !== true || flight.isExpanded === true) {
+          flight.isExpanded = true;
+        }
+      });
+
+      const filteredChecks: CheckedFlights = {
+        checkedIsApproved: checkedFlights.checkedIsApproved.filter(id => newFlights.some(x => x._id == id)),
+        checkedLBZBackChange: checkedFlights.checkedLBZBackChange.filter(id => newFlights.some(x => x._id == id)),
+        checkedLBZForwardChange: checkedFlights.checkedLBZForwardChange.filter(id => newFlights.some(x => x._id == id))
+      };
+
+      this.saveCheckedFlights(filteredChecks);
+
+      // Insert filtered flights
+      this.flights = [];
+      this.flights = [...newFlights];
+
+
+    } catch (error) {
+      if (error instanceof  HttpErrorResponse) {
+        if (error.status === 0) {
+          this.toastsService.showError("Проблема з інтернет з'єднанням.");
+        }
+      } else {
+        this.toastsService.showError("Сталась помилка. Оновіть сторінку і спробуйте знову.");
       }
-    });
 
-    newFlights.forEach(updatedFlight => {
-      // Find the corresponding collapsed flight
-      const nonCollapsedFlight = nonCollapsedFlights.find(flight => flight._id === updatedFlight._id);
-      if (nonCollapsedFlight && nonCollapsedFlight.isExpanded !== updatedFlight.isExpanded) {
-        updatedFlight.isExpanded = nonCollapsedFlight.isExpanded;
-      }
-    });
-
-    // Checked flight
-
-    const checkedFlights = this.getCheckedFlights();
-
-    newFlights.forEach(flight => {
-      flight.isChecked = checkedFlights.checkedIsApproved.includes(flight._id!);
-
-      if (flight.isForwardChanged === true) {
-        flight.isChecked = checkedFlights.checkedLBZForwardChange.includes(flight._id!);
-      }
-
-
-      if (flight.isReturnChanged === true) {
-        flight.isChecked = checkedFlights.checkedLBZBackChange.includes(flight._id!);
-      }
-
-      if(flight.isChecked !== true || flight.isExpanded === true) {
-        flight.isExpanded = true;
-      }
-    });
-  
-    const filteredChecks: CheckedFlights = {
-      checkedIsApproved: checkedFlights.checkedIsApproved.filter(id => newFlights.some(x => x._id == id)),
-      checkedLBZBackChange: checkedFlights.checkedLBZBackChange.filter(id => newFlights.some(x => x._id == id)),
-      checkedLBZForwardChange: checkedFlights.checkedLBZForwardChange.filter(id => newFlights.some(x => x._id == id))
-    };
-
-    this.saveCheckedFlights(filteredChecks);
-
-    // Insert filtered flights
-    this.flights = [];
-    this.flights = [...newFlights];
+      this.gotError$.next();
+      this.gotError$.complete();
+    }
   }
 
 
@@ -275,7 +314,7 @@ export class PpoComponent implements OnInit, OnDestroy {
       checkedLBZForwardChange: []
     }
 
-    if(item != null) {
+    if (item != null) {
       const parsed: CheckedFlights = JSON.parse(item);
       return (parsed.checkedIsApproved && parsed.checkedLBZBackChange && parsed.checkedLBZForwardChange) ? parsed : empty;
     }
@@ -321,13 +360,13 @@ export class PpoComponent implements OnInit, OnDestroy {
         break;
     }
 
-    if(dateFrom != null) {
+    if (dateFrom != null) {
       const diff = new Date().getTime() - new Date(dateFrom).getTime();
 
       const minutes = Math.floor(diff / 1000 / 60);
 
-      if(minutes > 60) {
-        const hours =  Math.floor(minutes / 60);
+      if (minutes > 60) {
+        const hours = Math.floor(minutes / 60);
         flight.timeFromLastStep = `${hours} г ${minutes - (hours * 60)} хв.`
       } else {
         flight.timeFromLastStep = `${minutes} хв.`

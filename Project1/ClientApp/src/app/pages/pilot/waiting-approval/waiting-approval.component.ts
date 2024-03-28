@@ -1,11 +1,13 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription, interval } from 'rxjs';
+import { Subject, Subscription, interval, takeUntil } from 'rxjs';
 import { ValueColor } from 'src/app/models/droneModel';
 import { Flight } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
 import { User, UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
+import { ToastsService } from 'src/app/services/toasts.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -31,9 +33,12 @@ export class WaitingApprovalComponent implements OnInit, OnDestroy {
   interval_ms = 10000;
   refreshFlightSubscription?: Subscription;
   
+  gotError$ = new Subject<void>();
+
   constructor(
     private flightService: FlightService,
     private optionsService: OptionsService,
+    private toastsService: ToastsService,
     private userService: UserService) { }
 
   ngOnDestroy(): void {
@@ -58,19 +63,31 @@ export class WaitingApprovalComponent implements OnInit, OnDestroy {
 
     await this.initFlights();
 
-    this.refreshFlightSubscription = interval(this.interval_ms).subscribe(async x => {
+    this.refreshFlightSubscription = interval(this.interval_ms).pipe(takeUntil(this.gotError$)).subscribe(async x => {
       await this.initFlights();
     })
   }
 
   async initFlights() {
-    const allFlights = await this.flightService.getByUserIdAsync(this.userInfo._id);
-
-    if(allFlights && allFlights[0]) {
+    try {
+      const allFlights = await this.flightService.getByUserIdAsync(this.userInfo._id);
+    if (allFlights && allFlights[0]) {
       this.flight = allFlights[0];
       if(this.flight.flightStep.isApproved == true || this.flight.isRejected == true){
         await this.flightService.refreshActiveFlight();
       }
+    }
+    } catch (error) {
+      if (error instanceof HttpErrorResponse) {
+        if (error.status === 0) {
+          this.toastsService.showError("Проблема з інтернет з'єднанням.");
+        }
+      } else {
+        this.toastsService.showError("Сталась помилка. Оновіть сторінку і спробуйте знову.");
+      }
+
+      this.gotError$.next();
+      this.gotError$.complete();
     }
   }
 

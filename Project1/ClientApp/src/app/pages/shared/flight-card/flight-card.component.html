@@ -1,4 +1,4 @@
-<div *ngIf="flight" style="min-width: 240px; max-width: 330px">
+<div *ngIf="flight && options" style="min-width: 240px; max-width: 330px">
   <div class="card m-1" [class.not-approved]="
       (userRole == UserRoles.PPO &&
         this.flight.flightStep.isApprovedByPPO === false) ||
@@ -6,33 +6,26 @@
         this.flight.flightStep.isApprovedByREB === false) ||
       (userRole == UserRoles.ADMIN &&
         this.flight.flightStep.isApproved === false)
-    " [style.backgroundColor]="
-   flight.flightStep.step !== FlightSteps.START
-     ? flight.assignment!.color
-     : 'black'
+    " [style.backgroundColor]="flight.flightStep.step !== FlightSteps.START ? flight.assignment!.color: 'black'
     ">
     <div class="card-body p-1" style="border: 2px solid black">
       <div class="header-step mb-1">
-        <span [style.backgroundColor]="
-            this.flightStatuses[flight.flightStep.visibleStep ?? 0].color
-          " class="badge badge-primary" style="color: white;">
+        <span [style.backgroundColor]="this.flightStatuses[flight.flightStep.visibleStep ?? 0].color" class="badge badge-primary" style="color: white;">
           {{
-          this.flightStatuses[
-          flight.flightStep.visibleStep ?? 0
-          ].name.toUpperCase()
+            this.flightStatuses[flight.flightStep.visibleStep ?? 0].name.toUpperCase()
           }}
         </span>
       </div>
       <div class="px-1 bg-white" style="border-radius: 0.25rem;">
         <div>
-          <div class="d-flex justify-content-between" style="color: black">                
+          <div class="d-flex justify-content-between" style="color: black">
             <div>
               <b>Модель:</b>
             </div>
             <div>
               <b style="color: blue;">{{ flight.model?.name?.toUpperCase() }}</b>
             </div>
-          </div>   
+          </div>
         </div>
 
         <div class="d-flex justify-content-between" style="color: black">
@@ -156,10 +149,12 @@
 
       <div *ngIf="flight.flightStep.isApproved == false" class="alert alert-warning mt-2 mb-0"
         style="background-color: white !important">
-        <div class="waiting-approval-text" style="border-bottom: 2px solid black;" *ngIf="flight.flightStep.isApprovedByPPO == false">
+        <div class="waiting-approval-text" style="border-bottom: 2px solid black;"
+          *ngIf="flight.flightStep.isApprovedByPPO == false">
           <b>Очікується дозвіл ППО</b>
         </div>
-        <div class="waiting-approval-text" style="border-bottom: 2px solid black;" *ngIf="flight.flightStep.isApprovedByREB == false">
+        <div class="waiting-approval-text" style="border-bottom: 2px solid black;"
+          *ngIf="flight.flightStep.isApprovedByREB == false">
           <b>Очікується дозвіл РЕБ</b>
         </div>
         <div class="waiting-approval-text" *ngIf="flight.flightStep.isApprovedByAdmin == false">

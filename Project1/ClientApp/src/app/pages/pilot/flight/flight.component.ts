@@ -11,6 +11,7 @@ import { UserService } from 'src/app/services/user.service';
 import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastsService } from 'src/app/services/toasts.service';
+import { PromptModalComponent } from '../../shared/prompt-modal/prompt-modal.component';
 
 @Component({
     selector: 'app-pilot-flight',
@@ -82,14 +83,15 @@ export class PilotFlightComponent implements OnInit {
   
     public async terminateFlight(isApproved: boolean) {
 
-      const modal = this.modalService.open(YesNoModalComponent);
-      modal.componentInstance.text = 'Ви впевнені?';
-      modal.componentInstance.yes = 'Так';
-      modal.componentInstance.no = 'Ні';
+      const modal = this.modalService.open(PromptModalComponent);
+      modal.componentInstance.text = 'Введіть причину скасування.';
+      modal.componentInstance.yes = 'Ок';
+      modal.componentInstance.no = 'Назад';
 
       modal.closed.subscribe(async res => {
-        if (res == true) {
+        if (res !== null) {
           this.flight.isTerminated = true;
+          this.flight.terminatedPilotReason = res;
           this.flight.endDate = new Date;
           this.flight.flightStep.step = FlightSteps.END;
           this.flight.flightStep.visibleStep = FlightSteps.END;

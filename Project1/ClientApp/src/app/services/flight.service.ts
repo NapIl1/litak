@@ -105,6 +105,14 @@ export class FlightService {
     }
   }
 
+  public async removeFlightRange(recordIds: string[]): Promise<void> {
+    try {
+      await lastValueFrom(this.http.post(this.RECORDS_URL + '/delete-record-list', recordIds));
+    } catch (error) {
+
+    }
+  }
+
   public async approveAsync(id: string): Promise<void> {
     const flight = await this.getByIdAsync(id);
 

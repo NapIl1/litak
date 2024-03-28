@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ValueColor } from 'src/app/models/droneModel';
 import { Flight, FlightSteps } from 'src/app/models/flight';
+import { DroneOptions } from 'src/app/models/options';
 import { UserRole } from 'src/app/models/user';
 import { OptionsService } from 'src/app/services/options.service';
 import { UserService } from 'src/app/services/user.service';
@@ -20,6 +21,8 @@ export class FlightCardComponent implements OnInit {
 
   flightStatuses: ValueColor[] = [];
 
+  options?: DroneOptions;
+
   constructor(private userService: UserService,
               private optionsService: OptionsService) {
 
@@ -32,10 +35,11 @@ export class FlightCardComponent implements OnInit {
       this.userRole = ui.role;
     }
     
-    const options = await this.optionsService.getAllOptions();
+    this.options = await this.optionsService.getAllOptions();
 
-    if (options.flightStatus) {
-      this.flightStatuses = options.flightStatus;
+    if (this.options.flightStatus) {
+      this.flightStatuses = this.options.flightStatus;
+      console.log(this.flightStatuses);
     }
   }
 

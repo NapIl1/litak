@@ -23,11 +23,8 @@
     }
 }
 
-input{
+input, select {
     border: 1.5px solid black;
-}
-
-.select-with-border{
-    border: 1.5px solid black;
+    height: auto !important;
 }
 
