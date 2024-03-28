@@ -81,6 +81,7 @@ export interface Flight {
     isRejectedbyAdmin?: boolean;
 
     isTerminated?: boolean;
+    terminatedPilotReason?: string;
 
     flightStep: FlightStep;
 

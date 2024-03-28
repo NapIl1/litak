@@ -45,7 +45,7 @@
 
                         <li *ngIf="userInfo.role == userRoles.ADMIN || userInfo.role == userRoles.PILOT"
                             class="nav-item _nav-sidebar">
-                            <a routerLink="/flight" class="nav-link nav-icons" href="#">
+                            <a [routerLink]="!currentUrl.includes('flight')? 'flight' : null" class="nav-link nav-icons" href="#">
                                 <i class="fas fa-fw fa-user"></i>
                                 Політ
                             </a>

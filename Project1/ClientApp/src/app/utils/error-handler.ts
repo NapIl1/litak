@@ -6,7 +6,7 @@ export class AppErrorHandler implements ErrorHandler {
   private toastService = inject(ToastsService);
 
   handleError(error: any) {
-    this.toastService.showError("Сталась помилка. Оновіть сторінку і спробуйте знову.");
+    // this.toastService.showError("Сталась помилка. Оновіть сторінку і спробуйте знову.");
     console.error(error);
   }
 }

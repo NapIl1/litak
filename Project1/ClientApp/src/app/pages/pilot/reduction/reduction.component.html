@@ -4,15 +4,10 @@
         <div class="col-6">
             <div>
                 <label class="col-form-label">Дистанція (в км.)</label>
-                <ng-select class="select-with-border"
-                [(ngModel)]="flight.reductionDistance"
-              >
-                <ng-option *ngFor="let item of reductions" [value]="item">
-                  <span class="badge">{{
-                    item
-                  }}</span>
-                </ng-option>
-              </ng-select>
+
+                <select class="form-control" [(ngModel)]="flight.reductionDistance">
+                    <option *ngFor="let item of reductions" [value]="item" >{{item}}</option>
+                </select>
             </div>
         </div>
         <div class="col-6">

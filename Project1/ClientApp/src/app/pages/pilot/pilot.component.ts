@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FLIGHT_ROUTES } from 'src/app/consts/consts';
 import { Flight, FlightSteps } from 'src/app/models/flight';
@@ -68,6 +68,11 @@ export class PilotComponent implements OnInit {
         }
       });
     }
+  }
+
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: any) {
+    window.location.reload();
   }
 
   private handleRouting(flight: Flight | null, usePrev = false) {

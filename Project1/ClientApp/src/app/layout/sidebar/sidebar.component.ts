@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router, Scroll } from '@angular/router';
+import { filter } from 'rxjs';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { User, UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
@@ -18,6 +19,8 @@ export class SidebarComponent implements OnInit {
 
   userInfo: User = {};
 
+  currentUrl = '';
+
   constructor(private flightService: FlightService, private userService: UserService, private router: Router) { }
 
   async ngOnInit(): Promise<void> {
@@ -27,6 +30,15 @@ export class SidebarComponent implements OnInit {
     if(ui) {
       this.userInfo = ui;
     }
+
+    this.router.events.pipe(filter(x => x instanceof NavigationEnd || x instanceof Scroll)).subscribe(x => {
+      if (x instanceof NavigationEnd) {
+        this.currentUrl = (x as NavigationEnd).url;
+      }
+      if (x instanceof Scroll) {
+        this.currentUrl = (x as Scroll).routerEvent.url;
+      }
+    })
     
   }
 
