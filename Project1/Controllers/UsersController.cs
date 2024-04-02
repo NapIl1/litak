@@ -44,6 +44,10 @@ public class UsersController : ControllerBase
         var recordsCollection = database.GetCollection<BsonDocument>("users");
         var record = (await recordsCollection.FindAsync(filter)).FirstOrDefault();
 
+        if (record == null)
+            return BadRequest();
+
+
         if (record.Contains("_id") && record["_id"].IsObjectId)
         {
             record["_id"] = record["_id"].AsObjectId.ToString();

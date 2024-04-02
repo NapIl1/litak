@@ -106,9 +106,7 @@ export class PpoComponent implements OnInit, OnDestroy {
       this.options = await this.optionsService.getAllOptions();
     } catch (error) {
       if (error instanceof HttpErrorResponse) {
-        if (error.status === 0) {
-          this.toastsService.showError("Проблема з інтернет з'єднанням. Оновіть сторінку і спробуйте знову.");
-        }
+
       } else {
         this.toastsService.showError("Сталась помилка. Оновіть сторінку і спробуйте знову.");
       }
@@ -292,9 +290,6 @@ export class PpoComponent implements OnInit, OnDestroy {
 
     } catch (error) {
       if (error instanceof  HttpErrorResponse) {
-        if (error.status === 0) {
-          this.toastsService.showError("Проблема з інтернет з'єднанням.");
-        }
       } else {
         this.toastsService.showError("Сталась помилка. Оновіть сторінку і спробуйте знову.");
       }

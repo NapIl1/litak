@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { PpoComponent } from './pages/ppo/ppo.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { OptionsComponent } from './pages/admin/components/options/options.component';
 import { UsersComponent } from './pages/admin/components/users/users.component';
 import { PersonalInfoComponent } from './pages/personal-info/personal-info.component';
@@ -41,6 +41,7 @@ import { ConfirmModalComponent } from './pages/shared/confirm-modal/confirm.comp
 import { GlobalToastComponent } from './pages/shared/global-toast/global-toast.component';
 import { ToastsContainerComponent } from './pages/shared/toasts-container/toasts-container.component';
 import { AppErrorHandler } from './utils/error-handler';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
 
 @NgModule({
   declarations: [
@@ -88,7 +89,9 @@ import { AppErrorHandler } from './utils/error-handler';
     ConfirmModalComponent
   ],
   providers: [provideNgxMask(),
-    {provide: ErrorHandler, useClass: AppErrorHandler}],
+    {provide: ErrorHandler, useClass: AppErrorHandler},
+    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
