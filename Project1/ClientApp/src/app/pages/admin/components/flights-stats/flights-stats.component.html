@@ -5,6 +5,13 @@
                 <div class="d-flex justify-content-between">
                     <h3 class="mb-0">Польоти</h3>
                     <div>
+                        <button (click)="selectAll()" class="btn btn-sm btn-info mr-1">
+                            Вибрати всі
+                        </button>
+                        <button (click)="selectAllUnfinished()" class="btn btn-sm btn-info mr-1">
+                            Вибрати завершені
+                        </button>
+
                         <button class="btn btn-sm btn-danger mr-1" (click)="deleteSelected()">
                             Видалити вибрані
                         </button>

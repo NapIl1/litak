@@ -83,6 +83,18 @@ export class FlightsStatsComponent implements OnInit {
     });
   }
 
+  selectAllUnfinished() {
+    this.isAllSelected = false;
+    this.flights.forEach(element => {
+      if(element.flightStep.step === FlightSteps.END) {
+        element.isCheckedAdmin = true;
+      } else {
+        element.isCheckedAdmin = false;
+      }
+      
+    });
+  }
+
   deleteSelected() {
     const modal = this.modalService.open(YesNoModalComponent);
     modal.componentInstance.text = 'Ви впевнені?';

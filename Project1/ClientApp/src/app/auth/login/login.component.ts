@@ -1,6 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserRole } from 'src/app/models/user';
+import { ToastsService } from 'src/app/services/toasts.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -15,9 +17,7 @@ export class LoginComponent {
   error = false;
   isLoading = false;
 
-  constructor(private userService: UserService, private router: Router) {
-
-  }
+  constructor(private userService: UserService, private router: Router, private toastsService: ToastsService) { }
 
   public async login(): Promise<void> {
     this.isLoading = true;
@@ -41,7 +41,11 @@ export class LoginComponent {
         this.router.navigate(['ppo']);
       }
     } catch (error) {
-      this.error = true;
+      if(error instanceof HttpErrorResponse) {
+        if (error.status == 400) {
+          this.error = true;
+        }
+      }
     }
 
     this.isLoading = false;
