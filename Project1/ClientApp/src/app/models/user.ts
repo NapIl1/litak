@@ -16,7 +16,6 @@ export interface User {
     role?: UserRole;
     userOptions?: {
         nickName?: string;
-        phoneNumber?: string;
         unitNumber?: string;
         dronModel?: string;
         dronAppointment?: string;

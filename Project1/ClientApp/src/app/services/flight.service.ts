@@ -76,25 +76,16 @@ export class FlightService {
   }
 
   public async addFlightAsync(flight: Flight): Promise<void> {
-    try {
-      await lastValueFrom(this.http.post(this.RECORDS_URL, flight));
-    } catch (error) {
-      
-    }
+    await lastValueFrom(this.http.post(this.RECORDS_URL, flight));
   }
 
   public async updateFlightAsync(flight: Flight): Promise<void> {
-    try {
-      const id = flight._id;
-      delete flight._id;
+    const id = flight._id;
+    delete flight._id;
+    
+    await lastValueFrom(this.http.put(this.RECORDS_URL + `?recordId=${id}`, flight));
 
-      await lastValueFrom(this.http.put(this.RECORDS_URL + `?recordId=${id}`, flight));
-
-      flight._id = id;
-    } catch (error) {
-      
-    }
-
+    flight._id = id;
   }
 
   public async removeFlight(id: string): Promise<void> {

@@ -1,12 +1,7 @@
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Flight, FlightSteps } from 'src/app/models/flight';
-import { DroneOptions } from 'src/app/models/options';
-import { User } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
-import { OptionsService } from 'src/app/services/options.service';
-import { UserService } from 'src/app/services/user.service';
 import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastsService } from 'src/app/services/toasts.service';
@@ -22,6 +17,7 @@ export class PilotReductionComponent implements OnInit, OnDestroy {
   isNextStep = false;
   subs: Subscription[] = [];
   reductions = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+  flightId?: string|undefined;
 
   private toastService = inject(ToastsService);
 
@@ -37,6 +33,7 @@ export class PilotReductionComponent implements OnInit, OnDestroy {
     const s = this.flightService.activeFlight$.subscribe(flight => {
       if (flight) {
         this.flight = flight;
+        this.flightId = this.flight._id;
       }
     });
 
@@ -67,12 +64,23 @@ export class PilotReductionComponent implements OnInit, OnDestroy {
     this.flight.flightStep.isApproved = true;
 
     if (!isSkipped) {
-      this.flight.reductionDate = new Date;
+      this.flight.reductionDate = new Date();
       this.flight.flightStep.visibleStep = FlightSteps.REDUCTION;
     }
 
-    await this.flightService.updateFlightAsync(this.flight);
-    await this.flightService.refreshActiveFlight();
+    try {
+      await this.flightService.updateFlightAsync(this.flight);
+      await this.flightService.refreshActiveFlight();
+    } catch (error) {
+      this.flight.flightStep.step = FlightSteps.LBZ_HOME;
+      this.flight.flightStep.isApproved = true;
+      this.flight._id = this.flightId;
+      if (!isSkipped) {
+        this.flight.reductionDate = undefined;
+        this.flight.flightStep.visibleStep = FlightSteps.LBZ_HOME;
+        this.flight._id = this.flightId;
+      }
+    }
   }
 
   public validateStep() {

@@ -23,7 +23,6 @@ export interface FlightStep {
 export interface Flight {
     _id?: string;
     operator?: string;
-    phoneNumber?: string;
     unit?: string;
     zone?: string;
     streamLink?: string;
@@ -56,7 +55,6 @@ export interface Flight {
     changedReturnRoute?: string;
 
     boardingStatus?: string;
-    boardingStatusComments?: string;
 
     LBZBackDate?: Date;
     isLBZBack?: boolean;

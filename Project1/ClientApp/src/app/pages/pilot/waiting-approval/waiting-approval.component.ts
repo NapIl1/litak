@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject, Subscription, interval, takeUntil } from 'rxjs';
+import { Subscription, interval } from 'rxjs';
 import { ValueColor } from 'src/app/models/droneModel';
 import { Flight } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
@@ -32,8 +32,6 @@ export class WaitingApprovalComponent implements OnInit, OnDestroy {
 
   interval_ms = 10000;
   refreshFlightSubscription?: Subscription;
-  
-  gotError$ = new Subject<void>();
 
   constructor(
     private flightService: FlightService,
@@ -63,7 +61,7 @@ export class WaitingApprovalComponent implements OnInit, OnDestroy {
 
     await this.initFlights();
 
-    this.refreshFlightSubscription = interval(this.interval_ms).pipe(takeUntil(this.gotError$)).subscribe(async x => {
+    this.refreshFlightSubscription = interval(this.interval_ms).subscribe(async x => {
       await this.initFlights();
     })
   }
@@ -83,9 +81,6 @@ export class WaitingApprovalComponent implements OnInit, OnDestroy {
       } else {
         this.toastsService.showError("Сталась помилка. Оновіть сторінку і спробуйте знову.");
       }
-
-      this.gotError$.next();
-      this.gotError$.complete();
     }
   }
 

@@ -26,6 +26,7 @@
 
           <div class="col-4">
             <select
+            
               style="height: 58px"
               [(ngModel)]="role"
               class="form-control"
@@ -55,6 +56,7 @@
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Логін</th>
+                  <th scope="col">Позивний</th>
                   <th scope="col">Роль</th>
                   <th scope="col">Видалити</th>
                 </tr>
@@ -63,6 +65,7 @@
                 <tr *ngFor="let item of users; index as i">
                   <th scope="row">{{ i + 1 }}</th>
                   <td>{{ item.login }}</td>
+                  <td>{{ item.userOptions?.nickName }}</td>
                   <td>
                     {{
                       item.role == UserRoles.ADMIN

@@ -21,12 +21,7 @@ export class UserService {
   }
 
   public async addUser(user: User): Promise<void> {
-    try {
-      await lastValueFrom(this.http.post<string>(this.USERS_API, user));
-
-    } catch (error) {
-
-    }
+    await lastValueFrom(this.http.post<string>(this.USERS_API, user));
   }
 
   public async removeUser(id: string):Promise<void> {

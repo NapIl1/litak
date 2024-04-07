@@ -23,6 +23,7 @@ export class PilotLbzForwardComponent implements OnInit, OnDestroy {
   isNextStep = false;
   isChangeRoute = false;
   subs: Subscription[] = [];
+  flightId?: string|undefined;
 
 	private toastService = inject(ToastsService);
 
@@ -38,6 +39,7 @@ export class PilotLbzForwardComponent implements OnInit, OnDestroy {
       const s = this.flightService.activeFlight$.subscribe(flight => {
           if (flight) {
               this.flight = flight;
+              this.flightId = this.flight._id;
           }
       });
 
@@ -75,12 +77,21 @@ export class PilotLbzForwardComponent implements OnInit, OnDestroy {
     this.flight.flightStep.isApproved = true;
 
     if (!isSkipped) {
-      this.flight.LBZForwardDate = new Date;
+      this.flight.LBZForwardDate = new Date();
       this.flight.flightStep.visibleStep = FlightSteps.LBZ_FORWARD;
     }
-
-    await this.flightService.updateFlightAsync(this.flight);
-    await this.flightService.refreshActiveFlight();
+    try {
+      await this.flightService.updateFlightAsync(this.flight);
+      await this.flightService.refreshActiveFlight();
+    } catch (error) {
+      this.flight.flightStep.step = FlightSteps.FLIGHT;
+      this.flight.flightStep.isApproved = true;
+      this.flight._id = this.flightId;
+      if (!isSkipped) {
+        this.flight.LBZForwardDate = undefined;
+        this.flight.flightStep.visibleStep = FlightSteps.FLIGHT;
+      }
+    }
 }
 
   public validateStep() {

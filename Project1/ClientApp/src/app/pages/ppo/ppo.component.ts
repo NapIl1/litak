@@ -36,7 +36,7 @@ export class PpoComponent implements OnInit, OnDestroy {
   interval_ms = 10000;
 
   private readonly timeRangeMinutes = 5;
-  endOptions: string[] = ['Успішно', 'Не успішно', 'Пошкоджено', 'Втрачено'];
+  endOptions: string[] = ['ЗЕМЛЯ', 'ВТРАЧЕНО'];
 
   flightStatuses: ValueColor[] = [];
 
