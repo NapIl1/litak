@@ -14,10 +14,8 @@ export class PilotEndComponent implements OnInit, OnDestroy {
   dateNow = Date.now();
   isNextStep = false;
   subs: Subscription[] = [];
-  successWithoutComments = 'Успішно';
-  customOptionSelector = 'Свій варіант';
-  endOptions: string[] = [ this.successWithoutComments, 'Не успішно', 'Пошкоджено','Втрачено', this.customOptionSelector];
-
+  endOptions: string[] = ['ЗЕМЛЯ', 'ВТРАЧЕНО'];
+  flightId?: string|undefined;
   custom = '';
 
 	private toastService = inject(ToastsService);
@@ -33,6 +31,7 @@ export class PilotEndComponent implements OnInit, OnDestroy {
     const s = this.flightService.activeFlight$.subscribe(flight => {
       if (flight) {
         this.flight = flight;
+        this.flightId = this.flight._id;
       }
     });
 
@@ -40,7 +39,7 @@ export class PilotEndComponent implements OnInit, OnDestroy {
   }
 
   public validateStep() {
-    return this.flight.boardingStatus == null || this.flight.boardingStatus == '' || (this.flight.boardingStatus != this.successWithoutComments && this.custom === '')
+    return this.flight.boardingStatus == null || this.flight.boardingStatus == '';
   }
 
   public async next() {
@@ -50,13 +49,18 @@ export class PilotEndComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.flight.boardingStatusComments = this.custom;
-    this.flight.endDate = new Date;
+    this.flight.endDate = new Date();
     this.flight.flightStep.step = FlightSteps.END;
     this.flight.flightStep.isApproved = true;
     this.flight.isRequireAttention = true;
 
-    await this.flightService.updateFlightAsync(this.flight);
-    await this.flightService.refreshActiveFlight();
+    try {
+      await this.flightService.updateFlightAsync(this.flight);
+      await this.flightService.refreshActiveFlight();
+    } catch (error) {
+      this.flight._id = this.flightId;
+      this.flight.endDate = undefined;
+      this.flight.flightStep.step = FlightSteps.REDUCTION;
+    }
   }
 }

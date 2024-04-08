@@ -19,6 +19,7 @@ export class PilotReturnComponent implements OnInit, OnDestroy {
   dateNow = Date.now();
   isNextStep = false;
   subs: Subscription[] = [];
+  flightId?: string|undefined;
 
   private toastService = inject(ToastsService);
 
@@ -34,6 +35,7 @@ export class PilotReturnComponent implements OnInit, OnDestroy {
     const s = this.flightService.activeFlight$.subscribe(flight => {
       if (flight) {
         this.flight = flight;
+        this.flightId = this.flight._id;
       }
     });
 
@@ -64,12 +66,18 @@ export class PilotReturnComponent implements OnInit, OnDestroy {
     this.flight.flightStep.isApproved = true;
 
     if (!isSkipped) {
-      this.flight.returnDate = new Date;
+      this.flight.returnDate = new Date();
       this.flight.flightStep.visibleStep = FlightSteps.RETURN;
     }
 
-    await this.flightService.updateFlightAsync(this.flight);
-    await this.flightService.refreshActiveFlight();
+    try {
+      await this.flightService.updateFlightAsync(this.flight);
+      await this.flightService.refreshActiveFlight();
+    } catch (error) {
+      this.flight._id = this.flightId;
+      this.flight.flightStep.step = FlightSteps.LBZ_FORWARD;
+      this.flight.returnDate = undefined;
+    }
   }
 
 

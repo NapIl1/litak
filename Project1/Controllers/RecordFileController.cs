@@ -45,7 +45,6 @@ namespace litak_back_end.Controllers
             "Посадка",
             "Статус",
             "Закінчення",
-            "Коментарі до посадки"
         };
 
         [HttpGet]
@@ -209,8 +208,6 @@ namespace litak_back_end.Controllers
 
             // Закінчення
             rowData.Append(CreateCell($"{record.FormatDateTime("endDate")}", CellValues.Date));
-            // Коментарі до посадки
-            rowData.Append(CreateCell($"{record.GetValue("boardingStatusComments")}", CellValues.String));
         }
 
         private static Cell CreateCell(string text, CellValues cellType)

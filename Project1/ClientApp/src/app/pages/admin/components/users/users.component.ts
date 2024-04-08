@@ -38,11 +38,18 @@ export class UsersComponent implements OnInit {
   }
 
   async addNewUser() {
-    const res = await this.userService.addUser({
-      login: this.login,
-      password: this.password,
-      role: this.role
-    })
+    try {
+      const res = await this.userService.addUser({
+        login: this.login,
+        password: this.password,
+        role: this.role,
+        userOptions:{
+          nickName: this.login
+        }
+      })
+    } catch (error) {
+      this.toastService.showError(`Користувач з логіном ${this.login} вже існує.`);
+    }
 
     this.users = await this.userService.getAllUsers();
   }

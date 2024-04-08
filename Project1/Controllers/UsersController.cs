@@ -59,22 +59,24 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> SaveUser([FromBody] JsonObject recordJson)
     {
-        try
-        {
-            var record = BsonDocument.Parse(recordJson.ToString());
-            var mongoClient =
-                new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/"); 
-            var database = mongoClient.GetDatabase("sample_weatherdata");
+        var record = BsonDocument.Parse(recordJson.ToString());
+        var mongoClient =
+            new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+        var database = mongoClient.GetDatabase("sample_weatherdata");
 
-            var recordsCollection = database.GetCollection<BsonDocument>("users");
-            await recordsCollection.InsertOneAsync(record);
+        var recordsCollection = database.GetCollection<BsonDocument>("users");
+        var userWithTheSameLogin = Builders<BsonDocument>.Filter.Eq("login", record["login"]);
 
-            return Ok("Record saved successfully");
-        }
-        catch (Exception ex)
+        var previousRecord = (await recordsCollection.FindAsync(userWithTheSameLogin)).FirstOrDefault();
+
+        if (previousRecord is not null)
         {
-            return BadRequest("Invalid JSON data: " + ex.Message);
+            return BadRequest("User already exists");
         }
+
+        await recordsCollection.InsertOneAsync(record);
+
+        return Ok("Record saved successfully");
     }
 
     [HttpPut]

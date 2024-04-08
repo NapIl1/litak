@@ -1,12 +1,9 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FLIGHT_ROUTES } from 'src/app/consts/consts';
+import { Component, OnInit, inject } from '@angular/core';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
 import { User } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
-import { RoutingService } from 'src/app/services/routing.service';
 import { UserService } from 'src/app/services/user.service';
 import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -26,16 +23,14 @@ export class PilotFlightComponent implements OnInit {
     localRouterPath!: string;
     isNewFlight: boolean = true;
     dateNow = Date.now();
+    flightId?: string|undefined;
 
     private toastService = inject(ToastsService);
 
     constructor(
-      private router: Router,
       private flightService: FlightService,
       private optionsService: OptionsService,
       private userService: UserService,
-      private route: ActivatedRoute,
-      private routingService: RoutingService,
       private modalService: NgbModal) { }
 
     async ngOnInit(): Promise<void> {
@@ -49,6 +44,9 @@ export class PilotFlightComponent implements OnInit {
         this.flightService.activeFlight$.subscribe(flight => {
           if (flight) {
             this.flight = flight;
+            if(this.flight._id != undefined){
+              this.flightId = this.flight._id;
+            }
           }
         });
       }
@@ -69,14 +67,20 @@ export class PilotFlightComponent implements OnInit {
 
       modal.closed.subscribe(async res => {
         if (res == true) {
-          this.flight.flightStartDate = new Date;
+          this.flight.flightStartDate = new Date();
           this.flight.flightStep.step = FlightSteps.FLIGHT;
           this.flight.flightStep.visibleStep = FlightSteps.FLIGHT;
           this.flight.flightStep.isApproved = true;
           this.flight.isRequireAttention = true;
-
-          await this.flightService.updateFlightAsync(this.flight);
-          await this.flightService.refreshActiveFlight();
+          try {
+            await this.flightService.updateFlightAsync(this.flight);
+            await this.flightService.refreshActiveFlight();
+          } catch{
+            this.flight._id = this.flightId;
+            this.flight.flightStartDate = undefined;
+            this.flight.flightStep.step = FlightSteps.START;
+            this.flight.flightStep.visibleStep = FlightSteps.START;
+          }
         }
       });
     }
@@ -92,13 +96,21 @@ export class PilotFlightComponent implements OnInit {
         if (res !== null) {
           this.flight.isTerminated = true;
           this.flight.terminatedPilotReason = res;
-          this.flight.endDate = new Date;
+          this.flight.endDate = new Date();
           this.flight.flightStep.step = FlightSteps.END;
           this.flight.flightStep.visibleStep = FlightSteps.END;
           this.flight.flightStep.isApproved = isApproved;
 
-          await this.flightService.updateFlightAsync(this.flight);
-          await this.flightService.refreshActiveFlight();
+          try {
+            await this.flightService.updateFlightAsync(this.flight);
+            await this.flightService.refreshActiveFlight();
+          } catch (error) {
+            this.flight.isTerminated = undefined;
+            this.flight.terminatedPilotReason = undefined;
+            this.flight.endDate = undefined;
+            this.flight.flightStep.step = FlightSteps.START;
+            this.flight.flightStep.visibleStep = FlightSteps.START;
+          }
         }
       });
     }

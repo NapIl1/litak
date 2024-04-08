@@ -14,7 +14,6 @@ export class PersonalInfoComponent implements OnInit {
   userInfo: User = {
     userOptions: {
       nickName: '',
-      phoneNumber: '',
       unitNumber: '',
       dronType: '',
       dronModel: '',

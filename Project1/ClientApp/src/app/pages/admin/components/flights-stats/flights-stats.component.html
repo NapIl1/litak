@@ -84,7 +84,6 @@
                                     Посадка</th>
                                 <th scope="col">Статус</th>
                                 <th scope="col">Закінчення</th>
-                                <th scope="col">Коментарі до посадки</th>
                                 <th scope="col">Видалити</th>
                             </tr>
                         </thead>
@@ -157,7 +156,6 @@
                                     }}</td> <!--Статус-->
     
                                 <td>{{item.endDate | date: 'ddMMyy-HHmm'}}</td>
-                                <td>{{item.boardingStatusComments}}</td>
                                 <td>
                                     <button (click)="removeFlight(item._id)" class="btn btn-danger btn-xs">
                                         <i class="fas fa-trash"></i>

@@ -39,7 +39,6 @@ export class FlightCardComponent implements OnInit {
 
     if (this.options.flightStatus) {
       this.flightStatuses = this.options.flightStatus;
-      console.log(this.flightStatuses);
     }
   }
 

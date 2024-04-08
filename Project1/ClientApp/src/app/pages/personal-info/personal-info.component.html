@@ -15,24 +15,17 @@
                         <div *ngIf="userRole != (UserRoles.PPO || UserRoles.REB)" class="card-body">
 
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-12">
                                     <div class="form-group">
                                         <label for="inputText3" class="col-form-label">Позивний</label>
-                                        <input [(ngModel)]="userInfo!.userOptions!.nickName" type="text"
+                                        <input readonly [(ngModel)]="userInfo!.userOptions!.nickName" type="text"
                                             class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="inputText3" class="col-form-label">Номер Телефону</label>
-                                        <input [(ngModel)]="userInfo!.userOptions!.phoneNumber" mask='(000) 000-0000'
-                                            type="text" class="form-control">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-12">
                                     <div class="form-group">
                                         <label for="inputText3" class="col-form-label">Підрозділ</label>
                                         <input [(ngModel)]="userInfo!.userOptions!.unit" type="text"

@@ -80,7 +80,6 @@ export class PilotStartComponent implements OnInit {
         if (ui) {
           this.userInfo = ui;
     
-          this.flight.phoneNumber = ui.userOptions?.phoneNumber;
           this.flight.operator = ui.userOptions?.nickName;
           this.flight.discordUrl = this.options.discordUrl;
           this.flight.unit = ui.userOptions?.unit;
@@ -102,12 +101,17 @@ export class PilotStartComponent implements OnInit {
     this.isLoading = true;
     this.flight.userId = this.userInfo._id;
     this.flight.dateOfFlight =  new Date();
-    await this.flightService.addFlightAsync(this.flight);
+    try{
+      await this.flightService.addFlightAsync(this.flight);
 
-    // alert('Заявку подано');
-    this.toastService.showSuccess("Заявку подано.");
-    await this.flightService.refreshActiveFlight();
-    this.isLoading = false;
+      // alert('Заявку подано');
+      this.toastService.showSuccess("Заявку подано.");
+      await this.flightService.refreshActiveFlight();
+      this.isLoading = false;
+    }catch{
+      this.isLoading = false;
+    }
+
     //this.route.navigate(['flight/' + FLIGHT_ROUTES.WAITING_APPROVAL]);
   }
 
@@ -136,7 +140,6 @@ export class PilotStartComponent implements OnInit {
       this.flight.routeBack = flightRecord.routeBack;
       this.flight.workingHeight = flightRecord.workingHeight;
       this.flight.streamLink = flightRecord.streamLink;
-      this.flight.phoneNumber = flightRecord.phoneNumber;
     }
   }
 
@@ -152,7 +155,6 @@ export class PilotStartComponent implements OnInit {
       || this.flight.routeForward == null || this.flight.routeForward === ''
       || this.flight.routeBack == null || this.flight.routeBack === ''
       || this.flight.workingHeight == null || this.flight.workingHeight === ''
-      || this.flight.phoneNumber == null || this.flight.phoneNumber === ''
       || this.flight.isInDiscord !== true
       || this.isLoading == true;
   }

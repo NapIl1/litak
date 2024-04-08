@@ -176,18 +176,8 @@
                 </div>
 
                 <div>
-                    <span class="section-name">Телефон:</span>
-                    <span class="section-value">{{ flight.phoneNumber }}</span>
-                </div>
-
-                <div>
                     <span class="section-name">Стрім:</span>
                     <span style="color: green;" class="section-value">{{ flight.streamLink }}</span>
-                </div>
-
-                <div *ngIf="flight.boardingStatus != 'Успішно'">
-                    <span class="section-name">Коментарі до посадки:</span>
-                    <span style="color: red;" class="section-value">{{ flight.boardingStatusComments }}</span>
                 </div>
               </div>
 
