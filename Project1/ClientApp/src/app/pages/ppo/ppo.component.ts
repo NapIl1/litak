@@ -223,8 +223,18 @@ export class PpoComponent implements OnInit, OnDestroy {
 
       newFlights.push(...filtered.filter(x => x.flightStep.isApproved === false))
 
+      newFlights.push(...filtered.filter(x => x.flightStep.step == FlightSteps.START))
+
       this.options.dronAppointment?.forEach(c => {
-        newFlights.push(...filtered.filter(x => x.flightStep.isApproved === true && x.assignment?.name === c.name && x.flightStep.step !== FlightSteps.END));
+        newFlights.push(...filtered.filter(x => 
+          x.flightStep.isApproved === true 
+          && x.flightStep.step != FlightSteps.START  
+          && x.assignment?.name === c.name 
+          && x.flightStep.step !== FlightSteps.END).sort((a: Flight, b: Flight) =>{
+            const stepA = new Date(a.dateOfFlight ?? '').getTime();
+            const stepB = new Date(b.dateOfFlight ?? '').getTime();
+            return stepA - stepB;
+          }));
       });
 
       newFlights.push(...filtered.filter(x => x.flightStep.step === FlightSteps.END).sort((a: Flight, b: Flight) => {
