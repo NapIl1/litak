@@ -31,6 +31,8 @@ export class SidebarComponent implements OnInit {
       this.userInfo = ui;
     }
 
+    this.currentUrl = this.router.url;
+
     this.router.events.pipe(filter(x => x instanceof NavigationEnd || x instanceof Scroll)).subscribe(x => {
       if (x instanceof NavigationEnd) {
         this.currentUrl = (x as NavigationEnd).url;
@@ -39,7 +41,6 @@ export class SidebarComponent implements OnInit {
         this.currentUrl = (x as Scroll).routerEvent.url;
       }
     })
-    
   }
 
   logout() {
