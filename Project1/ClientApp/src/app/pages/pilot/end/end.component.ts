@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Flight, FlightSteps } from 'src/app/models/flight';
@@ -58,9 +59,14 @@ export class PilotEndComponent implements OnInit, OnDestroy {
       await this.flightService.updateFlightAsync(this.flight);
       await this.flightService.refreshActiveFlight();
     } catch (error) {
-      this.flight._id = this.flightId;
-      this.flight.endDate = undefined;
-      this.flight.flightStep.step = FlightSteps.REDUCTION;
+      if (error instanceof HttpErrorResponse)
+        if (error.status == 200) {
+          await this.flightService.refreshActiveFlight();
+        } else {
+          this.flight._id = this.flightId;
+          this.flight.endDate = undefined;
+          this.flight.flightStep.step = FlightSteps.REDUCTION;
+        }
     }
   }
 }

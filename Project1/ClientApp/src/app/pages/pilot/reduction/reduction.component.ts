@@ -5,6 +5,7 @@ import { FlightService } from 'src/app/services/flight.service';
 import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastsService } from 'src/app/services/toasts.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-pilot-reduction',
@@ -72,13 +73,19 @@ export class PilotReductionComponent implements OnInit, OnDestroy {
       await this.flightService.updateFlightAsync(this.flight);
       await this.flightService.refreshActiveFlight();
     } catch (error) {
-      this.flight.flightStep.step = FlightSteps.LBZ_HOME;
-      this.flight.flightStep.isApproved = true;
-      this.flight._id = this.flightId;
-      if (!isSkipped) {
-        this.flight.reductionDate = undefined;
-        this.flight.flightStep.visibleStep = FlightSteps.LBZ_HOME;
-        this.flight._id = this.flightId;
+      if (error instanceof HttpErrorResponse) {
+        if (error.status == 200) {
+          await this.flightService.refreshActiveFlight();
+        } else { 
+          this.flight.flightStep.step = FlightSteps.LBZ_HOME;
+          this.flight.flightStep.isApproved = true;
+          this.flight._id = this.flightId;
+          if (!isSkipped) {
+            this.flight.reductionDate = undefined;
+            this.flight.flightStep.visibleStep = FlightSteps.LBZ_HOME;
+            this.flight._id = this.flightId;
+          }
+        }
       }
     }
   }

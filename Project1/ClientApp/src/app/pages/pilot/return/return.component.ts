@@ -8,6 +8,7 @@ import { FlightService } from 'src/app/services/flight.service';
 import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastsService } from 'src/app/services/toasts.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-pilot-return',
@@ -74,9 +75,15 @@ export class PilotReturnComponent implements OnInit, OnDestroy {
       await this.flightService.updateFlightAsync(this.flight);
       await this.flightService.refreshActiveFlight();
     } catch (error) {
-      this.flight._id = this.flightId;
-      this.flight.flightStep.step = FlightSteps.LBZ_FORWARD;
-      this.flight.returnDate = undefined;
+      if (error instanceof HttpErrorResponse) {
+        if (error.status == 200) {
+          await this.flightService.refreshActiveFlight();
+        } else {
+          this.flight._id = this.flightId;
+          this.flight.flightStep.step = FlightSteps.LBZ_FORWARD;
+          this.flight.returnDate = undefined;
+        }
+      }
     }
   }
 

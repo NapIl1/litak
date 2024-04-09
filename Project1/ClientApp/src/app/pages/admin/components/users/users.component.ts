@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { User, UserRole } from 'src/app/models/user';
 import { ToastsService } from 'src/app/services/toasts.service';
@@ -48,10 +49,18 @@ export class UsersComponent implements OnInit {
         }
       })
     } catch (error) {
-      this.toastService.showError(`Користувач з логіном ${this.login} вже існує.`);
+      if(error instanceof HttpErrorResponse){
+        if(error.status != 200){
+          this.toastService.showError(`Користувач з позивним ${this.login} вже існує.`);
+        }
+      }
     }
 
     this.users = await this.userService.getAllUsers();
+    this.toastService.showSuccess(`Користувач з позивним ${this.login} був створений`);
+    this.login = '';
+    this.password = '';
+    this.role = UserRole.NOT_SELECTED;
   }
 
 }

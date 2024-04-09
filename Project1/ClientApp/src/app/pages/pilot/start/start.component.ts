@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, TemplateRef, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { USE_PREVIOUS_PARAM } from 'src/app/consts/consts';
@@ -108,7 +109,13 @@ export class PilotStartComponent implements OnInit {
       this.toastService.showSuccess("Заявку подано.");
       await this.flightService.refreshActiveFlight();
       this.isLoading = false;
-    }catch{
+    } catch (error) {
+      if (error instanceof HttpErrorResponse) {
+        if (error.status == 200) {
+          await this.flightService.refreshActiveFlight();
+          this.isLoading = false;
+        }
+      }
       this.isLoading = false;
     }
 
