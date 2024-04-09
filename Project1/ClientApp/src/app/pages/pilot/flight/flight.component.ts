@@ -9,6 +9,7 @@ import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.comp
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastsService } from 'src/app/services/toasts.service';
 import { PromptModalComponent } from '../../shared/prompt-modal/prompt-modal.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-pilot-flight',
@@ -75,11 +76,18 @@ export class PilotFlightComponent implements OnInit {
           try {
             await this.flightService.updateFlightAsync(this.flight);
             await this.flightService.refreshActiveFlight();
-          } catch{
-            this.flight._id = this.flightId;
-            this.flight.flightStartDate = undefined;
-            this.flight.flightStep.step = FlightSteps.START;
-            this.flight.flightStep.visibleStep = FlightSteps.START;
+          } catch (error) {
+            console.log(error)
+            if (error instanceof HttpErrorResponse) {
+              if (error.status == 200) {
+                await this.flightService.refreshActiveFlight();
+              } else {
+                this.flight._id = this.flightId;
+                this.flight.flightStartDate = undefined;
+                this.flight.flightStep.step = FlightSteps.START;
+                this.flight.flightStep.visibleStep = FlightSteps.START;
+              }
+            }
           }
         }
       });

@@ -223,7 +223,7 @@ export class PpoComponent implements OnInit, OnDestroy {
 
       newFlights.push(...filtered.filter(x => x.flightStep.isApproved === false))
 
-      newFlights.push(...filtered.filter(x => x.flightStep.step == FlightSteps.START))
+      newFlights.push(...filtered.filter(x => x.flightStep.step == FlightSteps.START && x.flightStep.isApproved === true));
 
       this.options.dronAppointment?.forEach(c => {
         newFlights.push(...filtered.filter(x => 
