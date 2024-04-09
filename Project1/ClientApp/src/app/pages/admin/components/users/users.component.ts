@@ -50,7 +50,6 @@ export class UsersComponent implements OnInit {
     } catch (error) {
       if(error instanceof HttpErrorResponse){
         if(error.status != 200){
-          console.log(error)
           this.toastService.showError(`Користувач з позивним ${this.login} вже існує.`);
         }
       }
