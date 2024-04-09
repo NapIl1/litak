@@ -96,7 +96,7 @@
                                 </td>
                                 <td>{{ item.dateOfFlight | date: 'ddMMyy-HHmm' }}-{{item.operator}}
                                 </td> <!--Місія-->
-                                <td>{{item.dateOfFlight | date: 'ddMMyy-HHmm'}}</td>
+                                <td>{{item.dateOfFlight | date: 'dd/MM/yy HH:mm'}}</td>
                                 <td>{{ item.assignment!.name }}</td> <!--Дрон-->
                                 <td>{{ item.model!.name }}</td> <!--Призначення-->
                                 <td>{{ item.unit }}</td> <!--Підрозділ-->
@@ -155,7 +155,7 @@
                                     'Завершено'
                                     }}</td> <!--Статус-->
     
-                                <td>{{item.endDate | date: 'ddMMyy-HHmm'}}</td>
+                                <td>{{item.endDate | date: 'dd/MM/yy HH:mm'}}</td>
                                 <td>
                                     <button (click)="removeFlight(item._id)" class="btn btn-danger btn-xs">
                                         <i class="fas fa-trash"></i>
