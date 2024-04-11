@@ -344,7 +344,7 @@ export class PpoComponent implements OnInit, OnDestroy {
   private calculateTimePassed(flight: Flight) {
     let dateFrom = null;
 
-    switch (flight.flightStep.step) {
+    switch (flight.flightStep.visibleStep) {
       case FlightSteps.START:
         dateFrom = flight.dateOfFlight
         break;
