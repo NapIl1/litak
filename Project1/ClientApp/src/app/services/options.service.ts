@@ -7,6 +7,11 @@ import { FlightSteps } from '../models/flight';
 import { Template } from '../models/user';
 import {v4 as uuidv4} from 'uuid';
 
+export interface OptionsCache {
+  timestamp: number,
+  data: DroneOptions
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -14,15 +19,40 @@ export class OptionsService {
 
   private readonly OPTIONS_API = API_URL + 'Options';
 
+  private cache?: OptionsCache;
+  private readonly cacheExpirationTime = 10 * 60 * 1000; // 10 mins
+
   constructor(public http: HttpClient) { }
 
-  public async getAllOptions(): Promise<DroneOptions> {
-    const options = await lastValueFrom(this.http.get<DroneOptions[]>(this.OPTIONS_API))
-    return options[0] ?? {};
+  public async getAllOptions(forceUpdate: boolean = false): Promise<DroneOptions> {
+    const now = Date.now();
+    if (this.cache && now - this.cache.timestamp < this.cacheExpirationTime && forceUpdate == false) {
+      return this.cache.data;
+    } 
+    else {
+      try {
+        const options = await lastValueFrom(this.http.get<DroneOptions[]>(this.OPTIONS_API))
+        this.cache = {
+          data: options[0] ?? {},
+          timestamp: now
+        }
+        return this.cache.data;
+      } catch (err) {
+        if (forceUpdate == false && this.cache){
+          return this.cache?.data;
+        }
+        else {
+          throw err;
+        }
+      }
+    }
+
+    // const options = await lastValueFrom(this.http.get<DroneOptions[]>(this.OPTIONS_API))
+    // return options[0] ?? {};
   }
 
   public async changeDiscordUrl(discordUrl?: string) {
-    const options = await this.getAllOptions();
+    const options = await this.getAllOptions(true);
     const optionId = options._id;
 
     options.discordUrl = discordUrl;
@@ -32,7 +62,7 @@ export class OptionsService {
 
   public async addOption(name: string, color: string, type: string, legacyId?: string) {
 
-    const options = await this.getAllOptions();
+    const options = await this.getAllOptions(true);
     const optionId = options._id;
 
     if (type === 'boardingStatus') {
@@ -108,7 +138,7 @@ export class OptionsService {
   }
 
   public async removeOption(index: number, type: string) {
-    const options = await this.getAllOptions();
+    const options = await this.getAllOptions(true);
     const optionId = options._id;
 
     if (type === 'boardingStatus') {
@@ -132,8 +162,7 @@ export class OptionsService {
   private readonly statuses = ['Початок','Політ','ЛБЗ Вперед','Повернення','ЛБЗ Назад','Початок зниження','Завершено']
 
   public async addFlightSteps() {
-
-    const options = await this.getAllOptions();
+    const options = await this.getAllOptions(true);
     const optionId = options._id;
 
     if(!options.flightStatus || options.flightStatus.length === 0) {

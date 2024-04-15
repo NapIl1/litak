@@ -20,7 +20,6 @@ export class PilotFlightComponent implements OnInit {
     flights: Flight[] = [];
     flight!: Flight;
     userInfo!: User;
-    options!: DroneOptions;
     localRouterPath!: string;
     isNewFlight: boolean = true;
     dateNow = Date.now();
@@ -30,12 +29,10 @@ export class PilotFlightComponent implements OnInit {
 
     constructor(
       private flightService: FlightService,
-      private optionsService: OptionsService,
       private userService: UserService,
       private modalService: NgbModal) { }
 
     async ngOnInit(): Promise<void> {
-      this.options = await this.optionsService.getAllOptions();
 
       const ui = this.userService.getUserInfo();
   

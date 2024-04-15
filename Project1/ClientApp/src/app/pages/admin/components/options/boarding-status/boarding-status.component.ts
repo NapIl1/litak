@@ -23,7 +23,7 @@ export class BoardingStatusComponent implements OnInit {
 
     public async addNewOption(type: string) {
         await this.optionsService.addOption(this.name, this.color, type, this.selectedOption.toString());
-        this.options = await this.optionsService.getAllOptions();
+        this.options = await this.optionsService.getAllOptions(true);
     
         this.name = '';
         this.color = '';
@@ -32,6 +32,6 @@ export class BoardingStatusComponent implements OnInit {
 
     public async removeOption(index:number, type: string) {
         await this.optionsService.removeOption(index, type);
-        this.options = await this.optionsService.getAllOptions();
+        this.options = await this.optionsService.getAllOptions(true);
     }
 }
