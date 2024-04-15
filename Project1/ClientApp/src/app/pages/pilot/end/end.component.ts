@@ -4,6 +4,8 @@ import { Subscription } from 'rxjs';
 import { Flight, FlightSteps } from 'src/app/models/flight';
 import { FlightService } from 'src/app/services/flight.service';
 import { ToastsService } from 'src/app/services/toasts.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
 
 @Component({
   selector: 'app-pilot-end',
@@ -22,7 +24,8 @@ export class PilotEndComponent implements OnInit, OnDestroy {
 	private toastService = inject(ToastsService);
 
   constructor(
-    private flightService: FlightService) { }
+    private flightService: FlightService,
+    private modalService: NgbModal) { }
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
@@ -50,23 +53,32 @@ export class PilotEndComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.flight.endDate = new Date();
-    this.flight.flightStep.step = FlightSteps.END;
-    this.flight.flightStep.isApproved = true;
-    this.flight.isRequireAttention = true;
+    const modal = this.modalService.open(YesNoModalComponent);
+    modal.componentInstance.text = `Ви впевнені? Статус: ${this.flight.boardingStatus}`;
+    modal.componentInstance.yes = 'Так';
+    modal.componentInstance.no = 'Ні';
 
-    try {
-      await this.flightService.updateFlightAsync(this.flight);
-      await this.flightService.refreshActiveFlight();
-    } catch (error) {
-      if (error instanceof HttpErrorResponse)
-        if (error.status == 200) {
+    modal.closed.subscribe(async res => {
+      if (res == true) {
+        this.flight.endDate = new Date();
+        this.flight.flightStep.step = FlightSteps.END;
+        this.flight.flightStep.isApproved = true;
+        this.flight.isRequireAttention = true;
+    
+        try {
+          await this.flightService.updateFlightAsync(this.flight);
           await this.flightService.refreshActiveFlight();
-        } else {
-          this.flight._id = this.flightId;
-          this.flight.endDate = undefined;
-          this.flight.flightStep.step = FlightSteps.REDUCTION;
+        } catch (error) {
+          if (error instanceof HttpErrorResponse)
+            if (error.status == 200) {
+              await this.flightService.refreshActiveFlight();
+            } else {
+              this.flight._id = this.flightId;
+              this.flight.endDate = undefined;
+              this.flight.flightStep.step = FlightSteps.REDUCTION;
+            }
         }
-    }
+      }
+    })
   }
 }
