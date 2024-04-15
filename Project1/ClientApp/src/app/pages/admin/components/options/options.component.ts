@@ -36,18 +36,18 @@ export class OptionsComponent {
 
   async ngOnInit(): Promise<void> {
     await this.optionsService.addFlightSteps();
-    this.options = await this.optionsService.getAllOptions();
+    this.options = await this.optionsService.getAllOptions(true);
     this.encodedParam = encodeURIComponent(JSON.stringify(this.options));
   }
 
   public async changeDiscordUrl() {
     await this.optionsService.changeDiscordUrl(this.options.discordUrl);
-    this.options = await this.optionsService.getAllOptions();
+    this.options = await this.optionsService.getAllOptions(true);
   }
 
   public async addNewOption(type: string) {
     await this.optionsService.addOption(this.name, this.color, type, this.selectedOption.toString());
-    this.options = await this.optionsService.getAllOptions();
+    this.options = await this.optionsService.getAllOptions(true);
 
     this.name = '';
     this.color = '';
@@ -56,7 +56,7 @@ export class OptionsComponent {
 
   public async removeOption(index:number, type: string) {
     await this.optionsService.removeOption(index, type);
-    this.options = await this.optionsService.getAllOptions();
+    this.options = await this.optionsService.getAllOptions(true);
   }
 
   public async editOption(index: number, type: string) {

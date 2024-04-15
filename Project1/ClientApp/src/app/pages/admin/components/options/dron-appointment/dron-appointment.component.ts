@@ -26,7 +26,7 @@ export class DronAppointmentComponent {
 
     public async addNewOption(type: string) {
         await this.optionsService.addOption(this.name, this.color, type, this.legacyId.toString());
-        this.options = await this.optionsService.getAllOptions();
+        this.options = await this.optionsService.getAllOptions(true);
     
         this.name = '';
         this.color = '';
@@ -36,7 +36,7 @@ export class DronAppointmentComponent {
 
     public async removeOption(index:number, type: string) {
         await this.optionsService.removeOption(index, type);
-        this.options = await this.optionsService.getAllOptions();
+        this.options = await this.optionsService.getAllOptions(true);
     }
 
     public async editOption(index: number, type: string) {

@@ -1,9 +1,6 @@
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Flight, FlightSteps } from 'src/app/models/flight';
-import { DroneOptions } from 'src/app/models/options';
-import { User } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { YesNoModalComponent } from '../../shared/yes-no-modal/yes-no-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
