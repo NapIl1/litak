@@ -1,22 +1,35 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { Subject, Subscription, interval, takeUntil } from 'rxjs';
 import { ValueColor } from 'src/app/models/droneModel';
-import { Flight, FlightStep, FlightSteps } from 'src/app/models/flight';
+import { Flight, FlightSteps } from 'src/app/models/flight';
 import { DroneOptions } from 'src/app/models/options';
-import { User, UserRole } from 'src/app/models/user';
+import { UserRole } from 'src/app/models/user';
 import { FlightService } from 'src/app/services/flight.service';
 import { OptionsService } from 'src/app/services/options.service';
 import { UserService } from 'src/app/services/user.service';
-import { ConfirmModalComponent } from '../shared/confirm-modal/confirm.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastsService } from 'src/app/services/toasts.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PromptModalComponent } from '../shared/prompt-modal/prompt-modal.component';
 
+export interface CheckedFlight extends Flight {
+  isShowStepChengedSign?: boolean,
+  isShowShortVersion?: boolean,
+  isFlightStepChecked?: boolean,
+  isLbzForwardStepChecked?: boolean,
+  isLbzBackStepChecked?: boolean,
+  isReductionStepChecked?: boolean
+}
+
 export interface CompletedFlight {
-  flight: Flight,
-  msElapsed: number
+  flight: CheckedFlight,
+  msElapsed: number,
+}
+
+export interface CheckedFlights {
+  checkedLBZForwardChange: string[],
+  checkedLBZBackChange: string[],
+  checkedIsApproved: string[]
 }
 
 
@@ -27,7 +40,7 @@ export interface CompletedFlight {
 })
 export class PpoComponent implements OnInit, OnDestroy {
 
-  flights: Flight[] = [];
+  flights: CheckedFlight[] = [];
 
   options: DroneOptions = {};
   userRole?: UserRole;
@@ -46,14 +59,24 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   gotError$ = new Subject<void>();
 
+  private audioContext: AudioContext;
+  private oscillator: OscillatorNode;
+
   constructor(private flightService: FlightService,
     private optionsService: OptionsService,
     private userService: UserService,
     private toastsService: ToastsService,
     private modalService: NgbModal) {
+    this.audioContext = new AudioContext();
 
+    // Create an oscillator node
+    this.oscillator = this.audioContext.createOscillator();
+    this.oscillator.frequency.value = 440; // Set frequency (440 Hz is middle A)
+    this.oscillator.type = 'sine'; // Set waveform type (sine wave in this case)
+    this.oscillator.connect(this.audioContext.destination); // Connect oscillator to output
+    // this.oscillator.start();
   }
-  
+
   ngOnDestroy(): void {
     this.refreshFlightSubscription?.unsubscribe();
   }
@@ -177,35 +200,35 @@ export class PpoComponent implements OnInit, OnDestroy {
       if (rejectedReason == null || rejectedReason == undefined) {
         return;
       }
-  
+
       if (id) {
         const flightToUpdate = this.flights.find(x => x._id == id);
-  
+
         if (flightToUpdate) {
           flightToUpdate.isRejected = true;
-  
+
           const oldFlight = this.flights.find(x => x._id == id);
           if (oldFlight) {
             oldFlight.isRejected = true;
           }
-  
+
           if (this.userRole == UserRole.PPO) {
             flightToUpdate.isRejectedbyPPO = true;
           }
-  
+
           if (this.userRole == UserRole.REB) {
             flightToUpdate.isRejectedbyREB = true;
           }
-  
+
           if (this.userRole == UserRole.ADMIN) {
             flightToUpdate.isRejectedbyAdmin = true;
           }
-  
+
           flightToUpdate.rejectedReason = rejectedReason;
           await this.flightService.updateFlightAsync(flightToUpdate);
         }
       }
-  
+
       await this.initFlights();
 
     });
@@ -219,18 +242,18 @@ export class PpoComponent implements OnInit, OnDestroy {
 
       const filtered = allFlights.filter(x => !x.isRejected);
 
-      const newFlights: Flight[] = [];
+      const newFlights: CheckedFlight[] = [];
 
       newFlights.push(...filtered.filter(x => x.flightStep.isApproved === false))
 
       newFlights.push(...filtered.filter(x => x.flightStep.step == FlightSteps.START && x.flightStep.isApproved === true));
 
       this.options.dronAppointment?.forEach(c => {
-        newFlights.push(...filtered.filter(x => 
-          x.flightStep.isApproved === true 
-          && x.flightStep.step != FlightSteps.START  
-          && x.assignment?.name === c.name 
-          && x.flightStep.step !== FlightSteps.END).sort((a: Flight, b: Flight) =>{
+        newFlights.push(...filtered.filter(x =>
+          x.flightStep.isApproved === true
+          && x.flightStep.step != FlightSteps.START
+          && x.assignment?.name === c.name
+          && x.flightStep.step !== FlightSteps.END).sort((a: Flight, b: Flight) => {
             const stepA = new Date(a.dateOfFlight ?? '').getTime();
             const stepB = new Date(b.dateOfFlight ?? '').getTime();
             return stepA - stepB;
@@ -264,6 +287,8 @@ export class PpoComponent implements OnInit, OnDestroy {
         }
       });
 
+      this.checkedStepsVerification(newFlights);
+
       // Checked flight
 
       const checkedFlights = this.getCheckedFlights();
@@ -274,7 +299,6 @@ export class PpoComponent implements OnInit, OnDestroy {
         if (flight.isForwardChanged === true) {
           flight.isChecked = checkedFlights.checkedLBZForwardChange.includes(flight._id!);
         }
-
 
         if (flight.isReturnChanged === true) {
           flight.isChecked = checkedFlights.checkedLBZBackChange.includes(flight._id!);
@@ -299,7 +323,7 @@ export class PpoComponent implements OnInit, OnDestroy {
 
 
     } catch (error) {
-      if (error instanceof  HttpErrorResponse) {
+      if (error instanceof HttpErrorResponse) {
       } else {
         this.toastsService.showError("Сталась помилка. Оновіть сторінку і спробуйте знову.");
       }
@@ -309,6 +333,23 @@ export class PpoComponent implements OnInit, OnDestroy {
     }
   }
 
+
+  private checkedStepsVerification(newFlights: CheckedFlight[]) {
+    newFlights.forEach(updatedFlight => {
+      const oldFlightVersion = this.flights.find(flight => flight._id === updatedFlight._id);
+
+      updatedFlight.isFlightStepChecked = oldFlightVersion?.isFlightStepChecked;
+      updatedFlight.isLbzForwardStepChecked = oldFlightVersion?.isLbzForwardStepChecked;
+      updatedFlight.isLbzBackStepChecked = oldFlightVersion?.isLbzBackStepChecked;
+      updatedFlight.isReductionStepChecked = oldFlightVersion?.isReductionStepChecked;
+
+      updatedFlight.isShowStepChengedSign = this.isShowWarningSign(updatedFlight, oldFlightVersion?.flightStep.visibleStep);
+    });
+  }
+
+  public checkFlightStep(flight: CheckedFlight) {
+    flight.isShowStepChengedSign = this.isShowWarningSign(flight, flight.flightStep.visibleStep);
+  }
 
   public getCheckedFlights(): CheckedFlights {
     const item = localStorage.getItem(this.CHECKED_FLIGHTS_KEY);
@@ -381,10 +422,52 @@ export class PpoComponent implements OnInit, OnDestroy {
       flight.timeFromLastStep = '';
     }
   }
-}
 
-export interface CheckedFlights {
-  checkedLBZForwardChange: string[],
-  checkedLBZBackChange: string[],
-  checkedIsApproved: string[]
+  private isShowWarningSign(flight: CheckedFlight, flightStep: number | undefined) {
+    if (flightStep === this.FlightSteps.FLIGHT) {
+      if (flight?.isFlightStepChecked === true) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    if (flightStep === this.FlightSteps.LBZ_FORWARD || flightStep === this.FlightSteps.RETURN) {
+      if (flight?.isFlightStepChecked === true &&
+        flight.isLbzForwardStepChecked === true) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    if (flightStep === this.FlightSteps.LBZ_HOME) {
+      if (flight?.isFlightStepChecked === true &&
+        flight.isLbzForwardStepChecked === true &&
+        flight.isLbzBackStepChecked === true) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    if (flightStep === this.FlightSteps.REDUCTION) {
+      if (flight?.isFlightStepChecked === true &&
+        flight.isLbzForwardStepChecked === true &&
+        flight.isLbzBackStepChecked === true &&
+        flight.isReductionStepChecked === true) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    if (flightStep === this.FlightSteps.START ||
+      flightStep === this.FlightSteps.RETURN ||
+      flightStep === this.FlightSteps.END) {
+      return false;
+    }
+
+    return true;
+  }
 }
