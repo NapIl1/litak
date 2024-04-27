@@ -89,4 +89,10 @@ export interface Flight {
     isExpanded?: boolean;
 
     timeFromLastStep?: string;
+
+    isShowShortVersion?: boolean,
+    isFlightStepChecked?: boolean,
+    isLbzForwardStepChecked?: boolean,
+    isLbzBackStepChecked?: boolean,
+    isReductionStepChecked?: boolean
 }
