@@ -43,10 +43,24 @@
                     ].name.toUpperCase()
                   }}
                 </span>
-                <span *ngIf="flight.flightStep.step === this.FlightSteps.END" [style.backgroundColor]="this.flightStatuses[flight.flightStep.visibleStep ?? 0].color"
-                  class="badge badge-primary" style="color: white;">
-                  {{ flight.boardingStatus?.toUpperCase() }}
-                </span>
+                <div>
+                  <span *ngIf="flight.flightStep.step === this.FlightSteps.END" [style.backgroundColor]="this.flightStatuses[flight.flightStep.visibleStep ?? 0].color"
+                    class="badge badge-primary" style="color: white;">
+                    {{ flight.boardingStatus?.toUpperCase() }}
+                  </span>
+
+                  <div *ngIf="flight.isShowStepChengedSign === true &&
+                       flight.flightStep.step !== this.FlightSteps.END &&
+                       flight.flightStep.step !== this.FlightSteps.START"
+                       style="height: 25px; width: 25px; background-color: red; border: 2px solid white; margin-left: 6px;">
+                  </div>
+
+                  <div *ngIf="flight.isShowStepChengedSign === false &&
+                       flight.flightStep.step !== this.FlightSteps.END &&
+                       flight.flightStep.step !== this.FlightSteps.START"
+                       style="height: 25px; width: 25px; background-color: green; border: 2px solid white;  margin-left: 6px;">
+                  </div>
+                </div>
               </div>
               <div class="px-1 bg-white" style="border-radius: 0.25rem;">
                 <div>
@@ -96,26 +110,39 @@
                     <span class="section-name">Місія:</span>
                     <span class="section-value">{{ flight.dateOfFlight | date: 'ddMMyy-HHmm' }}-{{flight.operator}}</span>
                 </div>
-                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.FLIGHT">
-                    <span [className]="" class="section-name">Виліт:</span>
-                    <span class="section-value">{{ flight.flightStartDate | date : "dd/MM/yy HH:mm" }}</span>
+                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.FLIGHT" style="display: flex; justify-content: space-between;">
+                    <div>
+                      <span [className]="" class="section-name">Виліт:</span>
+                      <span class="section-value">{{ flight.flightStartDate | date : "dd/MM/yy HH:mm" }}</span>
+                    </div>
+                    <input [(ngModel)]="flight.isFlightStepChecked" *ngIf="flight.hasOwnProperty('flightStartDate')" type="checkbox" (change)="checkFlightStep(flight)">
                 </div>
-                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.LBZ_FORWARD">
-                    <span class="section-name">ЛБЗ Вперед:</span>
-                    <span class="section-value">{{ flight.LBZForwardDate | date : "dd/MM/yy HH:mm" }}</span>
+                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.LBZ_FORWARD" style="display: flex; justify-content: space-between;">
+                    <div>
+                      <span class="section-name">ЛБЗ Вперед:</span>
+                      <span class="section-value">{{ flight.LBZForwardDate | date : "dd/MM/yy HH:mm" }}</span>
+                    </div>
+                    <input [(ngModel)]="flight.isLbzForwardStepChecked" *ngIf="flight.hasOwnProperty('LBZForwardDate')" type="checkbox" (change)="checkFlightStep(flight)">
                 </div>
-                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.RETURN">
-                    <span class="section-name">Повернення:</span>
-                    <span class="section-value">{{ flight.returnDate | date : "dd/MM/yy HH:mm" }}</span>
-
+                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.RETURN" style="display: flex; justify-content: space-between;">
+                    <div>
+                      <span class="section-name">Повернення:</span>
+                      <span class="section-value">{{ flight.returnDate | date : "dd/MM/yy HH:mm" }}</span>
+                    </div>
                 </div>
-                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.LBZ_HOME">
-                    <span class="section-name">ЛБЗ Назад:</span>
-                    <span class="section-value">{{ flight.LBZBackDate | date : "dd/MM/yy HH:mm" }}</span>
+                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.LBZ_HOME" style="display: flex; justify-content: space-between;">
+                    <div>
+                      <span class="section-name">ЛБЗ Назад:</span>
+                      <span class="section-value">{{ flight.LBZBackDate | date : "dd/MM/yy HH:mm" }}</span>
+                    </div>
+                    <input [(ngModel)]="flight.isLbzBackStepChecked" *ngIf="flight.hasOwnProperty('LBZBackDate')" type="checkbox" (change)="checkFlightStep(flight)">
                 </div>
-                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.REDUCTION">
-                    <span class="section-name">Початок зниження:</span>
-                    <span class="section-value"> {{ flight.reductionDate | date : "dd/MM/yy HH:mm" }}</span>
+                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.REDUCTION" style="display: flex; justify-content: space-between;">
+                    <div>
+                      <span class="section-name">Початок зниження:</span>
+                      <span class="section-value"> {{ flight.reductionDate | date : "dd/MM/yy HH:mm" }}</span>
+                    </div>
+                    <input [(ngModel)]="flight.isReductionStepChecked" *ngIf="flight.hasOwnProperty('reductionDate')" type="checkbox" (change)="checkFlightStep(flight)">
                 </div>
                 <div>
                     <span class="section-name">Завершення:</span>
