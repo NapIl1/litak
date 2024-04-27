@@ -110,19 +110,25 @@
                     <span class="section-name">Місія:</span>
                     <span class="section-value">{{ flight.dateOfFlight | date: 'ddMMyy-HHmm' }}-{{flight.operator}}</span>
                 </div>
-                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.FLIGHT" style="display: flex; justify-content: space-between;">
+                <div (click)="checkFlightStep(flight, 'FLIGHT')" [class.current-step]="flight.flightStep.visibleStep == FlightSteps.FLIGHT" 
+                      style="display: flex; justify-content: space-between; cursor: pointer;">
                     <div>
                       <span [className]="" class="section-name">Виліт:</span>
                       <span class="section-value">{{ flight.flightStartDate | date : "dd/MM/yy HH:mm" }}</span>
                     </div>
-                    <input [(ngModel)]="flight.isFlightStepChecked" *ngIf="flight.hasOwnProperty('flightStartDate')" type="checkbox" (change)="checkFlightStep(flight)">
+                    <input *ngIf="flight.hasOwnProperty('flightStartDate') && userRole == UserRoles.ADMIN"
+                           [disabled]="flight.flightStep.visibleStep == FlightSteps.END"
+                           [(ngModel)]="flight.isFlightStepChecked" type="checkbox" >
                 </div>
-                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.LBZ_FORWARD" style="display: flex; justify-content: space-between;">
+                <div (click)="checkFlightStep(flight, 'LBZ_FORWARD')" [class.current-step]="flight.flightStep.visibleStep == FlightSteps.LBZ_FORWARD"
+                     style="display: flex; justify-content: space-between; cursor: pointer;">
                     <div>
                       <span class="section-name">ЛБЗ Вперед:</span>
                       <span class="section-value">{{ flight.LBZForwardDate | date : "dd/MM/yy HH:mm" }}</span>
                     </div>
-                    <input [(ngModel)]="flight.isLbzForwardStepChecked" *ngIf="flight.hasOwnProperty('LBZForwardDate')" type="checkbox" (change)="checkFlightStep(flight)">
+                    <input *ngIf="flight.hasOwnProperty('LBZForwardDate') && userRole == UserRoles.ADMIN"
+                           [disabled]="flight.flightStep.visibleStep == FlightSteps.END"
+                           [(ngModel)]="flight.isLbzForwardStepChecked"  type="checkbox">
                 </div>
                 <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.RETURN" style="display: flex; justify-content: space-between;">
                     <div>
@@ -130,19 +136,25 @@
                       <span class="section-value">{{ flight.returnDate | date : "dd/MM/yy HH:mm" }}</span>
                     </div>
                 </div>
-                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.LBZ_HOME" style="display: flex; justify-content: space-between;">
+                <div  (click)="checkFlightStep(flight, 'LBZ_HOME')" [class.current-step]="flight.flightStep.visibleStep == FlightSteps.LBZ_HOME" 
+                  style="display: flex; justify-content: space-between; cursor: pointer;">
                     <div>
                       <span class="section-name">ЛБЗ Назад:</span>
                       <span class="section-value">{{ flight.LBZBackDate | date : "dd/MM/yy HH:mm" }}</span>
                     </div>
-                    <input [(ngModel)]="flight.isLbzBackStepChecked" *ngIf="flight.hasOwnProperty('LBZBackDate')" type="checkbox" (change)="checkFlightStep(flight)">
+                    <input *ngIf="flight.hasOwnProperty('LBZBackDate') && userRole == UserRoles.ADMIN"
+                           [disabled]="flight.flightStep.visibleStep == FlightSteps.END"
+                           [(ngModel)]="flight.isLbzBackStepChecked"  type="checkbox">
                 </div>
-                <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.REDUCTION" style="display: flex; justify-content: space-between;">
+                <div (click)="checkFlightStep(flight, 'REDUCTION')" [class.current-step]="flight.flightStep.visibleStep == FlightSteps.REDUCTION" 
+                    style="display: flex; justify-content: space-between; cursor: pointer;">
                     <div>
                       <span class="section-name">Початок зниження:</span>
                       <span class="section-value"> {{ flight.reductionDate | date : "dd/MM/yy HH:mm" }}</span>
                     </div>
-                    <input [(ngModel)]="flight.isReductionStepChecked" *ngIf="flight.hasOwnProperty('reductionDate')" type="checkbox" (change)="checkFlightStep(flight)">
+                    <input *ngIf="flight.hasOwnProperty('reductionDate') && userRole == UserRoles.ADMIN"
+                           [disabled]="flight.flightStep.visibleStep == FlightSteps.END"
+                           [(ngModel)]="flight.isReductionStepChecked" type="checkbox">
                 </div>
                 <div>
                     <span class="section-name">Завершення:</span>

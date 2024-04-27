@@ -14,11 +14,6 @@ import { PromptModalComponent } from '../shared/prompt-modal/prompt-modal.compon
 
 export interface CheckedFlight extends Flight {
   isShowStepChengedSign?: boolean,
-  isShowShortVersion?: boolean,
-  isFlightStepChecked?: boolean,
-  isLbzForwardStepChecked?: boolean,
-  isLbzBackStepChecked?: boolean,
-  isReductionStepChecked?: boolean
 }
 
 export interface CompletedFlight {
@@ -337,17 +332,43 @@ export class PpoComponent implements OnInit, OnDestroy {
   private checkedStepsVerification(newFlights: CheckedFlight[]) {
     newFlights.forEach(updatedFlight => {
       const oldFlightVersion = this.flights.find(flight => flight._id === updatedFlight._id);
+      
+      updatedFlight.isShowStepChengedSign = this.isShowWarningSign(updatedFlight, updatedFlight?.flightStep.visibleStep);
+      if(oldFlightVersion == undefined){
+        return;
+      }
 
-      updatedFlight.isFlightStepChecked = oldFlightVersion?.isFlightStepChecked;
-      updatedFlight.isLbzForwardStepChecked = oldFlightVersion?.isLbzForwardStepChecked;
-      updatedFlight.isLbzBackStepChecked = oldFlightVersion?.isLbzBackStepChecked;
-      updatedFlight.isReductionStepChecked = oldFlightVersion?.isReductionStepChecked;
+      updatedFlight.isFlightStepChecked = oldFlightVersion.isFlightStepChecked;
+      updatedFlight.isLbzForwardStepChecked = oldFlightVersion.isLbzForwardStepChecked;
+      updatedFlight.isLbzBackStepChecked = oldFlightVersion.isLbzBackStepChecked;
+      updatedFlight.isReductionStepChecked = oldFlightVersion.isReductionStepChecked;
 
-      updatedFlight.isShowStepChengedSign = this.isShowWarningSign(updatedFlight, oldFlightVersion?.flightStep.visibleStep);
+      // updatedFlight.isShowStepChengedSign = this.isShowWarningSign(updatedFlight, oldFlightVersion?.flightStep.visibleStep);
     });
   }
 
-  public checkFlightStep(flight: CheckedFlight) {
+  public async checkFlightStep(flight: CheckedFlight, step: string) {
+    if(this.userRole != this.UserRoles.ADMIN || flight.flightStep.visibleStep == this.FlightSteps.END){
+      return;
+    }
+
+    if(step == 'FLIGHT'){
+      flight.isFlightStepChecked = !flight.isFlightStepChecked;
+    }
+    if(step == 'LBZ_FORWARD'){
+      flight.isLbzForwardStepChecked = !flight.isLbzForwardStepChecked;
+    }
+    if(step == 'LBZ_HOME'){
+      flight.isLbzBackStepChecked = !flight.isLbzBackStepChecked;
+    }
+    if(step == 'REDUCTION'){
+      flight.isReductionStepChecked = !flight.isReductionStepChecked;
+    }
+
+    delete flight.isShowStepChengedSign;
+    
+    await this.flightService.updateFlightAsync(flight);
+
     flight.isShowStepChengedSign = this.isShowWarningSign(flight, flight.flightStep.visibleStep);
   }
 
