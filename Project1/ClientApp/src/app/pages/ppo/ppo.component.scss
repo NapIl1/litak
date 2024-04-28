@@ -39,6 +39,25 @@
     }
 }
 
+.blink-sign{
+    height: 25px;
+    width: 25px;
+    background-color: red;
+    border: 2px solid white;
+    margin-left: 6px;
+    animation: blink 1s infinite; /* Define the animation */
+    visibility: hidden; /* Initially hide the div */
+}
+
+@keyframes blink {
+    50% {
+        visibility: hidden; /* At 50% of the animation duration, hide the div */
+    }
+    100% {
+        visibility: visible; /* At the end of the animation duration, make the div visible */
+    }
+}
+
 .changed-route{
     border: 3px solid red;
     /* Set border properties */
