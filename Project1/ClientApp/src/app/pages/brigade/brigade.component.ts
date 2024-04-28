@@ -29,11 +29,11 @@ export interface CheckedFlights {
 
 
 @Component({
-  selector: 'app-ppo',
-  templateUrl: './ppo.component.html',
-  styleUrls: ['./ppo.component.scss']
+  selector: 'app-brigade-ppo',
+  templateUrl: './brigade.component.html',
+  styleUrls: ['./brigade.component.scss']
 })
-export class PpoComponent implements OnInit, OnDestroy {
+export class BrigadeComponent implements OnInit, OnDestroy {
 
   flights: CheckedFlight[] = [];
 

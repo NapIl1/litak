@@ -22,6 +22,7 @@ import { PilotReductionComponent } from './pages/pilot/reduction/reduction.compo
 import { PilotEndComponent } from './pages/pilot/end/end.component';
 import { FLIGHT_ROUTES } from './consts/consts';
 import { FlightTemplateComponent } from './pages/personal-info/flight-templates/flight-templates.component';
+import { BrigadeComponent } from './pages/brigade/brigade.component';
 
 const routes: Routes = [
   {
@@ -89,6 +90,12 @@ const routes: Routes = [
         component: PpoComponent,
         canActivate: [RoleGuard],
         data: { roles: [UserRole.ADMIN, UserRole.PPO, UserRole.REB] }
+      },
+      {
+        path: 'brigade',
+        component: BrigadeComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [UserRole.BRIGADE_ADMIN, UserRole.BRIGADE_PPO, UserRole.BRIGADE_REB] }
       },
       {
         path: 'admin',

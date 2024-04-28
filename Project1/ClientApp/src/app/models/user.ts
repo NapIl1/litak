@@ -6,6 +6,9 @@ export enum UserRole {
     PILOT = 2,
     PPO = 3,
     REB = 4,
+    BRIGADE_ADMIN = 5,
+    BRIGADE_PPO = 6,
+    BRIGADE_REB = 7
 };
 
 export interface User {
