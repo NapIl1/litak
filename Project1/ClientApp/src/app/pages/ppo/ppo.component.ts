@@ -42,7 +42,6 @@ export class PpoComponent implements OnInit, OnDestroy {
   refreshFlightSubscription?: Subscription;
 
   interval_ms = 10000;
-
   private readonly timeRangeMinutes = 5;
   endOptions: string[] = ['ЗЕМЛЯ', 'ВТРАЧЕНО'];
 
@@ -55,7 +54,6 @@ export class PpoComponent implements OnInit, OnDestroy {
   gotError$ = new Subject<void>();
 
   private audioContext: AudioContext;
-  private oscillator: OscillatorNode;
 
   constructor(private flightService: FlightService,
     private optionsService: OptionsService,
@@ -63,13 +61,6 @@ export class PpoComponent implements OnInit, OnDestroy {
     private toastsService: ToastsService,
     private modalService: NgbModal) {
     this.audioContext = new AudioContext();
-
-    // Create an oscillator node
-    this.oscillator = this.audioContext.createOscillator();
-    this.oscillator.frequency.value = 440; // Set frequency (440 Hz is middle A)
-    this.oscillator.type = 'sine'; // Set waveform type (sine wave in this case)
-    this.oscillator.connect(this.audioContext.destination); // Connect oscillator to output
-    // this.oscillator.start();
   }
 
   ngOnDestroy(): void {
@@ -179,8 +170,6 @@ export class PpoComponent implements OnInit, OnDestroy {
         await this.initFlights();
       }
     }
-
-
   }
 
   public async discard(id: string | undefined) {
@@ -239,7 +228,21 @@ export class PpoComponent implements OnInit, OnDestroy {
 
       const newFlights: CheckedFlight[] = [];
 
-      newFlights.push(...filtered.filter(x => x.flightStep.isApproved === false))
+      const notApprovedFlights = filtered.filter(x => x.flightStep.isApproved === false)
+
+      if(notApprovedFlights != undefined && notApprovedFlights.length > 0){
+        if(this.userRole == this.UserRoles.PPO && notApprovedFlights.find(x=>x.flightStep.isApprovedByPPO == false)){
+          this.startNotificationSound();
+        }
+        else if(this.userRole == this.UserRoles.ADMIN && notApprovedFlights.find(x=>x.flightStep.isApprovedByAdmin == false)){
+          this.startNotificationSound();
+        }
+        else if(this.userRole == this.UserRoles.REB && notApprovedFlights.find(x=>x.flightStep.isApprovedByREB == false)){
+          this.startNotificationSound();
+        }
+      }
+
+      newFlights.push(...notApprovedFlights)
 
       newFlights.push(...filtered.filter(x => x.flightStep.step == FlightSteps.START && x.flightStep.isApproved === true));
 
@@ -490,5 +493,17 @@ export class PpoComponent implements OnInit, OnDestroy {
     }
 
     return true;
+  }
+
+  startNotificationSound() {
+    let osc = this.audioContext.createOscillator();
+    osc.onended = () => osc.disconnect();
+    osc.connect(this.audioContext.destination);
+
+    osc.frequency.value = 500; 
+    osc.type = 'sine';
+
+    osc.start();
+    osc.stop(this.audioContext.currentTime + 1.0);
   }
 }
