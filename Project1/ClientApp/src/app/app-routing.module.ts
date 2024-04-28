@@ -94,8 +94,8 @@ const routes: Routes = [
       {
         path: 'brigade',
         component: BrigadeComponent,
-        //canActivate: [RoleGuard],
-        //data: { roles: [UserRole.BRIGADE_ADMIN, UserRole.BRIGADE_PPO, UserRole.BRIGADE_REB] }
+        canActivate: [RoleGuard],
+        data: { roles: [UserRole.BRIGADE_ADMIN, UserRole.BRIGADE_PPO, UserRole.BRIGADE_REB] }
       },
       {
         path: 'admin',
