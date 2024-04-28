@@ -36,6 +36,12 @@ export class LoginComponent {
       if (userInfo?.role == UserRole.PPO) {
         this.router.navigate(['ppo']);
       }
+
+      if(userInfo?.role == UserRole.BRIGADE_ADMIN ||
+         userInfo?.role == UserRole.BRIGADE_PPO || 
+         userInfo?.role == UserRole.BRIGADE_REB){
+          this.router.navigate(['brigade']);
+      }
   
       if (userInfo?.role == UserRole.REB) {
         this.router.navigate(['ppo']);

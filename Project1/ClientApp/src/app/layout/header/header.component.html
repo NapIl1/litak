@@ -36,6 +36,13 @@
                     </a>
                 </li>
 
+                <li *ngIf="userInfo.role == userRoles.BRIGADE_ADMIN || userInfo.role == userRoles.BRIGADE_REB || userInfo.role == userRoles.BRIGADE_PPO" class="nav-item">
+                    <a routerLink="brigade" class="nav-link nav-icons" href="#">
+                        <i class="fas fa-fw fa-rocket"></i>
+                        ППО/РЕБ/БпС
+                    </a>
+                </li>
+
                 <li  *ngIf="userInfo.role == userRoles.ADMIN || userInfo.role == userRoles.PILOT" class="nav-item">
                     <a disabled="true" [routerLink]="!currentUrl.includes('flight')? 'flight' : null" class="nav-link nav-icons" href="#">
                         <i class="fas fa-fw fa-user"></i>

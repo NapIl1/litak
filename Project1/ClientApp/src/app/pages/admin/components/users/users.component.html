@@ -36,6 +36,9 @@
               <option value="2">Пілот</option>
               <option value="3">ППО</option>
               <option value="4">РЕБ</option>
+              <option value="5">Бригада Адмін</option>
+              <option value="6">Бригада ППО</option>
+              <option value="7">Бригада РЕБ</option>
             </select>
           </div>
         </div>
@@ -74,6 +77,12 @@
                         ? "Пілот"
                         : item.role == UserRoles.PPO
                         ? "ППО"
+                        : item.role == UserRoles.BRIGADE_ADMIN
+                        ? "Бригада Адмін"
+                        : item.role == UserRoles.BRIGADE_PPO
+                        ? "Бригада ППО"
+                        : item.role == UserRoles.BRIGADE_REB
+                        ? "Бригада РЕБ"
                         : "РЕБ"
                     }}
                   </td>

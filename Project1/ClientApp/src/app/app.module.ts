@@ -42,6 +42,7 @@ import { GlobalToastComponent } from './pages/shared/global-toast/global-toast.c
 import { ToastsContainerComponent } from './pages/shared/toasts-container/toasts-container.component';
 import { AppErrorHandler } from './utils/error-handler';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
+import { BrigadeComponent } from './pages/brigade/brigade.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { ErrorInterceptor } from './interceptors/error.interceptor';
     PilotReductionComponent,
     PilotEndComponent,
     PpoComponent,
+    BrigadeComponent,
     AdminComponent,
     OptionsComponent,
     UsersComponent,
