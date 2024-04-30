@@ -82,8 +82,9 @@ export class PpoComponent implements OnInit, OnDestroy {
       flight.isChecked = true;
     }
 
-    if (flight.flightStep.isApproved == true) {
+    if (flight.flightStep.isApproved == true && !checkedFlights.checkedIsApproved.includes(flight._id!)) {
       checkedFlights.checkedIsApproved.push(flight._id!);
+      flight.isChecked = true;
     }
 
     this.saveCheckedFlights(checkedFlights);
@@ -224,6 +225,7 @@ export class PpoComponent implements OnInit, OnDestroy {
 
   async initFlights() {
     const nonCollapsedFlights = this.flights.filter(x => x.isExpanded === true);
+    const collapsedFlights = this.flights.filter(x => x.isExpanded == false);
 
     try {
       const allFlights = await this.flightService.getFlightsWithTimeRange(this.timeRangeMinutes);
@@ -286,6 +288,11 @@ export class PpoComponent implements OnInit, OnDestroy {
         const nonCollapsedFlight = nonCollapsedFlights.find(flight => flight._id === updatedFlight._id);
         if (nonCollapsedFlight && nonCollapsedFlight.isExpanded !== updatedFlight.isExpanded) {
           updatedFlight.isExpanded = nonCollapsedFlight.isExpanded;
+        }else{
+          const collapsedFlight = collapsedFlights.find(flight => flight._id == updatedFlight._id);
+          if(collapsedFlight){
+            updatedFlight.isExpanded = collapsedFlight.isExpanded;
+          }
         }
       });
 
