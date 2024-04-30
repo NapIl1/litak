@@ -21,13 +21,13 @@
                 : 'black'"
           >
             <div class="card-body p-1">
-              <div *ngIf="!flight.isExpanded" style="text-align: right; float: right;" (click)="toggleSection(flight)">
+              <div *ngIf="flight.isHideBrigateView" style="text-align: right; float: right;" (click)="toggleSection(flight)">
                 <span class="bg-white px-2 py-1" style="border: 1px solid black;">
                   <i class="fas fa-angle-down"></i>
                 </span>
               </div>
 
-              <div *ngIf="flight.isExpanded" style="text-align: right; float: right;" (click)="toggleSection(flight)">
+              <div *ngIf="!flight.isHideBrigateView" style="text-align: right; float: right;" (click)="toggleSection(flight)">
                 <span class="bg-white px-2 py-1" style="border: 1px solid black;">
                   <i class="fas fa-angle-up"></i>
                 </span>
@@ -92,7 +92,7 @@
 
               <div
                 class="alert bg-white mb-1 mt-1"
-                [class.hidden]="!flight.isExpanded"
+                [class.hidden]="flight.isHideBrigateView"
               >
                 <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.START">
                     <span class="section-name">Місія:</span>
@@ -139,7 +139,7 @@
               </div>
               <div
                 class="alert alert-info mb-0"
-                [class.hidden]="!flight.isExpanded"
+                [class.hidden]="flight.isHideBrigateView"
                 style="background-color: white !important"
               >
                 <div>
@@ -197,11 +197,7 @@
               </div>
 
               <div
-                *ngIf="
-                  userRole == UserRoles.ADMIN &&
-                  flight.flightStep.isApprovedByPPO == false &&
-                    flight.flightStep.isApprovedByREB == false
-                "
+                *ngIf="flight.flightStep.isApproved == false"
                 class="alert alert-warning mt-2 mb-0"
                 style="background-color: white;"
               >
@@ -210,6 +206,9 @@
                 </div>
                 <div class="waiting-approval-text" *ngIf="flight.flightStep.isApprovedByREB == false">
                   <b >Очікується дозвіл РЕБ</b>
+                </div>
+                <div class="waiting-approval-text" *ngIf="flight.flightStep.isApprovedByAdmin == false">
+                  <b>Очікується дозвіл БпС</b>
                 </div>
               </div>
             </div>

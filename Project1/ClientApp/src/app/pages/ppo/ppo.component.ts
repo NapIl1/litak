@@ -82,6 +82,10 @@ export class PpoComponent implements OnInit, OnDestroy {
       flight.isChecked = true;
     }
 
+    if (flight.flightStep.isApproved == true) {
+      checkedFlights.checkedIsApproved.push(flight._id!);
+    }
+
     this.saveCheckedFlights(checkedFlights);
   }
 
@@ -458,7 +462,7 @@ export class PpoComponent implements OnInit, OnDestroy {
 
     if (flightStep === this.FlightSteps.LBZ_FORWARD || flightStep === this.FlightSteps.RETURN) {
       if (flight?.isFlightStepChecked === true &&
-        flight.isLbzForwardStepChecked === true) {
+        (flight.isLbzForwardStepChecked === true || flight.LBZForwardDate == undefined)) {
         return false;
       } else {
         return true;
@@ -467,8 +471,8 @@ export class PpoComponent implements OnInit, OnDestroy {
 
     if (flightStep === this.FlightSteps.LBZ_HOME) {
       if (flight?.isFlightStepChecked === true &&
-        flight.isLbzForwardStepChecked === true &&
-        flight.isLbzBackStepChecked === true) {
+        (flight.isLbzForwardStepChecked === true || flight.LBZForwardDate == undefined) &&
+        (flight.isLbzBackStepChecked === true || flight.LBZBackDate == undefined)) {
         return false;
       } else {
         return true;
@@ -477,9 +481,9 @@ export class PpoComponent implements OnInit, OnDestroy {
 
     if (flightStep === this.FlightSteps.REDUCTION) {
       if (flight?.isFlightStepChecked === true &&
-        flight.isLbzForwardStepChecked === true &&
-        flight.isLbzBackStepChecked === true &&
-        flight.isReductionStepChecked === true) {
+        (flight.isLbzForwardStepChecked === true || flight.LBZForwardDate == undefined) &&
+        (flight.isLbzBackStepChecked === true || flight.LBZBackDate == undefined) &&
+        (flight.isReductionStepChecked === true || flight.reductionDate == undefined)) {
         return false;
       } else {
         return true;
