@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Nodes;
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -87,6 +87,9 @@ namespace litak_back_end.Controllers
             var database = mongoClient.GetDatabase("sample_weatherdata");
             var collection = database.GetCollection<BsonDocument>("records");
 
+            var existingDocument = await collection.Find(filter).FirstOrDefaultAsync();
+
+            UpdateCheckedInformationIfNotExists(existingDocument, document);
             await collection.ReplaceOneAsync(filter, document);
         }
 
@@ -231,5 +234,51 @@ namespace litak_back_end.Controllers
             result["_id"] = result["_id"].AsObjectId.ToString();
             return BsonTypeMapper.MapToDotNetValue(result);
         }
+
+        private static void UpdateCheckedInformationIfNotExists(BsonDocument? existingDocument, BsonDocument document)
+        {
+            if (existingDocument == null)
+            {
+                return;
+            }
+
+            var isFlightStepCheckedElement = existingDocument.Elements.FirstOrDefault(x=>x.Name == "isFlightStepChecked");
+            var isLbzForwardStepCheckedElement = existingDocument.Elements.FirstOrDefault(x=>x.Name == "isLbzForwardStepChecked");
+            var isLbzBackStepCheckedElement = existingDocument.Elements.FirstOrDefault(x=>x.Name == "isLbzBackStepChecked");
+            var isReductionStepCheckedElement = existingDocument.Elements.FirstOrDefault(x=>x.Name == "isReductionStepChecked");
+
+            if (isFlightStepCheckedElement.Name is not null)
+            {
+                if (!document.Contains(isFlightStepCheckedElement))
+                {
+                    document.Add(isFlightStepCheckedElement);
+                }
+            }
+
+            if (isLbzForwardStepCheckedElement.Name is not null)
+            {
+                if (!document.Contains(isLbzForwardStepCheckedElement))
+                {
+                    document.Add(isLbzForwardStepCheckedElement);
+                }
+            }
+
+            if (isLbzBackStepCheckedElement.Name is not null)
+            {
+                if (!document.Contains(isLbzBackStepCheckedElement))
+                {
+                    document.Add(isLbzBackStepCheckedElement);
+                }
+            }
+
+            if (isReductionStepCheckedElement.Name is not null)
+            {
+                if (!document.Contains(isReductionStepCheckedElement))
+                {
+                    document.Add(isReductionStepCheckedElement);
+                }
+            }
+        }
+
     }
 }
