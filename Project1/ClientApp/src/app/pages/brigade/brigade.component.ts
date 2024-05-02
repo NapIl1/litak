@@ -61,6 +61,7 @@ export class BrigadeComponent implements OnInit {
 
   toggleSection(flight: CheckedFlight) {
     flight.isHideBrigateView = !flight.isHideBrigateView;
+    flight.isChecked = true;
   }
 
   async ngOnInit(): Promise<void> {
@@ -102,6 +103,7 @@ export class BrigadeComponent implements OnInit {
 
   async initFlights() {
     const nonCollapsedFlights = this.flights.filter(x => x.isHideBrigateView === true);
+    const checkedFlights = this.flights.filter(x=>x.isChecked == true);
 
     try {
       const allFlights = await this.flightService.getFlightsWithTimeRange(this.timeRangeMinutes);
@@ -154,6 +156,13 @@ export class BrigadeComponent implements OnInit {
           updatedFlight.isHideBrigateView = nonCollapsedFlight.isHideBrigateView;
         }
       });
+
+      newFlights.forEach(upddatedFlight => {
+        const checkedFlight = checkedFlights.find(flight => flight._id == upddatedFlight._id);
+        if(checkedFlight && checkedFlight.isChecked !== upddatedFlight.isChecked){
+          upddatedFlight.isChecked = checkedFlight.isChecked;
+        }
+      })
 
       // Insert filtered flights
       this.flights = [];
