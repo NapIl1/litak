@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject, Subscription, interval, takeUntil } from 'rxjs';
 import { ValueColor } from 'src/app/models/droneModel';
 import { Flight, FlightSteps } from 'src/app/models/flight';
@@ -10,6 +10,7 @@ import { UserService } from 'src/app/services/user.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastsService } from 'src/app/services/toasts.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { PromptModalComponent } from '../shared/prompt-modal/prompt-modal.component';
 
 export interface CheckedFlight extends Flight {
   isShowStepChengedSign?: boolean,
@@ -33,7 +34,9 @@ export interface CheckedFlights {
   templateUrl: './brigade.component.html',
   styleUrls: ['./brigade.component.scss']
 })
-export class BrigadeComponent implements OnInit {
+
+
+export class BrigadeComponent implements OnInit, OnDestroy {
 
   flights: CheckedFlight[] = [];
 
@@ -53,15 +56,38 @@ export class BrigadeComponent implements OnInit {
 
   gotError$ = new Subject<void>();
 
+
   constructor(private flightService: FlightService,
     private optionsService: OptionsService,
     private userService: UserService,
     private toastsService: ToastsService) {
   }
 
-  toggleSection(flight: CheckedFlight) {
-    flight.isHideBrigateView = !flight.isHideBrigateView;
-    flight.isChecked = !flight.isChecked;
+  ngOnDestroy(): void {
+    this.refreshFlightSubscription?.unsubscribe();
+  }
+
+  toggleSection(flight: Flight) {
+    flight.isExpanded = !flight.isExpanded;
+
+    const checkedFlights = this.getCheckedFlights();
+
+    if (flight.isForwardChanged === true && !checkedFlights.checkedLBZForwardChange.includes(flight._id!)) {
+      checkedFlights.checkedLBZForwardChange.push(flight._id!);
+      flight.isChecked = true;
+    }
+
+    if (flight.isReturnChanged === true && !checkedFlights.checkedLBZBackChange.includes(flight._id!)) {
+      checkedFlights.checkedLBZBackChange.push(flight._id!);
+      flight.isChecked = true;
+    }
+
+    if (flight.flightStep.isApproved == true && !checkedFlights.checkedIsApproved.includes(flight._id!)) {
+      checkedFlights.checkedIsApproved.push(flight._id!);
+      flight.isChecked = true;
+    }
+
+    this.saveCheckedFlights(checkedFlights);
   }
 
   async ngOnInit(): Promise<void> {
@@ -102,8 +128,8 @@ export class BrigadeComponent implements OnInit {
   }
 
   async initFlights() {
-    const nonCollapsedFlights = this.flights.filter(x => x.isHideBrigateView === true);
-    const checkedFlights = this.flights.filter(x=>x.isChecked == true);
+    const nonCollapsedFlights = this.flights.filter(x => x.isExpanded === true);
+    const collapsedFlights = this.flights.filter(x => x.isExpanded == false);
 
     try {
       const allFlights = await this.flightService.getFlightsWithTimeRange(this.timeRangeMinutes);
@@ -152,17 +178,41 @@ export class BrigadeComponent implements OnInit {
       newFlights.forEach(updatedFlight => {
         // Find the corresponding collapsed flight
         const nonCollapsedFlight = nonCollapsedFlights.find(flight => flight._id === updatedFlight._id);
-        if (nonCollapsedFlight && nonCollapsedFlight.isHideBrigateView !== updatedFlight.isHideBrigateView) {
-          updatedFlight.isHideBrigateView = nonCollapsedFlight.isHideBrigateView;
+        if (nonCollapsedFlight && nonCollapsedFlight.isExpanded !== updatedFlight.isExpanded) {
+          updatedFlight.isExpanded = nonCollapsedFlight.isExpanded;
+        }else{
+          const collapsedFlight = collapsedFlights.find(flight => flight._id == updatedFlight._id);
+          if(collapsedFlight){
+            updatedFlight.isExpanded = collapsedFlight.isExpanded;
+          }
         }
       });
 
-      newFlights.forEach(upddatedFlight => {
-        const checkedFlight = checkedFlights.find(flight => flight._id == upddatedFlight._id);
-        if(checkedFlight && checkedFlight.isChecked !== upddatedFlight.isChecked){
-          upddatedFlight.isChecked = checkedFlight.isChecked;
+      const checkedFlights = this.getCheckedFlights();
+
+      newFlights.forEach(flight => {
+        flight.isChecked = checkedFlights.checkedIsApproved.includes(flight._id!);
+
+        if (flight.isForwardChanged === true) {
+          flight.isChecked = checkedFlights.checkedLBZForwardChange.includes(flight._id!);
         }
-      })
+
+        if (flight.isReturnChanged === true) {
+          flight.isChecked = checkedFlights.checkedLBZBackChange.includes(flight._id!);
+        }
+
+        if (flight.isChecked !== true || flight.isExpanded === true) {
+          flight.isExpanded = true;
+        }
+      });
+
+      const filteredChecks: CheckedFlights = {
+        checkedIsApproved: checkedFlights.checkedIsApproved.filter(id => newFlights.some(x => x._id == id)),
+        checkedLBZBackChange: checkedFlights.checkedLBZBackChange.filter(id => newFlights.some(x => x._id == id)),
+        checkedLBZForwardChange: checkedFlights.checkedLBZForwardChange.filter(id => newFlights.some(x => x._id == id))
+      };
+
+      this.saveCheckedFlights(filteredChecks);
 
       // Insert filtered flights
       this.flights = [];
@@ -179,6 +229,29 @@ export class BrigadeComponent implements OnInit {
       this.gotError$.complete();
     }
   }
+
+  public getCheckedFlights(): CheckedFlights {
+    const item = localStorage.getItem(this.CHECKED_FLIGHTS_KEY);
+
+    const empty = {
+      checkedIsApproved: [],
+      checkedLBZBackChange: [],
+      checkedLBZForwardChange: []
+    }
+
+    if (item != null) {
+      const parsed: CheckedFlights = JSON.parse(item);
+      return (parsed.checkedIsApproved && parsed.checkedLBZBackChange && parsed.checkedLBZForwardChange) ? parsed : empty;
+    }
+
+    return empty;
+  }
+
+  public saveCheckedFlights(checkedFlights: CheckedFlights) {
+    localStorage.setItem(this.CHECKED_FLIGHTS_KEY, JSON.stringify(checkedFlights));
+  }
+
+  private readonly CHECKED_FLIGHTS_KEY = 'CHECKED_FLIGHTS';
 
   public get FlightSteps() {
     return FlightSteps;
@@ -228,5 +301,4 @@ export class BrigadeComponent implements OnInit {
       flight.timeFromLastStep = '';
     }
   }
-
 }
