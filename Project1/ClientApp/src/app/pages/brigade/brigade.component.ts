@@ -61,7 +61,7 @@ export class BrigadeComponent implements OnInit {
 
   toggleSection(flight: CheckedFlight) {
     flight.isHideBrigateView = !flight.isHideBrigateView;
-    flight.isChecked = true;
+    flight.isChecked = !flight.isChecked;
   }
 
   async ngOnInit(): Promise<void> {
