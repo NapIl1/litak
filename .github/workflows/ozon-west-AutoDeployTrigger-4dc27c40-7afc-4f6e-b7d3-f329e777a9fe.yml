@@ -5,7 +5,7 @@ on:
   # Automatically trigger it when detected changes in repo
   push:
     branches: 
-      [ main ]
+      [ west ]
     paths:
     - 'Project1/**'
     - '.github/workflows/ozon-west-AutoDeployTrigger-4dc27c40-7afc-4f6e-b7d3-f329e777a9fe.yml'
@@ -42,6 +42,7 @@ jobs:
           resourceGroup: ozon-west
           dockerfilePath: ./Dockerfile
           imageToBuild: ozonwestrg.azurecr.io/ozon-west:${{ github.sha }}
-          
+          environmentVariables: |
+            "ASPNETCORE_ENVIRONMENT=West"
 
 
