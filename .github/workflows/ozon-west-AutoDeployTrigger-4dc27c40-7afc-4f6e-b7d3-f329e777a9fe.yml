@@ -40,8 +40,8 @@ jobs:
           registryPassword: ${{ secrets.OZONWEST_REGISTRY_PASSWORD }}
           containerAppName: ozon-west
           resourceGroup: ozon-west
+          dockerfilePath: ./Dockerfile
           imageToBuild: ozonwestrg.azurecr.io/ozon-west:${{ github.sha }}
-          _buildArgumentsKey_: |
-            _buildArgumentsValues_
+          
 
 
