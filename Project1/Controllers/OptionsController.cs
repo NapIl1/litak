@@ -23,7 +23,6 @@ namespace litak_back_end.Controllers
             {
                 if (record.Contains("_id") && record["_id"].IsObjectId)
                 {
-                    // Convert the ObjectId to a string
                     record["_id"] = record["_id"].AsObjectId.ToString();
                 }
                 return record;
