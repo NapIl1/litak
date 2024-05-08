@@ -17,6 +17,12 @@ export class HeaderComponent implements OnInit{
 
   currentUrl = '';
 
+  backgroundColor = '#ffffff';
+  
+  onColorChanged(val: string) {
+    document.getElementById('mainWrapper')!.style.backgroundColor = val;
+  }
+
   constructor(private userService: UserService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
