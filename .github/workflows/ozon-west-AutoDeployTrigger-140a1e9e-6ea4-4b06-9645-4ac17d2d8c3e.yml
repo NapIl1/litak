@@ -34,14 +34,14 @@ jobs:
       - name: Build and push container image to registry
         uses: azure/container-apps-deploy-action@v2
         with:
-          appSourcePath: ${{ github.workspace }}Project1 
+          appSourcePath: ${{ github.workspace }}/Project1 
           registryUrl: ozonwestrg.azurecr.io
           registryUsername: ${{ secrets.OZONWEST_REGISTRY_USERNAME }}
           registryPassword: ${{ secrets.OZONWEST_REGISTRY_PASSWORD }}
           containerAppName: ozon-west
           resourceGroup: ozon-west
+          dockerfilePath: ./Dockerfile
           imageToBuild: ozonwestrg.azurecr.io/ozon-west:${{ github.sha }}
-          _buildArgumentsKey_: |
-            _buildArgumentsValues_
+          
 
 
