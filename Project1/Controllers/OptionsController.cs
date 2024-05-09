@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Nodes;
+using System.Text.Json.Nodes;
 using litak_back_end.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -13,7 +13,7 @@ namespace litak_back_end.Controllers
         [HttpGet]
         public async Task<List<object>> GetAllOptions()
         {
-            var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
             var database = mongoClient.GetDatabase("sample_weatherdata");
             
             var recordsCollection = database.GetCollection<BsonDocument>("options"); 
@@ -23,6 +23,7 @@ namespace litak_back_end.Controllers
             {
                 if (record.Contains("_id") && record["_id"].IsObjectId)
                 {
+                    // Convert the ObjectId to a string
                     record["_id"] = record["_id"].AsObjectId.ToString();
                 }
                 return record;
@@ -37,7 +38,7 @@ namespace litak_back_end.Controllers
             try
             {
                 var record = BsonDocument.Parse(recordJson.ToString());
-                var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+                var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
                 var database = mongoClient.GetDatabase("sample_weatherdata");
                 var replaceOptions = new ReplaceOptions { IsUpsert = true };
                 var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(optionsId));
@@ -56,7 +57,7 @@ namespace litak_back_end.Controllers
         public async Task UpdateOptions(string optionsId, [FromBody] JsonObject recordJson)
         {
             var record = BsonDocument.Parse(recordJson.ToString());
-            var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
             var database = mongoClient.GetDatabase("sample_weatherdata");
             var collection = database.GetCollection<BsonDocument>("options"); 
             
@@ -68,7 +69,7 @@ namespace litak_back_end.Controllers
         [HttpDelete]
         public async Task DeleteRecord(string optionsId)
         {
-            var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
             var database = mongoClient.GetDatabase("sample_weatherdata");
 
             var recordsCollection = database.GetCollection<BsonDocument>("options");
