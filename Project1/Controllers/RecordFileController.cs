@@ -1,4 +1,4 @@
-﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Mvc;
@@ -57,7 +57,7 @@ namespace litak_back_end.Controllers
 
         private async Task<List<object>> GetAllRecords()
         {
-            var mongoClient = new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
             var database = mongoClient.GetDatabase("sample_weatherdata");
 
             var recordsCollection = database.GetCollection<BsonDocument>("records");
