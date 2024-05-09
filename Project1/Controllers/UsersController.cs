@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Nodes;
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -13,7 +13,7 @@ public class UsersController : ControllerBase
     public async Task<List<object>> GetAllUsers()
     {
         var mongoClient =
-            new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
         var database = mongoClient.GetDatabase("sample_weatherdata");
 
         var recordsCollection = database.GetCollection<BsonDocument>("users");
@@ -36,7 +36,7 @@ public class UsersController : ControllerBase
     public async Task<object> GetUserByUserNameAndPassword(string username, string userPassword)
     {
         var mongoClient =
-            new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
         var database = mongoClient.GetDatabase("sample_weatherdata");
         
         var filter = new BsonDocument(){ {"login", username}, {"password", userPassword}};
@@ -46,7 +46,6 @@ public class UsersController : ControllerBase
 
         if (record == null)
             return BadRequest();
-
 
         if (record.Contains("_id") && record["_id"].IsObjectId)
         {
@@ -61,7 +60,7 @@ public class UsersController : ControllerBase
     {
         var record = BsonDocument.Parse(recordJson.ToString());
         var mongoClient =
-            new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
         var database = mongoClient.GetDatabase("sample_weatherdata");
 
         var recordsCollection = database.GetCollection<BsonDocument>("users");
@@ -84,7 +83,7 @@ public class UsersController : ControllerBase
     {
         var record = BsonDocument.Parse(recordJson.ToString());
         var mongoClient =
-            new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
         var database = mongoClient.GetDatabase("sample_weatherdata");
         var collection = database.GetCollection<BsonDocument>("users");
 
@@ -97,7 +96,7 @@ public class UsersController : ControllerBase
     public async Task DeleteUser(string userId)
     {
         var mongoClient =
-            new MongoClient("mongodb+srv://admin:admin@sandbox.ioqzb.mongodb.net/");
+            new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
         var database = mongoClient.GetDatabase("sample_weatherdata");
 
         var recordsCollection = database.GetCollection<BsonDocument>("users");
