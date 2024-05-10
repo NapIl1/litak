@@ -8,8 +8,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAuthentication("BasicAuthentication")
-    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+// builder.Services.AddAuthentication("BasicAuthentication")
+//     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 BsonSerializer.RegisterSerializer(new StringObjectIdConverter());
 
 var app = builder.Build();
@@ -24,6 +24,7 @@ app.Use(async (context, next) =>
     }
 });
 
+app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseRouting();
 

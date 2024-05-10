@@ -4,12 +4,8 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Project1;
 using Project1.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace litak_back_end.Controllers
 {
@@ -47,6 +43,14 @@ namespace litak_back_end.Controllers
             "Закінчення",
         };
 
+        private readonly string _connectionString;
+        private readonly string _databaseName;
+        public RecordFileController(IConfiguration configuration)
+        {
+            _connectionString = configuration["ConnectionStrings:Server"];
+            _databaseName = configuration["ConnectionStrings:DatabaseName"];
+        }
+
         [HttpGet]
         public async Task<IActionResult> BuildFile()
         {
@@ -57,10 +61,10 @@ namespace litak_back_end.Controllers
 
         private async Task<List<object>> GetAllRecords()
         {
-            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-            var database = mongoClient.GetDatabase("sample_weatherdata");
+            var mongoClient = new MongoClient(_connectionString);
+            var database = mongoClient.GetDatabase(_databaseName);
 
-            var recordsCollection = database.GetCollection<BsonDocument>("records");
+            var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.RecordCollection);
             var records = (await recordsCollection.FindAsync(_ => true)).ToList();
 
             var convertedRecords = records.ConvertAll(record =>

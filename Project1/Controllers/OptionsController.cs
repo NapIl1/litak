@@ -3,6 +3,7 @@ using litak_back_end.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Project1;
 
 namespace litak_back_end.Controllers
 {
@@ -10,13 +11,21 @@ namespace litak_back_end.Controllers
     [ApiController]
     public class OptionsController : ControllerBase
     {
+        private readonly string _connectionString;
+        private readonly string _databaseName;
+        public OptionsController(IConfiguration configuration)
+        {
+            _connectionString = configuration["ConnectionStrings:Server"];
+            _databaseName = configuration["ConnectionStrings:DatabaseName"];
+        }
+
         [HttpGet]
         public async Task<List<object>> GetAllOptions()
         {
-            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-            var database = mongoClient.GetDatabase("sample_weatherdata");
+            var mongoClient = new MongoClient(_connectionString);
+            var database = mongoClient.GetDatabase(_databaseName);
             
-            var recordsCollection = database.GetCollection<BsonDocument>("options"); 
+            var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.OptionsCollection);
             var records = (await recordsCollection.FindAsync(_ => true)).ToList();
             
             var convertedRecords = records.ConvertAll(record =>
@@ -38,11 +47,11 @@ namespace litak_back_end.Controllers
             try
             {
                 var record = BsonDocument.Parse(recordJson.ToString());
-                var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-                var database = mongoClient.GetDatabase("sample_weatherdata");
+                var mongoClient = new MongoClient(_connectionString);
+                var database = mongoClient.GetDatabase(_databaseName);
                 var replaceOptions = new ReplaceOptions { IsUpsert = true };
                 var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(optionsId));
-                var recordsCollection = database.GetCollection<BsonDocument>("options"); 
+                var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.OptionsCollection);
                 await recordsCollection.ReplaceOneAsync(filter, record, replaceOptions);
                 
                 return Ok("Record saved successfully");
@@ -57,9 +66,9 @@ namespace litak_back_end.Controllers
         public async Task UpdateOptions(string optionsId, [FromBody] JsonObject recordJson)
         {
             var record = BsonDocument.Parse(recordJson.ToString());
-            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-            var database = mongoClient.GetDatabase("sample_weatherdata");
-            var collection = database.GetCollection<BsonDocument>("options"); 
+            var mongoClient = new MongoClient(_connectionString);
+            var database = mongoClient.GetDatabase(_databaseName);
+            var collection = database.GetCollection<BsonDocument>(CollectionNames.OptionsCollection);
             
             var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(optionsId));
 
@@ -69,10 +78,10 @@ namespace litak_back_end.Controllers
         [HttpDelete]
         public async Task DeleteRecord(string optionsId)
         {
-            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-            var database = mongoClient.GetDatabase("sample_weatherdata");
+            var mongoClient = new MongoClient(_connectionString);
+            var database = mongoClient.GetDatabase(_databaseName);
 
-            var recordsCollection = database.GetCollection<BsonDocument>("options");
+            var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.OptionsCollection);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(optionsId));
             await recordsCollection.DeleteOneAsync(filter);
         }

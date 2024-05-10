@@ -42,6 +42,7 @@ jobs:
           resourceGroup: ozon-west
           dockerfilePath: ./Dockerfile
           imageToBuild: ozonwestrg.azurecr.io/ozon-west:${{ github.sha }}
-          
+          environmentVariables: |
+            "ASPNETCORE_ENVIRONMENT=West"
 
 

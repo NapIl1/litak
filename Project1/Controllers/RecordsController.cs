@@ -4,6 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Events;
 using MongoDB.Driver.Linq;
+using Project1;
 using System.Globalization;
 
 namespace litak_back_end.Controllers
@@ -12,14 +13,22 @@ namespace litak_back_end.Controllers
     [ApiController]
     public class RecordsController : ControllerBase
     {
+        private readonly string _connectionString;
+        private readonly string _databaseName;
+        public RecordsController(IConfiguration configuration)
+        {
+            _connectionString = configuration["ConnectionStrings:Server"];
+            _databaseName = configuration["ConnectionStrings:DatabaseName"];
+        }
+
         [HttpGet]
         //[Authorize(AuthenticationSchemes = "BasicAuthentication")]
         public async Task<List<object>> GetAllRecords()
         {
-            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-            var database = mongoClient.GetDatabase("sample_weatherdata");
+            var mongoClient = new MongoClient(_connectionString);
+            var database = mongoClient.GetDatabase(_databaseName);
 
-            var recordsCollection = database.GetCollection<BsonDocument>("records");
+            var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.RecordCollection);
             var records = (await recordsCollection.FindAsync(_ => true)).ToList();
 
             var convertedRecords = records.ConvertAll(record =>
@@ -40,10 +49,10 @@ namespace litak_back_end.Controllers
             try
             {
                 var record = BsonDocument.Parse(recordJson.ToString());
-                var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-                var database = mongoClient.GetDatabase("sample_weatherdata");
+                var mongoClient = new MongoClient(_connectionString);
+                var database = mongoClient.GetDatabase(_databaseName);
 
-                var recordsCollection = database.GetCollection<BsonDocument>("records");
+                var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.RecordCollection);
                 var filter1 = Builders<BsonDocument>.Filter.Eq("userId", record["userId"]);
                 var filter2 = Builders<BsonDocument>.Filter.Ne("flightStep.step", 6);
                 var combinedFilter = Builders<BsonDocument>.Filter.And(filter1, filter2);
@@ -83,9 +92,9 @@ namespace litak_back_end.Controllers
 
             var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(recordId));
 
-            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-            var database = mongoClient.GetDatabase("sample_weatherdata");
-            var collection = database.GetCollection<BsonDocument>("records");
+            var mongoClient = new MongoClient(_connectionString);
+            var database = mongoClient.GetDatabase(_databaseName);
+            var collection = database.GetCollection<BsonDocument>(CollectionNames.RecordCollection);
 
             var existingDocument = await collection.Find(filter).FirstOrDefaultAsync();
 
@@ -96,10 +105,10 @@ namespace litak_back_end.Controllers
         [HttpDelete]
         public async Task DeleteRecord(string recordId)
         {
-            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-            var database = mongoClient.GetDatabase("sample_weatherdata");
+            var mongoClient = new MongoClient(_connectionString);
+            var database = mongoClient.GetDatabase(_databaseName);
 
-            var recordsCollection = database.GetCollection<BsonDocument>("records");
+            var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.RecordCollection);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(recordId));
             await recordsCollection.DeleteOneAsync(filter);
         }
@@ -108,10 +117,10 @@ namespace litak_back_end.Controllers
         [Route("delete-record-list")]
         public async Task DeleteRecords([FromBody] List<string> recordIds)
         {
-            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-            var database = mongoClient.GetDatabase("sample_weatherdata");
+            var mongoClient = new MongoClient(_connectionString);
+            var database = mongoClient.GetDatabase(_databaseName);
 
-            var recordsCollection = database.GetCollection<BsonDocument>("records");
+            var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.RecordCollection);
 
             var filter = Builders<BsonDocument>.Filter.In("_id", recordIds.Select(id => new ObjectId(id)));
 
@@ -121,10 +130,10 @@ namespace litak_back_end.Controllers
         [HttpGet("GetNotFinishedRecords")]
         public async Task<List<object>> GetNotFinishedRecords()
         {
-            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-            var database = mongoClient.GetDatabase("sample_weatherdata");
+            var mongoClient = new MongoClient(_connectionString);
+            var database = mongoClient.GetDatabase(_databaseName);
 
-            var recordsCollection = database.GetCollection<BsonDocument>("records");
+            var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.RecordCollection);
             var filter = Builders<BsonDocument>.Filter.Ne("flightStep.step", 6);
 
             var records = (await recordsCollection.FindAsync(filter)).ToList();
@@ -143,10 +152,10 @@ namespace litak_back_end.Controllers
         [HttpGet("GetNotFinishedRecordsOrItTenMinutesRange")]
         public async Task<List<object>> GetNotFinishedRecordsOrItTenMinutesRange([FromQuery] int timeRange)
         {
-            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-            var database = mongoClient.GetDatabase("sample_weatherdata");
+            var mongoClient = new MongoClient(_connectionString);
+            var database = mongoClient.GetDatabase(_databaseName);
 
-            var recordsCollection = database.GetCollection<BsonDocument>("records");
+            var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.RecordCollection);
 
 
             var currentTimeUtc = DateTime.UtcNow; // Current UTC time
@@ -172,10 +181,10 @@ namespace litak_back_end.Controllers
         [HttpGet("GetRecordsForUser")]
         public async Task<List<object>> GetRecordsForUser([FromQuery] string userId)
         {
-            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-            var database = mongoClient.GetDatabase("sample_weatherdata");
+            var mongoClient = new MongoClient(_connectionString);
+            var database = mongoClient.GetDatabase(_databaseName);
 
-            var recordsCollection = database.GetCollection<BsonDocument>("records");
+            var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.RecordCollection);
             var filter1 = Builders<BsonDocument>.Filter.Eq("userId", userId);
             var filter2 = Builders<BsonDocument>.Filter.Ne("flightStep.step", 6);
             var combinedFilter = Builders<BsonDocument>.Filter.And(filter1, filter2);
@@ -196,10 +205,10 @@ namespace litak_back_end.Controllers
         [HttpGet("GetRecordById")]
         public async Task<List<object>> GetRecordById([FromQuery] string recordId)
         {
-            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-            var database = mongoClient.GetDatabase("sample_weatherdata");
+            var mongoClient = new MongoClient(_connectionString);
+            var database = mongoClient.GetDatabase(_databaseName);
 
-            var recordsCollection = database.GetCollection<BsonDocument>("records");
+            var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.RecordCollection);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(recordId));
 
             var records = (await recordsCollection.FindAsync(filter)).ToList();
@@ -218,10 +227,10 @@ namespace litak_back_end.Controllers
         [HttpGet("GetLastRecordByUserId")]
         public async Task<object> GetLastRecordByUserId([FromQuery] string userId)
         {
-            var mongoClient = new MongoClient("mongodb+srv://western-ozon-db:onTRaHx6EV8SgKdB@cluster0.jfg3y84.mongodb.net/");
-            var database = mongoClient.GetDatabase("sample_weatherdata");
+            var mongoClient = new MongoClient(_connectionString);
+            var database = mongoClient.GetDatabase(_databaseName);
 
-            var recordsCollection = database.GetCollection<BsonDocument>("records");
+            var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.RecordCollection);
 
             var filter = Builders<BsonDocument>.Filter.Eq("userId", userId);
             var sort = Builders<BsonDocument>.Sort.Descending("dateOfFlight");
