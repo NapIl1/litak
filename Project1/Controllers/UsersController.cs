@@ -104,7 +104,10 @@ public class UsersController : ControllerBase
         var database = mongoClient.GetDatabase(_databaseName);
 
         var recordsCollection = database.GetCollection<BsonDocument>(CollectionNames.UserCollection);
-        var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(userId));
-        await recordsCollection.DeleteOneAsync(filter);
+        var filter1 = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(userId));
+        var filter2 = Builders<BsonDocument>.Filter.Eq("_id", userId);
+        var combinedFilter = Builders<BsonDocument>.Filter.Or(filter1, filter2);
+
+        await recordsCollection.DeleteOneAsync(combinedFilter);
     }
 }
