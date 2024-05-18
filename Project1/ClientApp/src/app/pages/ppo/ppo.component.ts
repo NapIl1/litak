@@ -362,26 +362,28 @@ export class PpoComponent implements OnInit, OnDestroy {
   }
 
   public async checkFlightStep(flight: CheckedFlight, step: string) {
-    if(this.userRole != this.UserRoles.ADMIN || flight.flightStep.visibleStep == this.FlightSteps.END){
+    const recordtoUpdate = await this.flightService.getByIdAsync(flight._id!);
+
+    if(!recordtoUpdate || this.userRole != this.UserRoles.ADMIN || recordtoUpdate.flightStep.visibleStep == this.FlightSteps.END){
       return;
     }
 
     if(step == 'FLIGHT'){
-      flight.isFlightStepChecked = !flight.isFlightStepChecked;
+      recordtoUpdate.isFlightStepChecked = !recordtoUpdate.isFlightStepChecked;
     }
     if(step == 'LBZ_FORWARD'){
-      flight.isLbzForwardStepChecked = !flight.isLbzForwardStepChecked;
+      recordtoUpdate.isLbzForwardStepChecked = !recordtoUpdate.isLbzForwardStepChecked;
     }
     if(step == 'LBZ_HOME'){
-      flight.isLbzBackStepChecked = !flight.isLbzBackStepChecked;
+      recordtoUpdate.isLbzBackStepChecked = !recordtoUpdate.isLbzBackStepChecked;
     }
     if(step == 'REDUCTION'){
-      flight.isReductionStepChecked = !flight.isReductionStepChecked;
+      recordtoUpdate.isReductionStepChecked = !recordtoUpdate.isReductionStepChecked;
     }
 
     delete flight.isShowStepChengedSign;
     
-    await this.flightService.updateFlightAsync(flight);
+    await this.flightService.updateFlightAsync(recordtoUpdate);
 
     flight.isShowStepChengedSign = this.isShowWarningSign(flight, flight.flightStep.visibleStep);
   }

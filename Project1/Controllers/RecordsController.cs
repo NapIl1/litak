@@ -258,7 +258,7 @@ namespace litak_back_end.Controllers
 
             if (isFlightStepCheckedElement.Name is not null)
             {
-                if (!document.Contains(isFlightStepCheckedElement))
+                if (!document.Contains(isFlightStepCheckedElement.Name))
                 {
                     document.Add(isFlightStepCheckedElement);
                 }
@@ -266,7 +266,7 @@ namespace litak_back_end.Controllers
 
             if (isLbzForwardStepCheckedElement.Name is not null)
             {
-                if (!document.Contains(isLbzForwardStepCheckedElement))
+                if (!document.Contains(isLbzForwardStepCheckedElement.Name))
                 {
                     document.Add(isLbzForwardStepCheckedElement);
                 }
@@ -274,7 +274,7 @@ namespace litak_back_end.Controllers
 
             if (isLbzBackStepCheckedElement.Name is not null)
             {
-                if (!document.Contains(isLbzBackStepCheckedElement))
+                if (!document.Contains(isLbzBackStepCheckedElement.Name))
                 {
                     document.Add(isLbzBackStepCheckedElement);
                 }
@@ -282,7 +282,7 @@ namespace litak_back_end.Controllers
 
             if (isReductionStepCheckedElement.Name is not null)
             {
-                if (!document.Contains(isReductionStepCheckedElement))
+                if (!document.Contains(isReductionStepCheckedElement.Name))
                 {
                     document.Add(isReductionStepCheckedElement);
                 }
