@@ -118,7 +118,7 @@
                     </div>
                     <input *ngIf="flight.hasOwnProperty('flightStartDate') && userRole == UserRoles.ADMIN"
                            [disabled]="flight.flightStep.visibleStep == FlightSteps.END"
-                           [(ngModel)]="flight.isFlightStepChecked" type="checkbox" >
+                           [ngModel]="flight.isFlightStepChecked" type="checkbox" >
                 </div>
                 <div (click)="checkFlightStep(flight, 'LBZ_FORWARD')" [class.current-step]="flight.flightStep.visibleStep == FlightSteps.LBZ_FORWARD"
                      style="display: flex; justify-content: space-between; cursor: pointer;">
@@ -128,7 +128,7 @@
                     </div>
                     <input *ngIf="flight.hasOwnProperty('LBZForwardDate') && userRole == UserRoles.ADMIN"
                            [disabled]="flight.flightStep.visibleStep == FlightSteps.END"
-                           [(ngModel)]="flight.isLbzForwardStepChecked"  type="checkbox">
+                           [ngModel]="flight.isLbzForwardStepChecked"  type="checkbox">
                 </div>
                 <div [class.current-step]="flight.flightStep.visibleStep == FlightSteps.RETURN" style="display: flex; justify-content: space-between;">
                     <div>
@@ -144,7 +144,7 @@
                     </div>
                     <input *ngIf="flight.hasOwnProperty('LBZBackDate') && userRole == UserRoles.ADMIN"
                            [disabled]="flight.flightStep.visibleStep == FlightSteps.END"
-                           [(ngModel)]="flight.isLbzBackStepChecked"  type="checkbox">
+                           [ngModel]="flight.isLbzBackStepChecked"  type="checkbox">
                 </div>
                 <div (click)="checkFlightStep(flight, 'REDUCTION')" [class.current-step]="flight.flightStep.visibleStep == FlightSteps.REDUCTION" 
                     style="display: flex; justify-content: space-between; cursor: pointer;">
@@ -154,7 +154,7 @@
                     </div>
                     <input *ngIf="flight.hasOwnProperty('reductionDate') && userRole == UserRoles.ADMIN"
                            [disabled]="flight.flightStep.visibleStep == FlightSteps.END"
-                           [(ngModel)]="flight.isReductionStepChecked" type="checkbox">
+                           [ngModel]="flight.isReductionStepChecked" type="checkbox">
                 </div>
                 <div>
                     <span class="section-name">Завершення:</span>

@@ -370,15 +370,19 @@ export class PpoComponent implements OnInit, OnDestroy {
 
     if(step == 'FLIGHT'){
       recordtoUpdate.isFlightStepChecked = !recordtoUpdate.isFlightStepChecked;
+      flight.isFlightStepChecked = !flight.isFlightStepChecked;
     }
     if(step == 'LBZ_FORWARD'){
       recordtoUpdate.isLbzForwardStepChecked = !recordtoUpdate.isLbzForwardStepChecked;
+      flight.isLbzForwardStepChecked = !flight.isLbzForwardStepChecked;
     }
     if(step == 'LBZ_HOME'){
       recordtoUpdate.isLbzBackStepChecked = !recordtoUpdate.isLbzBackStepChecked;
+      flight.isLbzBackStepChecked = !flight.isLbzBackStepChecked;
     }
     if(step == 'REDUCTION'){
       recordtoUpdate.isReductionStepChecked = !recordtoUpdate.isReductionStepChecked;
+      flight.isReductionStepChecked = !flight.isReductionStepChecked;
     }
 
     delete flight.isShowStepChengedSign;
